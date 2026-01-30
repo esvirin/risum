@@ -1,5 +1,5 @@
 export interface PushPressUser {
-    id: string;
+    id: string; // uuid or id
     firstName: string;
     lastName: string;
     email: string;
@@ -7,58 +7,108 @@ export interface PushPressUser {
     planName: string;
     classesRemaining: number;
     lastVisit?: string;
+    photoUrl?: string;
 }
 
 export interface PushPressClass {
     id: string;
     name: string;
-    startTime: string;
+    startTime: string; // ISO
+    endTime: string;
     instructor: string;
     location: string;
+    spotsTotal: number;
+    spotsDetailed?: {
+        reserved: number;
+        checked_in: number;
+    }
 }
 
-// Mock data for demonstration
-const MOCK_USER: PushPressUser = {
-    id: "pp_123456",
-    firstName: "Ivan",
-    lastName: "Ivanov",
-    email: "ivan@example.com",
-    membershipStatus: 'active',
-    planName: "Unlimited Pilates Monthly",
-    classesRemaining: 12,
-    lastVisit: "2024-05-20",
-};
+const API_KEY = process.env.PUSHPRESS_API_KEY;
+const API_URL = process.env.PUSHPRESS_API_URL;
 
-const MOCK_CLASSES: PushPressClass[] = [
-    {
-        id: "cls_1",
-        name: "Morning Flow",
-        startTime: "2024-05-25T09:00:00Z",
-        instructor: "Elena",
-        location: "Studio A",
-    },
-    {
-        id: "cls_2",
-        name: "Core Strength",
-        startTime: "2024-05-26T18:30:00Z",
-        instructor: "Alex",
-        location: "Studio B",
-    },
-];
+async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
+    if (!API_KEY) throw new Error("PUSHPRESS_API_KEY is not set");
 
-export async function getPushPressUser(userId: string): Promise<PushPressUser> {
-    // In a real implementation:
-    // const response = await fetch(`https://api.pushpress.com/v3/members/${userId}`, {
-    //   headers: { 'Authorization': `Bearer ${process.env.PUSHPRESS_API_KEY}` }
-    // });
-    // return response.json();
+    const headers = {
+        'API-KEY': API_KEY,
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+    };
 
-    // For now, simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    return MOCK_USER;
+    const res = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers,
+    });
+
+    if (!res.ok) {
+        throw new Error(`PushPress API Error ${res.status}: ${await res.text()}`);
+    }
+
+    return res.json();
+}
+
+export async function getPushPressMemberByEmail(email: string): Promise<PushPressUser | null> {
+    try {
+        const data = await fetchPushPress(`/customers?email=${encodeURIComponent(email)}`);
+        // Assuming data structure: { data: { resultArray: [...] } } or just { resultArray: [...] } based on curls
+        // Correct handling for diverse API responses might be needed.
+        const results = data.resultArray || data.data?.resultArray || [];
+
+        if (!results || results.length === 0) return null;
+
+        const customer = results[0];
+
+        return {
+            id: customer.uuid || customer.id || 'unknown',
+            firstName: customer.first_name || 'Unknown',
+            lastName: customer.last_name || '',
+            email: customer.email,
+            membershipStatus: customer.status === 'Active' ? 'active' : 'inactive',
+            planName: customer.plan_name || 'Membership',
+            classesRemaining: customer.classes_remaining || 0,
+            photoUrl: customer.photo_url,
+        };
+    } catch (error) {
+        console.error("getPushPressMemberByEmail error:", error);
+        return null;
+    }
 }
 
 export async function getUpcomingClasses(): Promise<PushPressClass[]> {
-    await new Promise(resolve => setTimeout(resolve, 600));
-    return MOCK_CLASSES;
+    try {
+        // Determine internal structure. Assuming /classes endpoint returns list.
+        // We might need to pass start/end dates? 
+        // For now, simple GET.
+        const data = await fetchPushPress('/classes?type=active');
+
+        // Check if response is { resultArray: [...] }
+        const results = data.resultArray || data.data?.resultArray || [];
+
+        // Map to interface
+        return results.map((cls: any) => ({
+            id: cls.class_id || cls.id,
+            name: cls.name || 'Class',
+            startTime: cls.date_time || cls.start_time, // Adjust based on actual fields
+            endTime: cls.end_time_time || cls.end_time,
+            instructor: cls.instructor_name || 'Staff',
+            location: cls.room_name || 'Main Studio',
+            spotsTotal: cls.limit || 20,
+        }));
+    } catch (error) {
+        console.error("getUpcomingClasses error:", error);
+        return [];
+    }
+}
+
+export async function bookClass(classId: string, memberId: string): Promise<boolean> {
+    // MOCK IMPLEMENTATION - API docs needed for real POST
+    console.log(`[MOCK] Booking class ${classId} for member ${memberId}`);
+    return true;
+}
+
+export async function cancelBooking(bookingId: string): Promise<boolean> {
+    // MOCK IMPLEMENTATION
+    console.log(`[MOCK] Cancelling booking ${bookingId}`);
+    return true;
 }

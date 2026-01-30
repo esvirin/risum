@@ -10,8 +10,8 @@ const RobotoSans = Roboto({
 
 
 export const metadata: Metadata = {
-  title: "Pilates Space",
-  description: "Pilates Space",
+  title: "Fit Space",
+  description: "Fit Space Member Portal",
 };
 
 export default function RootLayout({
