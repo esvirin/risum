@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
-export default function BookingButton({ classId }: { classId: string }) {
-    const router = useRouter();
+interface BookingButtonProps {
+    classId: string;
+}
+
+export default function BookingButton({ classId }: BookingButtonProps) {
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+    const [status, setStatus] = useState<"idle" | "booked">("idle");
 
     const handleBook = async () => {
         setLoading(true);
-        setStatus('idle');
-
         try {
             const res = await fetch("/api/classes/book", {
                 method: "POST",
@@ -19,28 +20,33 @@ export default function BookingButton({ classId }: { classId: string }) {
                 body: JSON.stringify({ classId }),
             });
 
-            if (!res.ok) throw new Error("Failed");
-
-            setStatus('success');
-            router.refresh(); // Refresh server data
+            if (res.ok) {
+                setStatus("booked");
+            } else {
+                alert("Booking failed");
+            }
         } catch (e) {
-            setStatus('error');
+            alert("Error booking class");
         } finally {
             setLoading(false);
         }
     };
 
-    if (status === 'success') {
-        return <button className="btn btn-secondary" disabled>Booked ✓</button>;
+    if (status === "booked") {
+        return (
+            <Button disabled variant="outline" className="text-green-600 border-green-200 bg-green-50">
+                Booked ✓
+            </Button>
+        );
     }
 
     return (
-        <button
+        <Button
             onClick={handleBook}
-            className="btn btn-primary"
             disabled={loading}
+            className="min-w-[100px]"
         >
             {loading ? "..." : "Book"}
-        </button>
+        </Button>
     );
 }

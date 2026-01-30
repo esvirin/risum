@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import styles from "../auth.module.scss";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -41,54 +44,58 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className={styles.container}>
-            <div className={`card ${styles.card}`}>
-                <h1 className={styles.title}>Claim Account</h1>
-                <p className={styles.subtitle}>
-                    Enter your email to verify membership
-                </p>
+        <div className="flex min-h-screen items-center justify-center p-4 bg-muted/20">
+            <Card className="w-full max-w-md shadow-sm">
+                <CardHeader className="text-center space-y-2">
+                    <CardTitle className="text-2xl font-bold tracking-tight">Claim Account</CardTitle>
+                    <CardDescription>
+                        Enter your email to verify membership
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <form onSubmit={handleSubmit} className="space-y-4">
+                        {error && (
+                            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-md">
+                                {error}
+                            </div>
+                        )}
 
-                <form onSubmit={handleSubmit} className={styles.form}>
-                    {error && (
-                        <div className={styles.error}>
-                            {error}
+                        <div className="space-y-2">
+                            <Label htmlFor="email">PushPress Email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="Your email on file"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
                         </div>
-                    )}
 
-                    <div className={styles.field}>
-                        <label className={styles.label}>PushPress Email</label>
-                        <input
-                            type="email"
-                            className="input-field"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                            placeholder="Your email on file"
-                        />
-                    </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="password">Create Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                placeholder="Min. 6 characters"
+                                minLength={6}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                    <div className={styles.field}>
-                        <label className={styles.label}>Create Password</label>
-                        <input
-                            type="password"
-                            className="input-field"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                            placeholder="Min. 6 characters"
-                            minLength={6}
-                        />
-                    </div>
-
-                    <button type="submit" className="btn btn-primary full" disabled={loading}>
-                        {loading ? "Verifying..." : "Register"}
-                    </button>
-                </form>
-
-                <div className={styles.footer}>
-                    Already have an account? <Link href="/login">Sign In</Link>
-                </div>
-            </div>
+                        <Button type="submit" className="w-full" disabled={loading}>
+                            {loading ? "Verifying..." : "Register"}
+                        </Button>
+                    </form>
+                </CardContent>
+                <CardFooter className="justify-center">
+                    <p className="text-sm text-muted-foreground">
+                        Already have an account? <Link href="/login" className="text-primary hover:underline font-medium">Sign In</Link>
+                    </p>
+                </CardFooter>
+            </Card>
         </div>
     );
 }

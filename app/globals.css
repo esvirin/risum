@@ -1,131 +1,106 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        /* 
+      Pilates.com Inspired Theme: 
+      Clean, minimal, light, with nature-inspired greens or soft neutrals.
+      Base: White / Off-White
+      Primary: Muted Sage Green or Deep classic Green
+      Accent: Soft Charcoal
+    */
+        --background: 0 0% 100%;
+        /* White */
+        --foreground: 240 5.9% 10%;
+        /* Almost Black */
+
+        --card: 0 0% 100%;
+        --card-foreground: 240 5.9% 10%;
+
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 5.9% 10%;
+
+        /* Primary: Using a deep elegant green similar to pilates.com branding */
+        --primary: 154 40% 45%;
+        /* approximate sage/forest green */
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 240 4.8% 95.9%;
+        --secondary-foreground: 240 5.9% 10%;
+
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+
+        --accent: 154 30% 90%;
+        /* Very light green tint for hover areas */
+        --accent-foreground: 240 5.9% 10%;
+
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 154 40% 45%;
+
+        --radius: 0.5rem;
+    }
+
+    .dark {
+        /* 
+      Dark mode variant: 
+      Keeping it clean dark grey rather than pitch black.
+    */
+        --background: 240 10% 3.9%;
+        --foreground: 0 0% 98%;
+
+        --card: 240 10% 3.9%;
+        --card-foreground: 0 0% 98%;
+
+        --popover: 240 10% 3.9%;
+        --popover-foreground: 0 0% 98%;
+
+        --primary: 154 40% 45%;
+        --primary-foreground: 0 0% 100%;
+
+        --secondary: 240 3.7% 15.9%;
+        --secondary-foreground: 0 0% 98%;
+
+        --muted: 240 3.7% 15.9%;
+        --muted-foreground: 240 5% 64.9%;
+
+        --accent: 240 3.7% 15.9%;
+        --accent-foreground: 0 0% 98%;
+
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 154 40% 45%;
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-family: 'Outfit', sans-serif;
+    }
+}
+
+/* Legacy Support / Global overrides */
 :root {
-    /* Premium Dark Palette */
-    --background: #0a0a0a;
-    --surface: #121212;
-    --surface-hover: #1e1e1e;
-    --border: #2a2a2a;
-
-    --primary: #D4AF37;
-    /* Metallic Gold */
-    --primary-hover: #C5A028;
-    --primary-foreground: #000000;
-
-    --text-main: #ffffff;
-    --text-secondary: #a0a0a0;
-    --text-muted: #525252;
-
-    --accent-blue: #3b82f6;
-    --accent-red: #ef4444;
+    /* Mapping legacy variables to new Shadcn-based ones where possible */
+    --text-main: hsl(var(--foreground));
+    --text-secondary: hsl(var(--muted-foreground));
+    --text-muted: hsl(var(--muted-foreground));
     --accent-green: #22c55e;
-
-    /* Spacing & Radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-full: 9999px;
-
-    --font-main: 'Outfit', sans-serif;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    background-color: var(--background);
-    color: var(--text-main);
-    font-family: var(--font-main);
-    -webkit-font-smoothing: antialiased;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-weight: 600;
-    letter-spacing: -0.02em;
-}
-
-a {
-    color: inherit;
-    text-decoration: none;
-}
-
-/* Optimised Utility Classes */
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 24px;
-    width: 100%;
-}
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px 24px;
-    border-radius: var(--radius-md);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-    font-size: 16px;
-}
-
-.btn-primary {
-    background: var(--primary);
-    color: var(--primary-foreground);
-    box-shadow: 0 4px 12px -2px rgba(212, 175, 55, 0.3);
-}
-
-.btn-primary:hover {
-    background: var(--primary-hover);
-    transform: translateY(-1px);
-}
-
-.btn-secondary {
-    background: var(--surface-hover);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-}
-
-.btn-secondary:hover {
-    background: #252525;
-}
-
-.btn.full {
-    width: 100%;
-}
-
-.input-field {
-    width: 100%;
-    padding: 12px 16px;
-    border-radius: var(--radius-md);
-    background: var(--surface);
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    font-family: inherit;
-    font-size: 16px;
-    transition: border-color 0.2s;
-}
-
-.input-field:focus {
-    outline: none;
-    border-color: var(--primary);
-}
-
-.card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
+    --accent-red: #ef4444;
 }

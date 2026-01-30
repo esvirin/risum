@@ -1,49 +1,63 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function PaymentButton() {
     const [loading, setLoading] = useState(false);
 
-    const handlePay = async () => {
+    const handlePayment = async (amount: string) => {
         setLoading(true);
         try {
-            // 1. Init payment on server
             const res = await fetch("/api/payments/init", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: 10 }) // Mock 10 EUR
+                body: JSON.stringify({ amount }),
             });
-
             const data = await res.json();
+            if (data.redirectUrl) {
+                // Create a hidden form and submit it to JCC
+                const form = document.createElement("form");
+                form.method = "POST";
+                form.action = data.redirectUrl;
 
-            if (!res.ok) throw new Error(data.error);
+                // Add all parameters required by JCC
+                Object.keys(data.params).forEach(key => {
+                    const input = document.createElement("input");
+                    input.type = "hidden";
+                    input.name = key;
+                    input.value = data.params[key];
+                    form.appendChild(input);
+                });
 
-            // 2. Create hidden form and submit to JCC
-            const form = document.createElement("form");
-            form.method = "POST";
-            form.action = data.action;
-
-            Object.entries(data.fields).forEach(([key, val]) => {
-                const input = document.createElement("input");
-                input.type = "hidden";
-                input.name = key;
-                input.value = val as string;
-                form.appendChild(input);
-            });
-
-            document.body.appendChild(form);
-            form.submit();
-
+                document.body.appendChild(form);
+                form.submit();
+            } else {
+                alert("Payment initiation failed");
+                setLoading(false);
+            }
         } catch (error) {
-            alert("Payment failed initialization");
+            console.error(error);
+            alert("Error");
             setLoading(false);
         }
     };
 
     return (
-        <button onClick={handlePay} className="btn btn-primary full" disabled={loading}>
-            {loading ? "Redirecting to JCC..." : "Pay / Top Up"}
-        </button>
+        <div className="flex gap-2">
+            <Button
+                onClick={() => handlePayment("10.00")}
+                disabled={loading}
+            >
+                {loading ? "Processing..." : "Top Up €10"}
+            </Button>
+            <Button
+                variant="outline"
+                onClick={() => handlePayment("50.00")}
+                disabled={loading}
+            >
+                {loading ? "Processing..." : "Top Up €50"}
+            </Button>
+        </div>
     );
 }
