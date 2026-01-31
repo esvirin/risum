@@ -1,4 +1,4 @@
 [[plugins]]
 package = "@sentry/netlify-build-plugin"
   [plugins.inputs]
-  setCommits = false
+  skipSetCommits = true
