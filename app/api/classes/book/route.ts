@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { bookClass, getPushPressMemberByEmail } from "@/lib/pushpress";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
+import { captureException } from "@sentry/nextjs";
 
 export async function POST(req: Request) {
     try {
@@ -33,7 +34,7 @@ export async function POST(req: Request) {
         }
 
     } catch (error) {
-        console.error("Booking error:", error);
+        captureException(error);
         return NextResponse.json({ error: "Internal Error" }, { status: 500 });
     }
 }

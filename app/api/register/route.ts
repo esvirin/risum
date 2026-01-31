@@ -1,5 +1,6 @@
 import { db } from "@/lib/db";
 import { getPushPressMemberByEmail } from "@/lib/pushpress";
+import { captureException } from "@sentry/nextjs";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -62,7 +63,7 @@ export async function POST(req: Request) {
         return NextResponse.json({ user: userWithoutPassword }, { status: 201 });
 
     } catch (error) {
-        console.error("Registration error:", error);
+        captureException(error);
         return NextResponse.json(
             { error: "Internal Server Error" },
             { status: 500 }
