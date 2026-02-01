@@ -4,6 +4,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter"
 import { db } from "@/lib/db"
 import bcrypt from "bcryptjs"
 import { z } from "zod"
+import { captureException } from "@sentry/nextjs"
 
 // Simple schema for login validation
 const LoginSchema = z.object({
@@ -45,6 +46,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             },
         }),
     ],
+    logger: {
+        error(message) {
+            captureException(message)
+        }
+    },
     callbacks: {
         async session({ session, token }) {
             if (token.sub && session.user) {
@@ -55,5 +61,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         async jwt({ token }) {
             return token
         }
-    }
+    },
 })
