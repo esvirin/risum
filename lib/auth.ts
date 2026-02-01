@@ -51,6 +51,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             captureException(message)
         }
     },
+    trustHost: true,
     callbacks: {
         async session({ session, token }) {
             if (token.sub && session.user) {
