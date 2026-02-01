@@ -10,22 +10,95 @@ export interface PushPressUser {
     photoUrl?: string;
 }
 
+
+
 export interface PushPressClass {
     id: string;
+    coachUuid: string;
+    assistantCoachUuid: string;
+    title: string;
+    classTypeName: string;
+    locationUuid: string | null;
+    start: number;
+    end: number;
+}
+
+
+export interface PushPressCompany {
+    id: string;
     name: string;
-    startTime: string; // ISO
-    endTime: string;
-    instructor: string;
-    location: string;
-    spotsTotal: number;
-    spotsDetailed?: {
-        reserved: number;
-        checked_in: number;
-    }
+    subdomain: string;
+    address: {
+        city: string;
+        state: string;
+        postalCode: string;
+        country: {
+            name: string;
+            iso: string;
+        };
+        line1: string;
+        line2: string;
+    };
+    defaultTimezone: string;
+    phone: string;
+    email: string;
+    url: string;
+}
+
+
+/*
+[{"id":"usr_049dfc79d8b616896982d2460f24915f","companyId":"client_8bdcb9db6d735d","name":{"first":"Maxim","last":"Brovko","nickname":""},"gender":null,"dob":null,"address":{"line1":"","line2":"","city":"","country":"","state":"","zip":""},"assignedToStaffId":null,"account":{"type":"primary"},"emergencyContact":{"name":"","phone":"","relationship":""},"membershipDetails":{"initialMembershipStartDate":"1970-01-01"},"email":"max@risumcyprus.eu","phone":"","role":"admin"},{"id":"usr_25e09f0ed83e62","companyId":"client_8bdcb9db6d735d","name":{"first":"Evgeny","last":"Svirin","nickname":""},"gender":null,"dob":null,"address":{"line1":"","line2":"","city":"El Campello","country":"","state":"VC","zip":"03560"},"assignedToStaffId":null,"account":{"type":"primary"},"emergencyContact":{"name":"","phone":"","relationship":""},"membershipDetails":null,"email":"esvirin@mail.com","phone":"622403610","role":"lead"},{"id":"usr_e7a3150e64cee0","companyId":"client_8bdcb9db6d735d","name":{"first":"Evgeny","last":"Svirin","nickname":""},"gender":"male","dob":null,"address":{"line1":"","line2":"","city":"","country":"","state":"","zip":""},"assignedToStaffId":"usr_049dfc79d8b616896982d2460f24915f","account":{"type":"primary"},"emergencyContact":{"name":"","phone":"","relationship":""},"membershipDetails":{"initialMembershipStartDate":"2026-02-01"},"email":"evg.svirin@gmail.com","phone":"","role":"member"}]
+*/
+
+export interface PushPressCustomer {
+    id: string;
+    companyId: string;
+    name: {
+        first: string;
+        last: string;
+        nickname: string;
+    };
+    gender: string;
+    dob: string;
+    address: {
+        line1: string;
+        line2: string;
+        city: string;
+        country: string;
+        state: string;
+        zip: string;
+    };
+    assignedToStaffId: string;
+    account: {
+        type: string;
+    };
+    emergencyContact: {
+        name: string;
+        phone: string;
+        relationship: string;
+    };
+    membershipDetails: {
+        initialMembershipStartDate: string;
+    };
+    email: string;
+    phone: string;
+    role: string;
 }
 
 const API_KEY = process.env.PUSHPRESS_API_KEY;
 const API_URL = process.env.PUSHPRESS_API_URL;
+
+
+export async function getCompany(): Promise<PushPressCompany | null> {
+    const data = await fetchPushPress(`/company`);
+    return data;
+}
+
+
+export async function getCustomers(companyId: string): Promise<{ data: { resultArray: PushPressCustomer[] } } | null> {
+    const data = await fetchPushPress(`/customers`, { headers: { 'company-id': companyId } });
+    return data;
+}
 
 async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
     if (!API_KEY) throw new Error("PUSHPRESS_API_KEY is not set");
@@ -51,6 +124,7 @@ async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
 export async function getPushPressMemberByEmail(email: string): Promise<PushPressUser | null> {
     try {
         const data = await fetchPushPress(`/customers?email=${encodeURIComponent(email)}`);
+        console.log(data.resultArray);
         // Assuming data structure: { data: { resultArray: [...] } } or just { resultArray: [...] } based on curls
         // Correct handling for diverse API responses might be needed.
         const results = data.resultArray || data.data?.resultArray || [];
@@ -77,27 +151,23 @@ export async function getPushPressMemberByEmail(email: string): Promise<PushPres
 
 export async function getUpcomingClasses(): Promise<PushPressClass[]> {
     try {
-        // Determine internal structure. Assuming /classes endpoint returns list.
-        // We might need to pass start/end dates? 
-        // For now, simple GET.
         const data = await fetchPushPress('/classes?type=active');
-
-        // Check if response is { resultArray: [...] }
-        const results = data.resultArray || data.data?.resultArray || [];
-
-        // Map to interface
-        return results.map((cls: any) => ({
-            id: cls.class_id || cls.id,
-            name: cls.name || 'Class',
-            startTime: cls.date_time || cls.start_time, // Adjust based on actual fields
-            endTime: cls.end_time_time || cls.end_time,
-            instructor: cls.instructor_name || 'Staff',
-            location: cls.room_name || 'Main Studio',
-            spotsTotal: cls.limit || 20,
-        }));
+        const results = data.data.resultArray || [];
+        return results
     } catch (error) {
         console.error("getUpcomingClasses error:", error);
         return [];
+    }
+}
+
+export async function getCoachByUuid(uuid: string): Promise<any | null> {
+    try {
+        const data = await fetchPushPress(`/users?uuid=${encodeURIComponent(uuid)}`);
+        const results = data.data.resultArray || [];
+        return results[0];
+    } catch (error) {
+        console.error("getCoachByUuid error:", error);
+        return null;
     }
 }
 

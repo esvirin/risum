@@ -14,7 +14,7 @@ export default async function SchedulePage() {
     // Group by Date
     const groupedClasses: Record<string, typeof classes> = {};
     classes.forEach(cls => {
-        const date = new Date(cls.startTime).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+        const date = new Date(cls.start).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
         if (!groupedClasses[date]) groupedClasses[date] = [];
         groupedClasses[date].push(cls);
     });
@@ -51,35 +51,24 @@ export default async function SchedulePage() {
                                                 <div className="flex flex-row sm:flex-col items-center justify-between sm:justify-center p-4 sm:p-6 bg-muted/20 sm:min-w-[120px] sm:border-r border-b sm:border-b-0">
                                                     <div className="flex items-baseline gap-2 sm:flex-col sm:gap-0 text-center">
                                                         <span className="text-lg sm:text-xl font-bold leading-none">
-                                                            {new Date(cls.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                            {new Date(cls.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </span>
                                                         <span className="text-xs text-muted-foreground uppercase font-medium">
                                                             60 min
                                                         </span>
                                                     </div>
-                                                    {/* Mobile only spots indicator for compactness */}
-                                                    <Badge variant={cls.spotsTotal < 5 ? "destructive" : "secondary"} className="sm:hidden text-[10px] h-5">
-                                                        {cls.spotsTotal} left
-                                                    </Badge>
                                                 </div>
 
                                                 {/* Details Column */}
                                                 <div className="flex-1 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                                     <div className="space-y-2 sm:space-y-1">
-                                                        <div className="font-semibold text-base sm:text-lg leading-tight">{cls.name}</div>
+                                                        <div className="font-semibold text-base sm:text-lg leading-tight">{cls.title}</div>
                                                         <div className="text-sm text-muted-foreground flex flex-col sm:block">
-                                                            <span>with <span className="text-foreground font-medium">{cls.instructor}</span></span>
+                                                            <span>with <span className="text-foreground font-medium">{cls.classTypeName}</span></span>
                                                             <span className="hidden sm:inline"> • </span>
-                                                            <span>{cls.location}</span>
-                                                        </div>
-                                                        <div className="hidden sm:block pt-1">
-                                                            <Badge variant={cls.spotsTotal < 5 ? "destructive" : "secondary"}
-                                                                className={cls.spotsTotal < 5 ? "" : "bg-green-100 text-green-700 hover:bg-green-200"}>
-                                                                {cls.spotsTotal} spots left
-                                                            </Badge>
+                                                            <span>{cls.assistantCoachUuid}</span>
                                                         </div>
                                                     </div>
-
                                                     <div className="w-full sm:w-auto pt-2 sm:pt-0">
                                                         <div className="w-full sm:w-auto [&>button]:w-full sm:[&>button]:w-auto">
                                                             <BookingButton classId={cls.id} />

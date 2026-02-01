@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { getPushPressMemberByEmail, getUpcomingClasses } from "@/lib/pushpress";
+import { getCompany, getCustomers, getPushPressMemberByEmail, getUpcomingClasses } from "@/lib/pushpress";
 import Link from "next/link";
 import PaymentButton from "@/components/PaymentButton";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -11,14 +11,30 @@ export default async function CabinetPage() {
     const session = await auth();
     const email = session?.user?.email;
 
+    const company = await getCompany();
+    if (!company) return <div>Error loading profile</div>;
+
+    const customers = await getCustomers(company.id);
+    const data = customers?.data;
+    if (!data) return <div>Error loading profile</div>;
+    const resultArray = data?.resultArray;
+
+    const customer = resultArray?.find((customer) => customer.email === email);
+    if (!customer) return <div>Error loading profile</div>;
     if (!email) return <div>Error loading profile</div>;
+
+    console.log(customer)
 
     const [member, upcomingClasses] = await Promise.all([
         getPushPressMemberByEmail(email),
         getUpcomingClasses(),
     ]);
 
+
+    console.log(member)
+
     const myClasses = upcomingClasses.slice(0, 2);
+
 
     if (!member) {
         return (
@@ -34,8 +50,8 @@ export default async function CabinetPage() {
     return (
         <div className="space-y-8">
             <header className="space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight">Hello, {member.firstName}</h1>
-                <p className="text-muted-foreground">Welcome to your personal dashboard</p>
+                <h1 className="text-3xl font-bold tracking-tight">Hello, {customer.name.first} {customer.name.last}</h1>
+                <p className="text-muted-foreground">Welcome to your personal dashboard {customer.email}</p>
             </header>
 
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -92,9 +108,9 @@ export default async function CabinetPage() {
                         {myClasses.map((cls) => (
                             <Card key={cls.id} className="flex items-center justify-between p-6">
                                 <div>
-                                    <div className="text-lg font-semibold">{cls.name}</div>
+                                    <div className="text-lg font-semibold">{cls.title}</div>
                                     <div className="text-sm text-muted-foreground mt-1">
-                                        {new Date(cls.startTime).toLocaleDateString()} at {new Date(cls.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {cls.instructor}
+                                        {new Date(cls.start).toLocaleDateString()} at {new Date(cls.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                     </div>
                                 </div>
                                 <Button variant="outline" size="sm">Cancel</Button>
