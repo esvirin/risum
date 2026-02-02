@@ -11,6 +11,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 export default function RegisterPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
+    const [first, setFirst] = useState("");
+    const [last, setLast] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -24,7 +26,7 @@ export default function RegisterPage() {
             const res = await fetch("/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email, password }),
+                body: JSON.stringify({ email, password, first, last }),
             });
 
             const data = await res.json();
@@ -61,7 +63,31 @@ export default function RegisterPage() {
                         )}
 
                         <div className="space-y-2">
-                            <Label htmlFor="email">PushPress Email</Label>
+                            <Label htmlFor="first">Firstname</Label>
+                            <Input
+                                id="first"
+                                type="text"
+                                placeholder="Your first name    "
+                                value={first}
+                                onChange={(e) => setFirst(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="last">Lastname</Label>
+                            <Input
+                                id="last"
+                                type="text"
+                                placeholder="Your last name    "
+                                value={last}
+                                onChange={(e) => setLast(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="email">Email</Label>
                             <Input
                                 id="email"
                                 type="email"

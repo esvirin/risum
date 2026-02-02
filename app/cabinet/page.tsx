@@ -23,7 +23,7 @@ export default async function CabinetPage() {
     if (!customer) return <div>Error loading profile</div>;
     if (!email) return <div>Error loading profile</div>;
 
-    console.log(customer)
+    console.log(company.id)
 
     const [member, upcomingClasses] = await Promise.all([
         getPushPressCustomerByEmail(email),

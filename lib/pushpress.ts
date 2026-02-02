@@ -127,7 +127,7 @@ export async function getCustomers(companyId: string): Promise<{ data: { resultA
 export async function getPushPressCustomerByEmail(email: string): Promise<PushPressCustomer | null> {
     try {
         const data = await fetchPushPress(`/customers?email=${encodeURIComponent(email)}`);
-        console.log(data.resultArray);
+
 
         const results = data.resultArray || data.data?.resultArray || [];
 
@@ -165,9 +165,11 @@ export async function getCoachByUuid(uuid: string): Promise<any | null> {
 }
 
 
-export async function createNewCustomer(customer: PushPressCustomer, companyId: string) {
+export async function createNewCustomer(customer: any): Promise<PushPressCustomer | null> {
     try {
-        const data = await fetchPushPress(`/customers`, { headers: { 'company-id': companyId }, method: 'POST', body: JSON.stringify(customer) });
+        const company = await getCompany();
+        if (!company) return null
+        const data = await fetchPushPress(`/customers`, { headers: { 'company-id': company.id }, method: 'POST', body: JSON.stringify(customer) });
         return data;
     } catch (error) {
         console.error("createNewCustomer error:", error);
