@@ -89,16 +89,7 @@ const API_KEY = process.env.PUSHPRESS_API_KEY;
 const API_URL = process.env.PUSHPRESS_API_URL;
 
 
-export async function getCompany(): Promise<PushPressCompany | null> {
-    const data = await fetchPushPress(`/company`);
-    return data;
-}
 
-
-export async function getCustomers(companyId: string): Promise<{ data: { resultArray: PushPressCustomer[] } } | null> {
-    const data = await fetchPushPress(`/customers`, { headers: { 'company-id': companyId } });
-    return data;
-}
 
 async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
     if (!API_KEY) throw new Error("PUSHPRESS_API_KEY is not set");
@@ -121,30 +112,32 @@ async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
     return res.json();
 }
 
-export async function getPushPressMemberByEmail(email: string): Promise<PushPressUser | null> {
+
+export async function getCompany(): Promise<PushPressCompany | null> {
+    const data = await fetchPushPress(`/company`);
+    return data;
+}
+
+
+export async function getCustomers(companyId: string): Promise<{ data: { resultArray: PushPressCustomer[] } } | null> {
+    const data = await fetchPushPress(`/customers`, { headers: { 'company-id': companyId } });
+    return data;
+}
+
+export async function getPushPressCustomerByEmail(email: string): Promise<PushPressCustomer | null> {
     try {
         const data = await fetchPushPress(`/customers?email=${encodeURIComponent(email)}`);
         console.log(data.resultArray);
-        // Assuming data structure: { data: { resultArray: [...] } } or just { resultArray: [...] } based on curls
-        // Correct handling for diverse API responses might be needed.
+
         const results = data.resultArray || data.data?.resultArray || [];
 
         if (!results || results.length === 0) return null;
 
         const customer = results[0];
 
-        return {
-            id: customer.uuid || customer.id || 'unknown',
-            firstName: customer.first_name || 'Unknown',
-            lastName: customer.last_name || '',
-            email: customer.email,
-            membershipStatus: customer.status === 'Active' ? 'active' : 'inactive',
-            planName: customer.plan_name || 'Membership',
-            classesRemaining: customer.classes_remaining || 0,
-            photoUrl: customer.photo_url,
-        };
+        return customer;
     } catch (error) {
-        console.error("getPushPressMemberByEmail error:", error);
+        console.error("getPushPressCustomerByEmail error:", error);
         return null;
     }
 }
@@ -167,6 +160,17 @@ export async function getCoachByUuid(uuid: string): Promise<any | null> {
         return results[0];
     } catch (error) {
         console.error("getCoachByUuid error:", error);
+        return null;
+    }
+}
+
+
+export async function createNewCustomer(customer: PushPressCustomer, companyId: string) {
+    try {
+        const data = await fetchPushPress(`/customers`, { headers: { 'company-id': companyId }, method: 'POST', body: JSON.stringify(customer) });
+        return data;
+    } catch (error) {
+        console.error("createNewCustomer error:", error);
         return null;
     }
 }

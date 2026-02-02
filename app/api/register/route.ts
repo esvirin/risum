@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { getPushPressMemberByEmail } from "@/lib/pushpress";
+import { getPushPressCustomerByEmail } from "@/lib/pushpress";
 import { captureException } from "@sentry/nextjs";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
@@ -35,7 +35,7 @@ export async function POST(req: Request) {
         }
 
         // 2. Verify user exists in PUSHPRESS
-        const ppMember = await getPushPressMemberByEmail(email);
+        const ppMember = await getPushPressCustomerByEmail(email);
 
         if (!ppMember) {
             return NextResponse.json(
@@ -51,7 +51,7 @@ export async function POST(req: Request) {
             data: {
                 email,
                 password: hashedPassword,
-                name: name || `${ppMember.firstName} ${ppMember.lastName}`,
+                name: name || `${ppMember.name.first} ${ppMember.name.last}`,
                 pushPressId: ppMember.id,
                 emailVerified: new Date(), // Trusted from PushPress
             },

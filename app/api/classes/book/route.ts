@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { bookClass, getPushPressMemberByEmail } from "@/lib/pushpress";
+import { bookClass, getPushPressCustomerByEmail } from "@/lib/pushpress";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { captureException } from "@sentry/nextjs";

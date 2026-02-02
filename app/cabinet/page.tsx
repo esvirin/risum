@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { getCompany, getCustomers, getPushPressMemberByEmail, getUpcomingClasses } from "@/lib/pushpress";
+import { getCompany, getCustomers, getPushPressCustomerByEmail, getUpcomingClasses } from "@/lib/pushpress";
 import Link from "next/link";
 import PaymentButton from "@/components/PaymentButton";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
@@ -26,7 +26,7 @@ export default async function CabinetPage() {
     console.log(customer)
 
     const [member, upcomingClasses] = await Promise.all([
-        getPushPressMemberByEmail(email),
+        getPushPressCustomerByEmail(email),
         getUpcomingClasses(),
     ]);
 
