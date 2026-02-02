@@ -61,14 +61,13 @@ export default async function CabinetPage() {
                         <CardTitle className="text-sm font-medium text-muted-foreground uppercase">Membership</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold mb-1">{member.planName}</div>
+                        <div className="text-2xl font-bold mb-1">{member.role}</div>
                         <div className="flex items-center justify-between mt-4">
-                            <Badge variant={member.membershipStatus === 'active' ? 'default' : 'destructive'}
-                                className={member.membershipStatus === 'active' ? 'bg-primary/20 text-primary hover:bg-primary/30 shadow-none' : ''}>
-                                {member.membershipStatus.toUpperCase()}
+                            <Badge variant={member.role === 'active' ? 'default' : 'destructive'}
+                                className={member.role === 'active' ? 'bg-primary/20 text-primary hover:bg-primary/30 shadow-none' : ''}>
+                                {member.role.toUpperCase()}
                             </Badge>
                             <span className="text-sm text-muted-foreground">
-                                {member.classesRemaining > 1000 ? "Unlimited" : `${member.classesRemaining} credits left`}
                             </span>
                         </div>
                     </CardContent>
