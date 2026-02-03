@@ -4,15 +4,17 @@ import withPWA from "next-pwa";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  pwa: {
-    dest: "public",
-    register: true,
-    skipWaiting: true,
-    disable: process.env.NODE_ENV === 'development',
-  },
 };
 
-export default withSentryConfig(withPWA(nextConfig), {
+const withPWANextConfig = withPWA({
+  ...nextConfig,
+  dest: "public",
+  register: true,
+  skipWaiting: true,
+  disable: process.env.NODE_ENV === "development",
+});
+
+export default withSentryConfig(withPWANextConfig, {
   // For all available options, see:
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
@@ -35,8 +37,6 @@ export default withSentryConfig(withPWA(nextConfig), {
   // side errors will fail.
   tunnelRoute: "/monitoring",
 
-
-
   webpack: {
     // Enables automatic instrumentation of Vercel Cron Monitors. (Does not yet work with App Router route handlers.)
     // See the following for more information:
@@ -49,5 +49,5 @@ export default withSentryConfig(withPWA(nextConfig), {
       // Automatically tree-shake Sentry logger statements to reduce bundle size
       removeDebugLogging: true,
     },
-  }
+  },
 });

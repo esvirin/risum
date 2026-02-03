@@ -13,6 +13,9 @@ export const metadata: Metadata = {
   title: "Fit Space",
   description: "Fit Space Member Portal",
   manifest: "/manifest.json",
+};
+
+export const viewport = {
   themeColor: "#000000",
 };
 
