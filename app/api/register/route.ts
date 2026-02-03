@@ -40,8 +40,9 @@ export async function POST(req: Request) {
 
         if (!customer) {
             const newCustomer = await createNewCustomer({ email, name: { first, last, nickname: first } });
-            console.log(newCustomer)
+
             if (!newCustomer) {
+                captureException(new Error(`Failed to create user in PushPress ${newCustomer}`));
                 return NextResponse.json(
                     { error: "Failed to create user in PushPress" },
                     { status: 500 }
@@ -59,7 +60,7 @@ export async function POST(req: Request) {
                 password: hashedPassword,
                 name: `${customer.name.first} ${customer.name.last}`,
                 pushPressId: customer.id,
-                emailVerified: new Date(), // Trusted from PushPress
+                emailVerified: new Date(),
             },
         });
 

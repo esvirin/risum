@@ -1,3 +1,7 @@
+const API_KEY = process.env.PUSHPRESS_API_KEY;
+const API_URL = process.env.PUSHPRESS_API_URL;
+
+
 export interface PushPressUser {
     id: string; // uuid or id
     firstName: string;
@@ -85,8 +89,7 @@ export interface PushPressCustomer {
     role: string;
 }
 
-const API_KEY = process.env.PUSHPRESS_API_KEY;
-const API_URL = process.env.PUSHPRESS_API_URL;
+
 
 
 
