@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { createReservation, getPushPressCustomerByEmail } from "@/lib/pushpress";
+import { createEnrollment } from "@/lib/pushpress";
 import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 import { captureException } from "@sentry/nextjs";
@@ -11,11 +11,11 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { classId } = await req.json();
-        if (!classId) return NextResponse.json({ error: "Class ID required" }, { status: 400 });
+        const { planId, paymentMethodId } = await req.json();
+        if (!planId) {
+            return NextResponse.json({ error: "Plan ID required" }, { status: 400 });
+        }
 
-        // We need the PushPress Member ID to book
-        // Optimization: Store PushPress ID in session or DB
         const user = await db.user.findUnique({
             where: { email: session.user.email },
             select: { pushPressId: true }
@@ -25,18 +25,19 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Member ID not found" }, { status: 404 });
         }
 
-        const reservation = await createReservation(classId, user.pushPressId);
+        const enrollment = await createEnrollment(user.pushPressId, planId, paymentMethodId);
 
-        if (reservation) {
+        if (enrollment) {
             return NextResponse.json({
                 success: true,
-                reservation: {
-                    id: reservation.id,
-                    status: reservation.status
+                enrollment: {
+                    id: enrollment.id,
+                    status: enrollment.status,
+                    planId: enrollment.planId
                 }
             });
         } else {
-            return NextResponse.json({ error: "Booking failed" }, { status: 500 });
+            return NextResponse.json({ error: "Enrollment failed" }, { status: 500 });
         }
 
     } catch (error) {
@@ -44,4 +45,3 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Internal Error" }, { status: 500 });
     }
 }
-

@@ -104,3 +104,30 @@
     --accent-green: #22c55e;
     --accent-red: #ef4444;
 }
+
+/* Custom Utilities */
+@layer utilities {
+    /* Hide scrollbar but keep functionality */
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+    
+    /* Smooth scroll snap */
+    .snap-x {
+        scroll-snap-type: x mandatory;
+    }
+    
+    .snap-center {
+        scroll-snap-align: center;
+    }
+    
+    /* Custom scale for hover effects */
+    .hover\:scale-102:hover {
+        transform: scale(1.02);
+    }
+}

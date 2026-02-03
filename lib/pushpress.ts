@@ -148,10 +148,10 @@ export async function getPushPressCustomerByEmail(email: string): Promise<PushPr
 export async function getUpcomingClasses(): Promise<PushPressClass[]> {
     try {
         const data = await fetchPushPress('/classes?type=active');
-        const results = data.data.resultArray || [];
-        return results
+        const results = data.data?.resultArray || data.resultArray || [];
+        return results;
     } catch (error) {
-        console.error("getUpcomingClasses error:", error);
+        console.error("❌ getUpcomingClasses error:", error);
         return [];
     }
 }
@@ -180,14 +180,236 @@ export async function createNewCustomer(customer: any): Promise<PushPressCustome
     }
 }
 
-export async function bookClass(classId: string, memberId: string): Promise<boolean> {
-    // MOCK IMPLEMENTATION - API docs needed for real POST
-    console.log(`[MOCK] Booking class ${classId} for member ${memberId}`);
-    return true;
+// ===== NEW INTERFACES FROM API =====
+
+export interface PushPressReservation {
+    id: string;
+    reservedId: string; // Calendar event ID
+    customerId: string | null;
+    companyId: string | null;
+    registrationTimestamp: number;
+    status: 'waitlisted' | 'checked-in' | 'reserved' | 'canceled' | 'late-canceled';
+    templateId?: string | null;
 }
 
-export async function cancelBooking(bookingId: string): Promise<boolean> {
-    // MOCK IMPLEMENTATION
-    console.log(`[MOCK] Cancelling booking ${bookingId}`);
-    return true;
+export interface PushPressPlan {
+    id: string;
+    name: string;
+    companyId: string;
+    recurrenceDetails: {
+        type: 'session-pack' | 'recurring' | 'limited-recurring' | 'non-recurring';
+        occurrences?: number;
+    };
+    policies: {
+        allowClassCheckins: boolean;
+        allowOpenGymCheckins: boolean;
+        allow24HourAccess: boolean;
+    };
+    category: {
+        name: string;
+    };
 }
+
+export interface PushPressEnrollment {
+    id: string;
+    customerId: string;
+    companyId: string;
+    planId: string | null;
+    billingSchedule: {
+        period: 'day' | 'week' | 'month' | 'year' | 'once';
+        interval: number;
+    };
+    status: 'active' | 'alert' | 'canceled' | 'completed' | 'paused' | 'pendactivation' | 'pendcancel';
+    startDate: string | null;
+    endDate: string | null;
+    lastCharge: string | null;
+    nextCharge: string | null;
+    paidUntil: string | null;
+    checkinDetails: {
+        checkins: number;
+        limit: number; // -1 for unlimited
+    };
+    entitlements: Array<{
+        type: string;
+        id: string;
+        interval: string;
+        quantity: number;
+        metadata: any;
+    }>;
+}
+
+// ===== RESERVATION/BOOKING FUNCTIONS =====
+
+/**
+ * Create a reservation (book a class) for a customer
+ * POST /reservations - Not in docs but inferred from the Reservation schema
+ * Note: The API docs show reservations but don't document the POST endpoint
+ * This implementation may need adjustment based on actual API behavior
+ */
+export async function createReservation(classId: string, customerId: string): Promise<PushPressReservation | null> {
+    try {
+        // Note: Based on API patterns, POST to create reservation
+        // The actual endpoint may be /classes/{id}/reserve or /reservations
+        const data = await fetchPushPress(`/reservations`, {
+            method: 'POST',
+            body: JSON.stringify({
+                reservedId: classId,
+                customerId: customerId,
+            }),
+        });
+        return data;
+    } catch (error) {
+        console.error("createReservation error:", error);
+        return null;
+    }
+}
+
+/**
+ * List reservations for a specific class
+ * GET /reservations?calendarItemId={id}
+ */
+export async function getReservationsForClass(classId: string, page: number = 1, limit: number = 10): Promise<PushPressReservation[]> {
+    try {
+        const data = await fetchPushPress(`/reservations?calendarItemId=${encodeURIComponent(classId)}&page=${page}&limit=${limit}`);
+        return data.data?.resultArray || [];
+    } catch (error) {
+        console.error("getReservationsForClass error:", error);
+        return [];
+    }
+}
+
+/**
+ * Get a specific reservation by ID
+ * GET /reservations/{id}
+ */
+export async function getReservation(reservationId: string): Promise<PushPressReservation | null> {
+    try {
+        const data = await fetchPushPress(`/reservations/${encodeURIComponent(reservationId)}`);
+        return data;
+    } catch (error) {
+        console.error("getReservation error:", error);
+        return null;
+    }
+}
+
+/**
+ * Cancel a reservation
+ * DELETE /reservations/{id} - Inferred from typical REST patterns
+ * Note: May need to be PATCH with status update instead
+ */
+export async function cancelReservation(reservationId: string): Promise<boolean> {
+    try {
+        await fetchPushPress(`/reservations/${encodeURIComponent(reservationId)}`, {
+            method: 'DELETE',
+        });
+        return true;
+    } catch (error) {
+        console.error("cancelReservation error:", error);
+        return false;
+    }
+}
+
+// ===== PLAN FUNCTIONS =====
+
+/**
+ * List all available plans
+ * GET /plans - Inferred from typical REST patterns, not explicitly in docs
+ */
+export async function getPlans(): Promise<PushPressPlan[]> {
+    try {
+        const data = await fetchPushPress(`/plans`);
+        return data.data?.resultArray || data.resultArray || [];
+    } catch (error) {
+        console.error("getPlans error:", error);
+        return [];
+    }
+}
+
+/**
+ * Get a specific plan by ID
+ * GET /plans/{id}
+ */
+export async function getPlan(planId: string): Promise<PushPressPlan | null> {
+    try {
+        const data = await fetchPushPress(`/plans/${encodeURIComponent(planId)}`);
+        return data;
+    } catch (error) {
+        console.error("getPlan error:", error);
+        return null;
+    }
+}
+
+// ===== ENROLLMENT FUNCTIONS =====
+
+/**
+ * List enrollments for a customer
+ * GET /enrollments?customerId={id}
+ */
+export async function getEnrollments(customerId?: string, status?: string, page: number = 1, limit: number = 10): Promise<PushPressEnrollment[]> {
+    try {
+        let url = `/enrollments?page=${page}&limit=${limit}`;
+        if (customerId) url += `&customerId=${encodeURIComponent(customerId)}`;
+        if (status) url += `&status=${encodeURIComponent(status)}`;
+
+        const data = await fetchPushPress(url);
+        return data.data?.resultArray || [];
+    } catch (error) {
+        console.error("getEnrollments error:", error);
+        return [];
+    }
+}
+
+/**
+ * Get a specific enrollment by ID
+ * GET /enrollments/{uuid}
+ */
+export async function getEnrollment(enrollmentId: string): Promise<PushPressEnrollment | null> {
+    try {
+        const data = await fetchPushPress(`/enrollments/${encodeURIComponent(enrollmentId)}`);
+        return data;
+    } catch (error) {
+        console.error("getEnrollment error:", error);
+        return null;
+    }
+}
+
+/**
+ * Create an enrollment (purchase a plan)
+ * POST /enrollments - Inferred, not explicitly in docs
+ * Note: This is a complex operation that typically requires payment processing
+ * The actual implementation may require additional fields and integration with payment provider
+ */
+export async function createEnrollment(customerId: string, planId: string, paymentMethodId?: string): Promise<PushPressEnrollment | null> {
+    try {
+        const data = await fetchPushPress(`/enrollments`, {
+            method: 'POST',
+            body: JSON.stringify({
+                customerId,
+                planId,
+                paymentMethodId, // May be required depending on plan
+            }),
+        });
+        return data;
+    } catch (error) {
+        console.error("createEnrollment error:", error);
+        return null;
+    }
+}
+
+// ===== LEGACY COMPATIBILITY =====
+
+/**
+ * @deprecated Use createReservation instead
+ */
+export async function bookClass(classId: string, memberId: string): Promise<boolean> {
+    const result = await createReservation(classId, memberId);
+    return result !== null;
+}
+
+/**
+ * @deprecated Use cancelReservation instead
+ */
+export async function cancelBooking(bookingId: string): Promise<boolean> {
+    return await cancelReservation(bookingId);
+}
+
