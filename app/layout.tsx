@@ -12,6 +12,8 @@ const RobotoSans = Roboto({
 export const metadata: Metadata = {
   title: "Fit Space",
   description: "Fit Space Member Portal",
+  manifest: "/manifest.json",
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

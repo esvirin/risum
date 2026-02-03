@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Calendar, Clock, Activity, CreditCard, User, TrendingUp, ChevronRight } from "lucide-react";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 export default async function CabinetPage() {
   const session = await auth();
@@ -303,6 +304,8 @@ export default async function CabinetPage() {
           </div>
         )}
       </div>
+      <PwaInstallPrompt />
     </div>
   );
 }
+
