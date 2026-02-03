@@ -25,8 +25,8 @@
         --popover-foreground: 240 5.9% 10%;
 
         /* Primary: Using a deep elegant green similar to pilates.com branding */
-        --primary: 154 40% 45%;
-        /* approximate sage/forest green */
+        --primary: 220 100% 63%;
+        /* Vibrant Blue */
         --primary-foreground: 0 0% 100%;
 
         --secondary: 240 4.8% 95.9%;
@@ -35,8 +35,8 @@
         --muted: 240 4.8% 95.9%;
         --muted-foreground: 240 3.8% 46.1%;
 
-        --accent: 154 30% 90%;
-        /* Very light green tint for hover areas */
+        --accent: 240 4.8% 95.9%;
+        /* Light gray for hover */
         --accent-foreground: 240 5.9% 10%;
 
         --destructive: 0 84.2% 60.2%;
@@ -44,7 +44,7 @@
 
         --border: 240 5.9% 90%;
         --input: 240 5.9% 90%;
-        --ring: 154 40% 45%;
+        --ring: 220 100% 63%;
 
         --radius: 0.5rem;
     }
@@ -63,8 +63,8 @@
         --popover: 240 10% 3.9%;
         --popover-foreground: 0 0% 98%;
 
-        --primary: 154 40% 45%;
-        --primary-foreground: 0 0% 100%;
+        --primary: 220 100% 70%;
+        --primary-foreground: 240 5.9% 10%;
 
         --secondary: 240 3.7% 15.9%;
         --secondary-foreground: 0 0% 98%;
@@ -80,7 +80,7 @@
 
         --border: 240 3.7% 15.9%;
         --input: 240 3.7% 15.9%;
-        --ring: 154 40% 45%;
+        --ring: 220 100% 70%;
     }
 }
 
