@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import TopNav from "@/components/TopNav";
 import { redirect } from "next/navigation";
+import { Toaster } from "@/components/ui/sonner";
 
 export default async function CabinetLayout({
     children,
@@ -19,6 +20,7 @@ export default async function CabinetLayout({
             <main className="w-full max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
                 {children}
             </main>
+            <Toaster />
         </div>
     );
 }
