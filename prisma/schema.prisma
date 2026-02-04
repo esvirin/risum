@@ -15,6 +15,7 @@ model User {
   image         String?
   password      String?   // Hashed password for local auth
   pushPressId   String?   // ID from PushPress
+  balance       Float     @default(0)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 

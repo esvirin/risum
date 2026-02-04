@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import {
   getCompany,
   getCustomers,
@@ -7,6 +8,7 @@ import {
 } from "@/lib/pushpress";
 import Link from "next/link";
 import PaymentButton from "@/components/PaymentButton";
+import PaymentsHistory from "@/components/PaymentsHistory";
 import {
   Card,
   CardHeader,
@@ -37,9 +39,18 @@ export default async function CabinetPage() {
   if (!customer) return <div>Error loading profile</div>;
   if (!email) return <div>Error loading profile</div>;
 
-  const [member, upcomingClasses] = await Promise.all([
+  const [member, upcomingClasses, dbUser, payments] = await Promise.all([
     getPushPressCustomerByEmail(email),
     getUpcomingClasses(),
+    db.user.findUnique({
+      where: { email },
+      select: { balance: true }
+    }),
+    db.payment.findMany({
+      where: { user: { email } },
+      orderBy: { createdAt: 'desc' },
+      take: 5
+    })
   ]);
 
   if (!member) {
@@ -153,9 +164,9 @@ export default async function CabinetPage() {
             <CreditCard className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">€0.00</div>
+            <div className="text-2xl font-bold">€{(dbUser?.balance || 0).toFixed(2)}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              All payments up to date
+              {dbUser?.balance && dbUser.balance > 0 ? "Credits available" : "All payments up to date"}
             </p>
           </CardContent>
         </Card>
@@ -304,6 +315,17 @@ export default async function CabinetPage() {
           </div>
         )}
       </div>
+      <Separator />
+
+      {/* Payment History */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight">Recent Payments</h2>
+          <p className="text-sm text-muted-foreground">Your recent transactions via JCC</p>
+        </div>
+        <PaymentsHistory payments={payments || []} />
+      </section>
+
       <PwaInstallPrompt />
     </div>
   );

@@ -6,13 +6,14 @@ const nextConfig: NextConfig = {
   /* config options here */
 };
 
-const withPWANextConfig = withPWA({
-  ...nextConfig,
+const pwaConfig = {
   dest: "public",
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === "development",
-});
+};
+
+const withPWANextConfig = withPWA(pwaConfig)(nextConfig);
 
 export default withSentryConfig(withPWANextConfig, {
   // For all available options, see:

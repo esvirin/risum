@@ -195,7 +195,10 @@ export interface PushPressReservation {
 export interface PushPressPlan {
     id: string;
     name: string;
+    description?: string;
     companyId: string;
+    price?: number;
+    currency?: string;
     recurrenceDetails: {
         type: 'session-pack' | 'recurring' | 'limited-recurring' | 'non-recurring';
         occurrences?: number;
