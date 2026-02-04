@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PublicNav } from "@/components/PublicNav";
+import { PwaInstallPrompt } from "@/components/PwaInstallPrompt";
 
 export default function HomePage() {
   return (
@@ -137,6 +138,7 @@ export default function HomePage() {
           <p>&copy; {new Date().getFullYear()} Fit Space. All Rights Reserved.</p>
         </div>
       </footer>
+      <PwaInstallPrompt />
     </div>
   );
 }

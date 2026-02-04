@@ -1,23 +1,42 @@
 {
-  "name": "Risum",
-  "short_name": "Risum",
-  "description": "Risum PWA",
-  "start_url": "/",
+  "name": "Fit Space Member Portal",
+  "short_name": "Fit Space",
+  "description": "Manage your memberships and classes with Fit Space.",
+  "start_url": "/cabinet",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
+  "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
     },
     {
       "src": "/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
+  ],
+  "categories": [
+    "fitness",
+    "health",
+    "lifestyle"
   ]
 }
