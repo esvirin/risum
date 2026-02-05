@@ -15,10 +15,9 @@ interface PlansClientProps {
     activePlanIds: (string | null)[];
     enrollments?: PushPressEnrollment[];
     customerId: string;
-    balance?: number;
 }
 
-export default function PlansClient({ plans, activePlanIds, enrollments = [], customerId, balance = 0 }: PlansClientProps) {
+export default function PlansClient({ plans, activePlanIds, enrollments = [], customerId }: PlansClientProps) {
     const searchParams = useSearchParams();
     const router = useRouter();
     const [purchasing, setPurchasing] = useState<string | null>(null);
@@ -46,12 +45,7 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
             const data = await response.json();
 
             if (response.ok && data.success) {
-                toast.success(
-                    data.type === 'TOPUP'
-                        ? `Wallet topped up! New balance: €${data.newBalance.toFixed(2)}`
-                        : 'Plan activated successfully!',
-                    { id: loadingToast }
-                );
+                toast.success('Plan activated successfully!', { id: loadingToast });
                 // Clean URL and refresh data
                 router.replace('/cabinet/plans');
                 setTimeout(() => window.location.reload(), 2000);

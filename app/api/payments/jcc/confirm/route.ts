@@ -32,29 +32,26 @@ export async function POST(req: Request) {
         // JCC ResponseCode 0 usually means success
         // statusResponse.orderStatus: 2 means deposited/completed
         if (statusResponse.orderStatus === 2 || statusResponse.orderStatus === 1) {
-            // Check if it's a top-up or plan purchase based on orderNumber
-            const isTopup = statusResponse.orderNumber?.startsWith('TOP');
-
             // Find user
             const user = await db.user.findUnique({
                 where: { email: session.user.email },
-                select: { id: true, pushPressId: true, balance: true }
+                select: { id: true, pushPressId: true }
             });
 
             if (!user) {
                 return NextResponse.json({ error: "User not found" }, { status: 404 });
             }
 
-            if (isTopup) {
-                const amount = statusResponse.amount / 100; // Assuming JCC returns cents
-                await db.user.update({
-                    where: { id: user.id },
-                    data: {
-                        balance: { increment: amount }
-                    }
-                });
+            if (!user.pushPressId) {
+                return NextResponse.json({ error: "Member ID not found" }, { status: 404 });
+            }
 
+            // Create enrollment in PushPress
+            const enrollment = await createEnrollment(user.pushPressId, planId);
+
+            if (enrollment) {
                 // Record payment in DB
+                const amount = statusResponse.amount / 100;
                 await db.payment.create({
                     data: {
                         userId: user.id,
@@ -62,49 +59,17 @@ export async function POST(req: Request) {
                         status: "COMPLETED",
                         jccOrderId: orderId,
                         jccReference: statusResponse.approvalCode,
-                        description: "Wallet Top-up"
+                        description: `Plan Purchase: ${planId}`
                     }
                 });
 
                 return NextResponse.json({
                     success: true,
-                    type: 'TOPUP',
-                    newBalance: user.balance + amount
+                    type: 'PLAN',
+                    enrollment
                 });
             } else {
-                if (!user.pushPressId) {
-                    return NextResponse.json({ error: "Member ID not found" }, { status: 404 });
-                }
-
-                if (!planId) {
-                    return NextResponse.json({ error: "Plan ID required for plan purchase" }, { status: 400 });
-                }
-
-                // Create enrollment in PushPress
-                const enrollment = await createEnrollment(user.pushPressId, planId);
-
-                if (enrollment) {
-                    // Record payment in DB
-                    const amount = statusResponse.amount / 100;
-                    await db.payment.create({
-                        data: {
-                            userId: user.id,
-                            amount: amount,
-                            status: "COMPLETED",
-                            jccOrderId: orderId,
-                            jccReference: statusResponse.approvalCode,
-                            description: `Plan Purchase: ${planId}`
-                        }
-                    });
-
-                    return NextResponse.json({
-                        success: true,
-                        type: 'PLAN',
-                        enrollment
-                    });
-                } else {
-                    return NextResponse.json({ error: "Enrollment failed after successful payment. Please contact support." }, { status: 500 });
-                }
+                return NextResponse.json({ error: "Enrollment failed after successful payment. Please contact support." }, { status: 500 });
             }
         } else {
             return NextResponse.json({

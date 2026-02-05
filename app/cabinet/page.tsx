@@ -7,7 +7,6 @@ import {
   getUpcomingClasses,
 } from "@/lib/pushpress";
 import Link from "next/link";
-import PaymentButton from "@/components/PaymentButton";
 import PaymentsHistory from "@/components/PaymentsHistory";
 import {
   Card,
@@ -44,7 +43,7 @@ export default async function CabinetPage() {
     getUpcomingClasses(),
     db.user.findUnique({
       where: { email },
-      select: { balance: true }
+      select: { id: true }
     }),
     db.payment.findMany({
       where: { user: { email } },
@@ -155,21 +154,7 @@ export default async function CabinetPage() {
           </CardContent>
         </Card>
 
-        {/* Balance Card */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Balance
-            </CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">€{(dbUser?.balance || 0).toFixed(2)}</div>
-            <p className="text-xs text-muted-foreground mt-1">
-              {dbUser?.balance && dbUser.balance > 0 ? "Credits available" : "All payments up to date"}
-            </p>
-          </CardContent>
-        </Card>
+
       </div>
 
       {/* Quick Actions */}
@@ -199,17 +184,7 @@ export default async function CabinetPage() {
             </Link>
           </Button>
 
-          <Button variant="outline" className="h-auto py-4 justify-start" disabled>
-            <Activity className="h-5 w-5 mr-3" />
-            <div className="text-left">
-              <div className="font-semibold">My Bookings</div>
-              <div className="text-xs text-muted-foreground">View & cancel</div>
-            </div>
-          </Button>
 
-          <div className="lg:col-span-1">
-            <PaymentButton />
-          </div>
         </CardContent>
       </Card>
 

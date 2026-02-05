@@ -23,7 +23,7 @@ export default async function PlansPage() {
 
     const user = await db.user.findUnique({
         where: { email },
-        select: { pushPressId: true, balance: true }
+        select: { pushPressId: true }
     });
 
     const [plans, enrollments] = await Promise.all([
@@ -49,7 +49,6 @@ export default async function PlansPage() {
                 activePlanIds={activePlanIds}
                 enrollments={enrollments}
                 customerId={user?.pushPressId || ''}
-                balance={user?.balance || 0}
             />
         </div>
     );

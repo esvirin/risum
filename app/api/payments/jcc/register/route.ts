@@ -11,15 +11,14 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { amount, description, planId, type = 'PLAN' } = await req.json();
+        const { amount, description, planId } = await req.json();
 
         if (!amount) {
             return NextResponse.json({ error: "Amount required" }, { status: 400 });
         }
 
-        // Generate a unique order number
-        const prefix = type === 'TOPUP' ? 'TOP' : 'PLN';
-        const orderNumber = `${prefix}-${planId || 'MISC'}-${Date.now()}`;
+        // Generate a unique order number for plan purchase
+        const orderNumber = `PLN-${planId || 'MISC'}-${Date.now()}`;
 
         // In a real app, the returnUrl should be a page that handles the successful payment UI
         const returnUrl = `${new URL(req.url).origin}/cabinet/plans?orderNumber=${orderNumber}`;
@@ -28,8 +27,8 @@ export async function POST(req: Request) {
             amount: Math.round(amount * 100), // convert to cents
             orderNumber,
             returnUrl,
-            description: description || (type === 'TOPUP' ? "Wallet Top-up" : "Plan Purchase"),
-            jsonParams: JSON.stringify({ type, planId, userId: session.user.id })
+            description: description || "Plan Purchase",
+            jsonParams: JSON.stringify({ type: 'PLAN', planId, userId: session.user.id })
         });
 
         if (response.orderId) {
