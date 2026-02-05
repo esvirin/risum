@@ -13,7 +13,6 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  password      String?   // Hashed password for local auth
   pushPressId   String?   // ID from PushPress
   balance       Float     @default(0)
   createdAt     DateTime  @default(now())

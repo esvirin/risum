@@ -23,7 +23,7 @@ export default function HomePage() {
               size="lg"
               className="w-full sm:w-auto text-lg h-12 sm:h-14 px-10 rounded-lg shadow-md hover:shadow-lg transition-shadow"
             >
-              <Link href="/register">Book a Class</Link>
+              <Link href="/login">Book a Class</Link>
             </Button>
             <Button
               asChild

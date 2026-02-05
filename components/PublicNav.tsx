@@ -15,7 +15,7 @@ export function PublicNav() {
                         <Link href="/login">Member Login</Link>
                     </Button>
                     <Button asChild>
-                        <Link href="/register">Book a Class</Link>
+                        <Link href="/login">Book a Class</Link>
                     </Button>
                 </div>
             </div>
