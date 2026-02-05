@@ -18,7 +18,6 @@ export default withSentryConfig(withPWANextConfig, {
   // https://www.npmjs.com/package/@sentry/webpack-plugin#options
 
   org: "dev-py7",
-  debug: true,
   project: "risum-pilates",
 
   // Only print logs for uploading source maps in CI
