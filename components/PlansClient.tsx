@@ -150,17 +150,7 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
 
     return (
         <div className="space-y-12">
-            <div className="flex items-center justify-between p-6 bg-primary/5 rounded-2xl border border-primary/10 shadow-sm">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-primary/10 rounded-xl">
-                        <Zap className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                        <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Account Balance</p>
-                        <p className="text-3xl font-bold">€{balance.toFixed(2)}</p>
-                    </div>
-                </div>
-            </div>
+
 
             {enrollments.length > 0 && (
                 <div className="space-y-6">
