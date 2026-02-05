@@ -26,49 +26,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     trustHost: true,
     callbacks: {
         async signIn({ user }) {
-            if (!user.email) return false;
-
-            try {
-                // We'll sync with PushPress here. 
-                // Since this is Auth.js with an adapter, the user might not be in the DB yet if it's the first time.
-                // But we can check PushPress anyway.
-
-                const existingUser = await db.user.findUnique({
-                    where: { email: user.email }
-                });
-
-                if (!existingUser || !existingUser.pushPressId) {
-                    let ppCustomer = await getPushPressCustomerByEmail(user.email);
-
-                    if (!ppCustomer) {
-                        const nameParts = user.name?.split(' ') || [];
-                        ppCustomer = await createNewCustomer({
-                            name: {
-                                first: nameParts[0] || 'User',
-                                last: nameParts.slice(1).join(' ') || 'Social'
-                            },
-                            email: user.email,
-                            role: 'member'
-                        });
-                    }
-
-                    // If user exists in DB but has no pushPressId, update it
-                    if (existingUser && ppCustomer) {
-                        await db.user.update({
-                            where: { id: existingUser.id },
-                            data: { pushPressId: ppCustomer.id }
-                        });
-                    }
-                    // If user doesn't exist yet, the adapter will create it after this callback.
-                    // We can't easily set the pushPressId for the new user here unless we use events or custom adapter.
-                    // However, we can use events.createUser below.
-                }
-
-                return true;
-            } catch (error) {
-                captureException(error);
-                return true; // Still allow login, maybe sync later
-            }
+            // Simply allow sign in if email exists. 
+            // The adapter will handle user lookup/creation.
+            return !!user.email;
         },
         async session({ session, token }) {
             if (token.sub && session.user) {

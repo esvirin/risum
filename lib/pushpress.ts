@@ -94,14 +94,36 @@ export interface PushPressCustomer {
 
 
 
+let cachedCompanyId: string | null = null;
+
 async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
     if (!API_KEY) throw new Error("PUSHPRESS_API_KEY is not set");
 
-    const headers = {
+    // Some endpoints require company-id header. If not provided, we try to use cached one
+    // or fetch it once from /company
+    let companyId = (options.headers as any)?.['company-id'];
+
+    if (!companyId && !endpoint.includes('/company')) {
+        if (!cachedCompanyId) {
+            try {
+                const company = await fetchPushPress('/company');
+                cachedCompanyId = company?.id;
+            } catch (e) {
+                console.warn("Failed to auto-fetch company-id:", e);
+            }
+        }
+        companyId = cachedCompanyId;
+    }
+
+    const headers: Record<string, string> = {
         'API-KEY': API_KEY,
         'Content-Type': 'application/json',
         ...(options.headers || {}),
     };
+
+    if (companyId) {
+        headers['company-id'] = companyId;
+    }
 
     const res = await fetch(`${API_URL}${endpoint}`, {
         ...options,
@@ -314,15 +336,38 @@ export async function cancelReservation(reservationId: string): Promise<boolean>
 
 // ===== PLAN FUNCTIONS =====
 
-/**
- * List all available plans
- * GET /plans - Inferred from typical REST patterns, not explicitly in docs
- */
 export async function getPlans(): Promise<PushPressPlan[]> {
     try {
+        // Primary method: List all plans
         const data = await fetchPushPress(`/plans`);
         return data.data?.resultArray || data.resultArray || [];
-    } catch (error) {
+    } catch (error: any) {
+        if (error.message?.includes('404')) {
+            console.warn("PushPress /plans endpoint not found. Attempting discovery via enrollments...");
+
+            try {
+                // Discovery method: Look at recent enrollments to find active plan IDs
+                // This is a workaround suggested by the availability of /enrollments
+                const enrollmentsData = await fetchPushPress(`/enrollments?limit=100`);
+                const enrollments = enrollmentsData.data?.resultArray || [];
+
+                const uniquePlanIds = Array.from(new Set(
+                    enrollments.map((e: any) => e.planId).filter(Boolean)
+                )) as string[];
+
+                if (uniquePlanIds.length === 0) return [];
+
+                // Fetch details for each discovered plan
+                const planDetails = await Promise.all(
+                    uniquePlanIds.map(id => getPlan(id))
+                );
+
+                return planDetails.filter((p): p is PushPressPlan => p !== null);
+            } catch (discoveryError) {
+                console.error("Plan discovery failed:", discoveryError);
+                return [];
+            }
+        }
         console.error("getPlans error:", error);
         return [];
     }
