@@ -1,7 +1,7 @@
 
-const API_LOGIN = process.env.APILogin;
-const API_PASSWORD = process.env.APIPassword;
-const GATEWAY_URL = process.env.GatewayURL || "https://gateway-test.jcc.com.cy/payment";
+const API_LOGIN = process.env.API_LOGIN;
+const API_PASSWORD = process.env.API_PASSWORD;
+const GATEWAY_URL = process.env.GATEWAY_URL || "https://gateway-test.jcc.com.cy/payment";
 
 export interface JccRegisterResponse {
     orderId?: string;
