@@ -4,9 +4,10 @@ import { useState } from 'react';
 import { Card, CardHeader, CardTitle, CardContent, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Zap, Calendar, Infinity } from 'lucide-react';
+import { Check, Zap, Calendar, Infinity, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import JCCPaymentForm from './JCCPaymentForm';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import type { PushPressPlan, PushPressEnrollment } from '@/lib/pushpress';
 
 interface PlansClientProps {
@@ -18,8 +19,53 @@ interface PlansClientProps {
 }
 
 export default function PlansClient({ plans, activePlanIds, enrollments = [], customerId, balance = 0 }: PlansClientProps) {
+    const searchParams = useSearchParams();
+    const router = useRouter();
     const [purchasing, setPurchasing] = useState<string | null>(null);
-    const [jccOrder, setJccOrder] = useState<{ orderId: string; amount: number; planId: string } | null>(null);
+    const [confirming, setConfirming] = useState<string | null>(null);
+
+    // Handle return from JCC
+    useEffect(() => {
+        const orderId = searchParams.get('orderId');
+        if (orderId && !confirming) {
+            handleConfirmPayment(orderId);
+        }
+    }, [searchParams]);
+
+    const handleConfirmPayment = async (orderId: string) => {
+        setConfirming(orderId);
+        const loadingToast = toast.loading('Confirming payment...');
+
+        try {
+            const response = await fetch('/api/payments/jcc/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ orderId }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                toast.success(
+                    data.type === 'TOPUP'
+                        ? `Wallet topped up! New balance: €${data.newBalance.toFixed(2)}`
+                        : 'Plan activated successfully!',
+                    { id: loadingToast }
+                );
+                // Clean URL and refresh data
+                router.replace('/cabinet/plans');
+                setTimeout(() => window.location.reload(), 2000);
+            } else {
+                toast.error(data.error || 'Payment confirmation failed', { id: loadingToast });
+                router.replace('/cabinet/plans');
+            }
+        } catch (error) {
+            console.error('Confirmation error:', error);
+            toast.error('Failed to confirm payment', { id: loadingToast });
+        } finally {
+            setConfirming(null);
+        }
+    };
 
     const handlePurchase = async (plan: PushPressPlan) => {
         if (!customerId) {
@@ -45,12 +91,9 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
 
             const data = await response.json();
 
-            if (response.ok && data.success) {
-                setJccOrder({
-                    orderId: data.orderId,
-                    amount: amount,
-                    planId: plan.id
-                });
+            if (response.ok && data.success && data.formUrl) {
+                // Redirect to JCC
+                window.location.href = data.formUrl;
             } else {
                 toast.error(data.error || 'Failed to start payment process');
             }
@@ -59,38 +102,6 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
             toast.error('An error occurred while starting the payment');
         } finally {
             setPurchasing(null);
-        }
-    };
-
-    const handlePaymentSuccess = async (result: any) => {
-        if (!jccOrder) return;
-
-        const loadingToast = toast.loading('Confirming payment and activating plan...');
-
-        try {
-            // Step 2: Confirm payment and create enrollment
-            const response = await fetch('/api/payments/jcc/confirm', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    orderId: jccOrder.orderId,
-                    planId: jccOrder.planId
-                }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                toast.success('Plan purchased and activated successfully!', { id: loadingToast });
-                setJccOrder(null);
-                // Refresh to show active plan
-                setTimeout(() => window.location.reload(), 1500);
-            } else {
-                toast.error(data.error || 'Confirmation failed', { id: loadingToast });
-            }
-        } catch (error) {
-            console.error('Confirmation error:', error);
-            toast.error('Failed to confirm payment', { id: loadingToast });
         }
     };
 
@@ -133,17 +144,12 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
         return acc;
     }, {} as Record<string, PushPressPlan[]>);
 
-    if (jccOrder) {
+    if (confirming) {
         return (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4">
-                <div className="w-full max-w-md">
-                    <JCCPaymentForm
-                        orderId={jccOrder.orderId}
-                        amount={jccOrder.amount}
-                        onSuccess={handlePaymentSuccess}
-                        onCancel={() => setJccOrder(null)}
-                    />
-                </div>
+            <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                <Loader2 className="h-12 w-12 animate-spin text-primary" />
+                <h2 className="text-xl font-semibold">Confirming your payment...</h2>
+                <p className="text-muted-foreground">Please don't close this page.</p>
             </div>
         );
     }

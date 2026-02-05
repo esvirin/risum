@@ -37,6 +37,7 @@ export async function POST(req: Request) {
                 success: true,
                 orderId: response.orderId,
                 orderNumber,
+                formUrl: response.formUrl,
             });
         } else {
             return NextResponse.json({

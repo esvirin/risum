@@ -13,13 +13,21 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const { orderId, planId } = await req.json();
-
-        if (!orderId || !planId) {
-            return NextResponse.json({ error: "Order ID and Plan ID required" }, { status: 400 });
+        const { orderId, planId: bodyPlanId } = await req.json();
+        if (!orderId) {
+            return NextResponse.json({ error: "Order ID required" }, { status: 400 });
         }
 
         const statusResponse = await getOrderStatus(orderId);
+
+        // Extract planId from orderNumber if not provided or to be sure
+        // OrderNumber format: PLN-planId-timestamp or TOP-TOPUP-timestamp
+        const orderParts = statusResponse.orderNumber?.split('-') || [];
+        const planId = bodyPlanId || orderParts[1];
+
+        if (!planId) {
+            return NextResponse.json({ error: "Could not determine Plan ID" }, { status: 400 });
+        }
 
         // JCC ResponseCode 0 usually means success
         // statusResponse.orderStatus: 2 means deposited/completed
