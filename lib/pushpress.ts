@@ -94,14 +94,24 @@ export interface PushPressCustomer {
 
 
 
-let cachedCompanyId: string | null = null;
+let cachedCompanyId: string | undefined;
 
 async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
     if (!API_KEY) throw new Error("PUSHPRESS_API_KEY is not set");
 
     // Some endpoints require company-id header. If not provided, we try to use cached one
     // or fetch it once from /company
-    let companyId = (options.headers as any)?.['company-id'];
+    let companyId: string | undefined;
+
+    if (options.headers) {
+        if (options.headers instanceof Headers) {
+            companyId = options.headers.get('company-id') || undefined;
+        } else if (Array.isArray(options.headers)) {
+            companyId = options.headers.find(([key]) => key.toLowerCase() === 'company-id')?.[1];
+        } else {
+            companyId = (options.headers as Record<string, string>)['company-id'];
+        }
+    }
 
     if (!companyId && !endpoint.includes('/company')) {
         if (!cachedCompanyId) {
@@ -115,19 +125,34 @@ async function fetchPushPress(endpoint: string, options: RequestInit = {}) {
         companyId = cachedCompanyId;
     }
 
-    const headers: Record<string, string> = {
-        'API-KEY': API_KEY,
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-    };
+    const finalHeaders = new Headers();
+    finalHeaders.set('API-KEY', API_KEY);
+    finalHeaders.set('Content-Type', 'application/json');
+
+    // Merge headers from options if they exist
+    if (options.headers) {
+        if (options.headers instanceof Headers) {
+            options.headers.forEach((value, key) => {
+                finalHeaders.set(key, value);
+            });
+        } else if (Array.isArray(options.headers)) {
+            options.headers.forEach(([key, value]) => {
+                finalHeaders.set(key, value);
+            });
+        } else {
+            Object.entries(options.headers).forEach(([key, value]) => {
+                finalHeaders.set(key, value);
+            });
+        }
+    }
 
     if (companyId) {
-        headers['company-id'] = companyId;
+        finalHeaders.set('company-id', companyId);
     }
 
     const res = await fetch(`${API_URL}${endpoint}`, {
         ...options,
-        headers,
+        headers: finalHeaders,
     });
 
     if (!res.ok) {
