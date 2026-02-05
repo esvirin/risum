@@ -4,4 +4,5 @@ package = "@sentry/netlify-build-plugin"
   skipSetCommits = true
 
 [build]
-command = "npx prisma migrate deploy && npm run build"
+  command = "npx prisma generate && npx prisma migrate deploy && npm run build"
+  publish = ".next"
