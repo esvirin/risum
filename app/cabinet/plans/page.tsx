@@ -23,7 +23,7 @@ export default async function PlansPage() {
 
     const user = await db.user.findUnique({
         where: { email },
-        select: { pushPressId: true }
+        select: { id: true, pushPressId: true }
     });
 
     const [plans, enrollments] = await Promise.all([

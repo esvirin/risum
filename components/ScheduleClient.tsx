@@ -3,9 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 import { PushPressClass } from "@/lib/pushpress";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, ChevronLeft, ChevronRight, Calendar, Clock, Users, MapPin } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Calendar, Clock } from "lucide-react";
+
+function getDateKey(d: Date): string {
+  return d.toISOString().split("T")[0];
+}
 
 // --- Calendar Constants ---
 const CALENDAR_START_HOUR = 6; // 6 AM
@@ -14,472 +18,553 @@ const HOUR_HEIGHT_IN_REM = 4; // Each hour row is 4rem tall
 
 // --- Helper Functions ---
 const groupClassesByDate = (classes: PushPressClass[]) => {
-    const grouped: Record<string, PushPressClass[]> = {};
-    if (!classes) return grouped;
-    classes.forEach(cls => {
-        const date = new Date(cls.start * 1000); // Convert Unix seconds to milliseconds
-        const dateKey = date.toISOString().split('T')[0]; // YYYY-MM-DD
-        if (!grouped[dateKey]) grouped[dateKey] = [];
-        grouped[dateKey].push(cls);
-    });
-    // Sort classes within each day by start time
-    Object.keys(grouped).forEach(key => {
-        grouped[key].sort((a, b) => a.start - b.start);
-    });
-    return grouped;
+  const grouped: Record<string, PushPressClass[]> = {};
+  if (!classes) return grouped;
+  classes.forEach((cls) => {
+    const date = new Date(cls.start * 1000); // Unix seconds → ms
+    const dateKey = getDateKey(date); // YYYY-MM-DD
+    if (!grouped[dateKey]) grouped[dateKey] = [];
+    grouped[dateKey].push(cls);
+  });
+  // Sort classes within each day by start time
+  Object.keys(grouped).forEach((key) => {
+    grouped[key].sort((a, b) => a.start - b.start);
+  });
+  return grouped;
 };
 
 const getWeekDays = (startDate: Date): Date[] => {
-    const days: Date[] = [];
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
+  const days: Date[] = [];
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
 
-    // Start from Monday
-    const day = start.getDay();
-    const diff = start.getDate() - day + (day === 0 ? -6 : 1);
-    start.setDate(diff);
+  // Start from Monday
+  const day = start.getDay();
+  const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+  start.setDate(diff);
 
-    for (let i = 0; i < 7; i++) {
-        const date = new Date(start);
-        date.setDate(start.getDate() + i);
-        days.push(date);
-    }
-    return days;
+  for (let i = 0; i < 7; i++) {
+    const date = new Date(start);
+    date.setDate(start.getDate() + i);
+    days.push(date);
+  }
+  return days;
+};
+
+const getWeekStartMonday = (d: Date): Date => {
+  const start = new Date(d);
+  start.setHours(0, 0, 0, 0);
+  const day = start.getDay();
+  const diff = start.getDate() - day + (day === 0 ? -6 : 1);
+  start.setDate(diff);
+  return start;
 };
 
 const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+  return date.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
 };
 
 const formatDuration = (start: number, end: number): string => {
-    const minutes = Math.round((end - start) / 60); // Timestamps are in seconds
-    if (minutes < 60) return `${minutes}min`;
-    const hours = Math.floor(minutes / 60);
-    const remainingMinutes = minutes % 60;
-    return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
+  const minutes = Math.round((end - start) / 60);
+  if (minutes < 60) return `${minutes}min`;
+  const hours = Math.floor(minutes / 60);
+  const remainingMinutes = minutes % 60;
+  return remainingMinutes > 0 ? `${hours}h ${remainingMinutes}min` : `${hours}h`;
 };
 
 // --- Mobile View Component ---
 function MobileScheduleView({
-    groupedClasses,
-    handleBook,
-    bookingState,
-    selectedDate,
-    setSelectedDate,
-    availableDays
+  groupedClasses,
+  handleBook,
+  bookingState,
+  selectedDate,
+  setSelectedDate,
+  availableDays,
+  nextClass,
+  onJumpToNextClass,
+  nowMs,
 }: {
-    groupedClasses: Record<string, PushPressClass[]>,
-    handleBook: (classId: string) => void,
-    bookingState: Record<string, boolean>,
-    selectedDate: string | null,
-    setSelectedDate: (date: string) => void,
-    availableDays: string[]
+  groupedClasses: Record<string, PushPressClass[]>;
+  handleBook: (classId: string) => void;
+  bookingState: Record<string, boolean>;
+  selectedDate: string | null;
+  setSelectedDate: (date: string) => void;
+  availableDays: string[];
+  nextClass: PushPressClass | null;
+  onJumpToNextClass: () => void;
+  nowMs: number;
 }) {
-    const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-        // Scroll to selected date on mount
-        if (selectedDate && scrollRef.current) {
-            const element = document.getElementById(`mobile-date-${selectedDate}`);
-            if (element) {
-                element.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            }
-        }
-    }, []);
-
-    if (availableDays.length === 0) {
-        return (
-            <div className="md:hidden flex flex-col items-center justify-center py-20 px-4">
-                <Calendar className="h-16 w-16 text-muted-foreground/30 mb-4" />
-                <p className="text-muted-foreground text-center">No upcoming classes found.</p>
-            </div>
-        );
+  useEffect(() => {
+    if (selectedDate && scrollRef.current) {
+      const element = document.getElementById(`mobile-date-${selectedDate}`);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      }
     }
+  }, [selectedDate]);
 
-    const currentDate = selectedDate || availableDays[0];
-    const classes = groupedClasses[currentDate] || [];
-    const displayDate = new Date(currentDate + 'T00:00:00');
-
+  if (availableDays.length === 0) {
     return (
-        <div className="md:hidden space-y-4">
-            {/* Date Selector - Horizontal Scroll */}
-            <div className="relative -mx-4 px-4">
-                <div
-                    ref={scrollRef}
-                    className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"
-                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                    {availableDays.map(dateKey => {
-                        const date = new Date(dateKey + 'T00:00:00');
-                        const isSelected = dateKey === currentDate;
-                        const classCount = groupedClasses[dateKey]?.length || 0;
-
-                        return (
-                            <button
-                                key={dateKey}
-                                id={`mobile-date-${dateKey}`}
-                                onClick={() => setSelectedDate(dateKey)}
-                                className={`
-                                    flex-shrink-0 snap-center px-4 py-3 rounded-lg border-2 transition-all duration-200
-                                    ${isSelected
-                                        ? 'border-primary bg-primary text-primary-foreground shadow-lg scale-105'
-                                        : 'border-border bg-card hover:border-primary/50 hover:scale-102'
-                                    }
-                                `}
-                            >
-                                <div className="text-xs font-medium opacity-80">
-                                    {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                                </div>
-                                <div className="text-xl font-bold">
-                                    {date.getDate()}
-                                </div>
-                                <div className="text-xs opacity-70">
-                                    {classCount} {classCount === 1 ? 'class' : 'classes'}
-                                </div>
-                            </button>
-                        );
-                    })}
-                </div>
-            </div>
-
-            {/* Selected Date Title */}
-            <div className="flex items-center justify-between px-1 py-2">
-                <h3 className="text-lg font-semibold">
-                    {displayDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-                </h3>
-                <span className="text-sm text-muted-foreground">
-                    {classes.length} {classes.length === 1 ? 'class' : 'classes'}
-                </span>
-            </div>
-
-            {/* Classes List */}
-            <div className="space-y-3">
-                {classes.length === 0 ? (
-                    <Card className="border-dashed">
-                        <CardContent className="py-10 text-center">
-                            <p className="text-muted-foreground">No classes scheduled for this day</p>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    classes.map(cls => {
-                        const isBooking = bookingState[cls.id];
-                        const startDate = new Date(cls.start * 1000); // Convert Unix seconds to milliseconds
-                        const isPast = startDate.getTime() < Date.now();
-
-                        return (
-                            <Card
-                                key={cls.id}
-                                className={`overflow-hidden transition-all hover:shadow-md ${isPast ? 'opacity-60' : ''}`}
-                            >
-                                <CardContent className="p-0">
-                                    <div className="flex">
-                                        {/* Time Badge */}
-                                        <div className="flex-shrink-0 w-20 bg-primary/10 flex flex-col items-center justify-center p-3 border-r-2 border-primary/20">
-                                            <Clock className="h-4 w-4 text-primary mb-1" />
-                                            <div className="text-sm font-bold text-primary">
-                                                {formatTime(startDate)}
-                                            </div>
-                                            <div className="text-xs text-muted-foreground">
-                                                {formatDuration(cls.start, cls.end)}
-                                            </div>
-                                        </div>
-
-                                        {/* Class Info */}
-                                        <div className="flex-1 p-4">
-                                            <div className="flex justify-between items-start mb-2">
-                                                <div className="flex-1">
-                                                    <h4 className="font-semibold text-base leading-tight mb-1">
-                                                        {cls.title}
-                                                    </h4>
-                                                    <p className="text-sm text-muted-foreground">
-                                                        {cls.assistantCoachUuid || 'Instructor TBA'}
-                                                    </p>
-                                                </div>
-                                            </div>
-
-                                            {/* Action Button */}
-                                            <Button
-                                                onClick={() => handleBook(cls.id)}
-                                                disabled={isBooking || isPast}
-                                                className="w-full mt-3"
-                                                size="sm"
-                                            >
-                                                {isBooking ? (
-                                                    <>
-                                                        <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                                                        Booking...
-                                                    </>
-                                                ) : isPast ? (
-                                                    "Class Ended"
-                                                ) : (
-                                                    "Book Class"
-                                                )}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        );
-                    })
-                )}
-            </div>
-        </div>
+      <div className="md:hidden flex flex-col items-center justify-center py-20 px-4">
+        <Calendar className="h-16 w-16 text-muted-foreground/30 mb-4" />
+        <p className="text-muted-foreground text-center">No upcoming classes found.</p>
+      </div>
     );
+  }
+
+  const currentDate = selectedDate || availableDays[0];
+  const classes = groupedClasses[currentDate] || [];
+  const displayDate = new Date(currentDate + "T00:00:00");
+
+  return (
+    <div className="md:hidden space-y-4">
+      {/* Empty day CTA on mobile */}
+      {classes.length === 0 && nextClass && (
+        <Card className="border-dashed">
+          <CardContent className="py-4 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-semibold">No classes for this day</div>
+              <div className="text-sm text-muted-foreground">Jump to the next available class.</div>
+            </div>
+            <Button onClick={onJumpToNextClass}>Next class</Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Date Selector - Horizontal Scroll */}
+      <div className="relative -mx-4 px-4">
+        <div
+          ref={scrollRef}
+          className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide"
+          style={{ scrollbarWidth: "none" } as any}
+        >
+          {availableDays.map((dateKey) => {
+            const date = new Date(dateKey + "T00:00:00");
+            const isSelected = dateKey === currentDate;
+            const classCount = groupedClasses[dateKey]?.length || 0;
+
+            return (
+              <button
+                key={dateKey}
+                id={`mobile-date-${dateKey}`}
+                onClick={() => setSelectedDate(dateKey)}
+                className={`
+                  flex-shrink-0 snap-center px-4 py-3 rounded-lg border-2 transition-all duration-200
+                  ${
+                    isSelected
+                      ? "border-primary bg-primary text-primary-foreground shadow-lg scale-105"
+                      : "border-border bg-card hover:border-primary/50 hover:scale-102"
+                  }
+                `}
+              >
+                <div className="text-xs font-medium opacity-80">{date.toLocaleDateString("en-US", { weekday: "short" })}</div>
+                <div className="text-xl font-bold">{date.getDate()}</div>
+                <div className="text-xs opacity-70">{classCount} {classCount === 1 ? "class" : "classes"}</div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Selected Date Title */}
+      <div className="flex items-center justify-between px-1 py-2">
+        <h3 className="text-lg font-semibold">
+          {displayDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+        </h3>
+        <span className="text-sm text-muted-foreground">
+          {classes.length} {classes.length === 1 ? "class" : "classes"}
+        </span>
+      </div>
+
+      {/* Classes List */}
+      <div className="space-y-3">
+        {classes.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="py-10 text-center">
+              <p className="text-muted-foreground">No classes scheduled for this day</p>
+            </CardContent>
+          </Card>
+        ) : (
+          classes.map((cls) => {
+            const isBooking = bookingState[cls.id];
+            const startDate = new Date(cls.start * 1000);
+            const isPast = startDate.getTime() < nowMs;
+
+            return (
+              <Card
+                key={cls.id}
+                id={`class-${cls.id}`}
+                className={`overflow-hidden transition-all hover:shadow-md ${isPast ? "opacity-60" : ""}`}
+              >
+                <CardContent className="p-0">
+                  <div className="flex">
+                    {/* Time Badge */}
+                    <div className="flex-shrink-0 w-20 bg-primary/10 flex flex-col items-center justify-center p-3 border-r-2 border-primary/20">
+                      <Clock className="h-4 w-4 text-primary mb-1" />
+                      <div className="text-sm font-bold text-primary">{formatTime(startDate)}</div>
+                      <div className="text-xs text-muted-foreground">{formatDuration(cls.start, cls.end)}</div>
+                    </div>
+
+                    {/* Class Info */}
+                    <div className="flex-1 p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-base leading-tight mb-1">{cls.title}</h4>
+                          <p className="text-sm text-muted-foreground">{cls.assistantCoachUuid || "Instructor TBA"}</p>
+                        </div>
+                      </div>
+
+                      <Button
+                        onClick={() => handleBook(cls.id)}
+                        disabled={isBooking || isPast}
+                        className="w-full mt-3"
+                        size="sm"
+                      >
+                        {isBooking ? (
+                          <>
+                            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                            Booking...
+                          </>
+                        ) : isPast ? (
+                          "Class Ended"
+                        ) : (
+                          "Book Class"
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
 }
 
 // --- Desktop Week View ---
 function DesktopScheduleView({
-    groupedClasses,
-    handleBook,
-    bookingState,
-    weekStart,
-    setWeekStart
+  groupedClasses,
+  handleBook,
+  bookingState,
+  weekStart,
+  setWeekStart,
+  nextClass,
+  onJumpToNextClass,
+  onJumpToNextWeekWithClasses,
+  weekHasClasses,
+  nowMs,
 }: {
-    groupedClasses: Record<string, PushPressClass[]>,
-    handleBook: (classId: string) => void,
-    bookingState: Record<string, boolean>,
-    weekStart: Date,
-    setWeekStart: (date: Date) => void
+  groupedClasses: Record<string, PushPressClass[]>;
+  handleBook: (classId: string) => void;
+  bookingState: Record<string, boolean>;
+  weekStart: Date;
+  setWeekStart: (date: Date) => void;
+  nextClass: PushPressClass | null;
+  onJumpToNextClass: () => void;
+  onJumpToNextWeekWithClasses: () => void;
+  weekHasClasses: boolean;
+  nowMs: number;
 }) {
-    const weekDays = getWeekDays(weekStart);
-    const timeLabels = Array.from({ length: CALENDAR_END_HOUR - CALENDAR_START_HOUR }, (_, i) => i + CALENDAR_START_HOUR);
+  const weekDays = getWeekDays(weekStart);
+  const timeLabels = Array.from({ length: CALENDAR_END_HOUR - CALENDAR_START_HOUR }, (_, i) => i + CALENDAR_START_HOUR);
 
-    const goToPreviousWeek = () => {
-        const newDate = new Date(weekStart);
-        newDate.setDate(newDate.getDate() - 7);
-        setWeekStart(newDate);
-    };
+  const goToPreviousWeek = () => {
+    const newDate = new Date(weekStart);
+    newDate.setDate(newDate.getDate() - 7);
+    setWeekStart(newDate);
+  };
 
-    const goToNextWeek = () => {
-        const newDate = new Date(weekStart);
-        newDate.setDate(newDate.getDate() + 7);
-        setWeekStart(newDate);
-    };
+  const goToNextWeek = () => {
+    const newDate = new Date(weekStart);
+    newDate.setDate(newDate.getDate() + 7);
+    setWeekStart(newDate);
+  };
 
-    const goToToday = () => {
-        setWeekStart(new Date());
-    };
+  const goToToday = () => {
+    setWeekStart(new Date());
+  };
 
-    const isCurrentWeek = () => {
-        const today = new Date();
-        return weekDays.some(day =>
-            day.toDateString() === today.toDateString()
-        );
-    };
+  const isCurrentWeek = () => {
+    const today = new Date();
+    return weekDays.some((day) => day.toDateString() === today.toDateString());
+  };
 
-    return (
-        <div className="hidden md:block space-y-4">
-            {/* Week Navigation */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={goToPreviousWeek}>
-                        <ChevronLeft className="h-4 w-4" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={goToNextWeek}>
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
-                    {!isCurrentWeek() && (
-                        <Button variant="outline" size="sm" onClick={goToToday}>
-                            Today
-                        </Button>
-                    )}
-                </div>
-                <h3 className="text-lg font-semibold">
-                    {weekDays[0].toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} - {weekDays[6].toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
-                </h3>
-                <div className="w-32"></div> {/* Spacer for alignment */}
-            </div>
-
-            {/* Week View Grid */}
-            <div className="border rounded-lg bg-card overflow-hidden">
-                <div className="grid grid-cols-8 gap-0">
-                    {/* Header Row */}
-                    <div className="col-span-1 border-r bg-muted/30 p-3">
-                        <div className="text-xs font-medium text-muted-foreground">Time</div>
-                    </div>
-                    {weekDays.map((day, idx) => {
-                        const dateKey = day.toISOString().split('T')[0];
-                        const classCount = groupedClasses[dateKey]?.length || 0;
-                        const isToday = day.toDateString() === new Date().toDateString();
-
-                        return (
-                            <div
-                                key={idx}
-                                className={`border-r last:border-r-0 p-3 ${isToday ? 'bg-primary/5' : 'bg-muted/30'}`}
-                            >
-                                <div className={`text-xs font-medium ${isToday ? 'text-primary' : 'text-muted-foreground'}`}>
-                                    {day.toLocaleDateString('en-US', { weekday: 'short' })}
-                                </div>
-                                <div className={`text-lg font-bold ${isToday ? 'text-primary' : ''}`}>
-                                    {day.getDate()}
-                                </div>
-                                <div className="text-xs text-muted-foreground">
-                                    {classCount} {classCount === 1 ? 'class' : 'classes'}
-                                </div>
-                            </div>
-                        );
-                    })}
-
-                    {/* Time Slots and Classes */}
-                    <div className="col-span-8 grid grid-cols-8">
-                        {/* Time Column */}
-                        <div className="col-span-1 border-r bg-muted/10">
-                            {timeLabels.map(hour => (
-                                <div
-                                    key={hour}
-                                    className="border-t text-right pr-2 text-xs text-muted-foreground flex items-start pt-1"
-                                    style={{ height: `${HOUR_HEIGHT_IN_REM}rem` }}
-                                >
-                                    {hour}:00
-                                </div>
-                            ))}
-                        </div>
-
-                        {/* Day Columns */}
-                        {weekDays.map((day, dayIdx) => {
-                            const dateKey = day.toISOString().split('T')[0];
-                            const dayClasses = groupedClasses[dateKey] || [];
-                            const isToday = day.toDateString() === new Date().toDateString();
-
-                            return (
-                                <div
-                                    key={dayIdx}
-                                    className={`relative border-r last:border-r-0 ${isToday ? 'bg-primary/[0.02]' : ''}`}
-                                >
-                                    {/* Hour Grid Lines */}
-                                    {timeLabels.map(hour => (
-                                        <div
-                                            key={hour}
-                                            className="border-t"
-                                            style={{ height: `${HOUR_HEIGHT_IN_REM}rem` }}
-                                        ></div>
-                                    ))}
-
-                                    {/* Classes */}
-                                    {dayClasses.map(cls => {
-                                        const startDate = new Date(cls.start * 1000); // Convert Unix seconds to milliseconds
-                                        const top = (startDate.getHours() + startDate.getMinutes() / 60 - CALENDAR_START_HOUR) * HOUR_HEIGHT_IN_REM;
-                                        const durationHours = (cls.end - cls.start) / 3600; // Convert seconds to hours
-                                        const height = Math.max(durationHours * HOUR_HEIGHT_IN_REM, 3); // Min height 3rem
-                                        const isBooking = bookingState[cls.id];
-                                        const isPast = startDate.getTime() < Date.now();
-
-
-                                        return (
-                                            <div
-                                                key={cls.id}
-                                                className="absolute inset-x-1"
-                                                style={{ top: `${top}rem`, height: `${height}rem` }}
-                                            >
-                                                <div className={`
-                                                    h-full rounded-md p-2 
-                                                    bg-gradient-to-br from-primary to-primary/80
-                                                    text-primary-foreground
-                                                    shadow-sm hover:shadow-md
-                                                    transition-all duration-200
-                                                    border border-primary/20
-                                                    flex flex-col justify-between
-                                                    overflow-hidden
-                                                    ${isPast ? 'opacity-50' : 'hover:scale-[1.02]'}
-                                                `}>
-                                                    <div className="flex-1 min-h-0">
-                                                        <div className="text-xs font-bold leading-tight mb-0.5 line-clamp-2">
-                                                            {cls.title}
-                                                        </div>
-                                                        <div className="text-[10px] opacity-80 line-clamp-1">
-                                                            {formatTime(startDate)}
-                                                        </div>
-                                                        <div className="text-[10px] opacity-70 line-clamp-1">
-                                                            {cls.assistantCoachUuid || 'TBA'}
-                                                        </div>
-                                                    </div>
-
-                                                    {height >= 4 && (
-                                                        <Button
-                                                            variant="secondary"
-                                                            size="sm"
-                                                            className="w-full h-6 text-xs mt-1"
-                                                            onClick={() => handleBook(cls.id)}
-                                                            disabled={isBooking || isPast}
-                                                        >
-                                                            {isBooking ? (
-                                                                <Loader2 className="h-3 w-3 animate-spin" />
-                                                            ) : isPast ? (
-                                                                "Ended"
-                                                            ) : (
-                                                                "Book"
-                                                            )}
-                                                        </Button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        );
-                                    })}
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
+  return (
+    <div className="hidden md:block space-y-4">
+      {/* Week Navigation */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={goToPreviousWeek}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <Button variant="outline" size="sm" onClick={goToNextWeek}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+          {!isCurrentWeek() && (
+            <Button variant="outline" size="sm" onClick={goToToday}>
+              Today
+            </Button>
+          )}
+          {nextClass && (
+            <Button variant="default" size="sm" onClick={onJumpToNextClass}>
+              Next class
+            </Button>
+          )}
         </div>
-    );
+        <h3 className="text-lg font-semibold">
+          {weekDays[0].toLocaleDateString("en-US", { month: "long", day: "numeric" })} - {weekDays[6].toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
+        </h3>
+        <div className="w-32"></div>
+      </div>
+
+      {!weekHasClasses && nextClass && (
+        <Card className="border-dashed">
+          <CardContent className="py-4 flex items-center justify-between gap-4">
+            <div>
+              <div className="font-semibold">No classes this week</div>
+              <div className="text-sm text-muted-foreground">Jump to the next available class.</div>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="default" onClick={onJumpToNextClass}>
+                Go to next class
+              </Button>
+              <Button variant="outline" onClick={onJumpToNextWeekWithClasses}>
+                Next week with classes
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Week View Grid */}
+      <div className="border rounded-lg bg-card overflow-hidden">
+        <div className="grid grid-cols-8 gap-0">
+          {/* Header Row */}
+          <div className="col-span-1 border-r bg-muted/30 p-3">
+            <div className="text-xs font-medium text-muted-foreground">Time</div>
+          </div>
+          {weekDays.map((day, idx) => {
+            const dateKey = getDateKey(day);
+            const classCount = groupedClasses[dateKey]?.length || 0;
+            const isToday = day.toDateString() === new Date().toDateString();
+
+            return (
+              <div key={idx} className={`border-r last:border-r-0 p-3 ${isToday ? "bg-primary/5" : "bg-muted/30"}`}>
+                <div className={`text-xs font-medium ${isToday ? "text-primary" : "text-muted-foreground"}`}>
+                  {day.toLocaleDateString("en-US", { weekday: "short" })}
+                </div>
+                <div className={`text-lg font-bold ${isToday ? "text-primary" : ""}`}>{day.getDate()}</div>
+                <div className="text-xs text-muted-foreground">
+                  {classCount} {classCount === 1 ? "class" : "classes"}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Time Slots and Classes */}
+          <div className="col-span-8 grid grid-cols-8">
+            {/* Time Column */}
+            <div className="col-span-1 border-r bg-muted/10">
+              {timeLabels.map((hour) => (
+                <div
+                  key={hour}
+                  className="border-t text-right pr-2 text-xs text-muted-foreground flex items-start pt-1"
+                  style={{ height: `${HOUR_HEIGHT_IN_REM}rem` }}
+                >
+                  {hour}:00
+                </div>
+              ))}
+            </div>
+
+            {/* Day Columns */}
+            {weekDays.map((day, dayIdx) => {
+              const dateKey = getDateKey(day);
+              const dayClasses = groupedClasses[dateKey] || [];
+              const isToday = day.toDateString() === new Date().toDateString();
+
+              return (
+                <div key={dayIdx} className={`relative border-r last:border-r-0 ${isToday ? "bg-primary/[0.02]" : ""}`}>
+                  {/* Hour Grid Lines */}
+                  {timeLabels.map((hour) => (
+                    <div key={hour} className="border-t" style={{ height: `${HOUR_HEIGHT_IN_REM}rem` }}></div>
+                  ))}
+
+                  {/* Classes */}
+                  {dayClasses.map((cls) => {
+                    const startDate = new Date(cls.start * 1000);
+                    const top = (startDate.getHours() + startDate.getMinutes() / 60 - CALENDAR_START_HOUR) * HOUR_HEIGHT_IN_REM;
+                    const durationHours = (cls.end - cls.start) / 3600;
+                    const height = Math.max(durationHours * HOUR_HEIGHT_IN_REM, 3);
+                    const isBooking = bookingState[cls.id];
+                    const isPast = startDate.getTime() < nowMs;
+
+                    return (
+                      <div key={cls.id} id={`class-${cls.id}`} className="absolute inset-x-1" style={{ top: `${top}rem`, height: `${height}rem` }}>
+                        <div
+                          className={`
+                            h-full rounded-md p-2
+                            bg-gradient-to-br from-primary to-primary/80
+                            text-primary-foreground
+                            shadow-sm hover:shadow-md
+                            transition-all duration-200
+                            border border-primary/20
+                            flex flex-col justify-between
+                            overflow-hidden
+                            ${isPast ? "opacity-50" : "hover:scale-[1.02]"}
+                          `}
+                        >
+                          <div className="flex-1 min-h-0">
+                            <div className="text-xs font-bold leading-tight mb-0.5 line-clamp-2">{cls.title}</div>
+                            <div className="text-[10px] opacity-80 line-clamp-1">{formatTime(startDate)}</div>
+                            <div className="text-[10px] opacity-70 line-clamp-1">{cls.assistantCoachUuid || "TBA"}</div>
+                          </div>
+
+                          {height >= 4 && (
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              className="w-full h-6 text-xs mt-1"
+                              onClick={() => handleBook(cls.id)}
+                              disabled={isBooking || isPast}
+                            >
+                              {isBooking ? <Loader2 className="h-3 w-3 animate-spin" /> : isPast ? "Ended" : "Book"}
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function ScheduleClient({ initialClasses }: { initialClasses: PushPressClass[] }) {
-    const [bookingState, setBookingState] = useState<Record<string, boolean>>({});
-    const [selectedDate, setSelectedDate] = useState<string | null>(null);
-    const [weekStart, setWeekStart] = useState<Date>(new Date());
+  const [bookingState, setBookingState] = useState<Record<string, boolean>>({});
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [weekStart, setWeekStart] = useState<Date>(new Date());
+  const [nowMs, setNowMs] = useState<number>(0);
 
-    const groupedClasses = groupClassesByDate(initialClasses);
-    const availableDays = Object.keys(groupedClasses).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
+  // set once on mount to satisfy lint rule about Date.now in render
+  useEffect(() => {
+    setNowMs(Date.now());
+  }, []);
 
-    // Set initial selected date for mobile
-    useEffect(() => {
-        if (availableDays.length > 0 && !selectedDate) {
-            // Default to today if available, otherwise first available day
-            const today = new Date().toISOString().split('T')[0];
-            setSelectedDate(availableDays.includes(today) ? today : availableDays[0]);
-        }
-    }, [availableDays, selectedDate]);
+  const groupedClasses = groupClassesByDate(initialClasses);
+  const availableDays = Object.keys(groupedClasses).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
-    const handleBook = async (classId: string) => {
-        setBookingState(prev => ({ ...prev, [classId]: true }));
-        const toastId = toast.loading("Booking class...");
-        try {
-            const response = await fetch('/api/classes/book', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ classId }),
-            });
-            if (!response.ok) {
-                const { error } = await response.json();
-                throw new Error(error || "Booking failed.");
-            }
-            toast.success("Class booked successfully!", { id: toastId });
-        } catch (error: any) {
-            toast.error(error.message || "An error occurred.", { id: toastId });
-        } finally {
-            setBookingState(prev => ({ ...prev, [classId]: false }));
-        }
-    };
+  const nextClass = (initialClasses || [])
+    .filter((c) => c.start * 1000 > nowMs)
+    .sort((a, b) => a.start - b.start)[0] || null;
 
-    return (
-        <>
-            <MobileScheduleView
-                groupedClasses={groupedClasses}
-                handleBook={handleBook}
-                bookingState={bookingState}
-                selectedDate={selectedDate}
-                setSelectedDate={setSelectedDate}
-                availableDays={availableDays}
-            />
-            <DesktopScheduleView
-                groupedClasses={groupedClasses}
-                handleBook={handleBook}
-                bookingState={bookingState}
-                weekStart={weekStart}
-                setWeekStart={setWeekStart}
-            />
-        </>
-    );
+  const weekDays = getWeekDays(weekStart);
+  const weekHasClasses = weekDays.some((d) => (groupedClasses[getDateKey(d)]?.length || 0) > 0);
+
+  const scrollToClass = (classId: string) => {
+    setTimeout(() => {
+      const el = document.getElementById(`class-${classId}`);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        el.classList.add("ring-2", "ring-primary");
+        setTimeout(() => el.classList.remove("ring-2", "ring-primary"), 2500);
+      }
+    }, 50);
+  };
+
+  const jumpToClass = (cls: PushPressClass) => {
+    const d = new Date(cls.start * 1000);
+    setWeekStart(getWeekStartMonday(d));
+    setSelectedDate(getDateKey(d));
+    scrollToClass(cls.id);
+  };
+
+  const jumpToNextClass = () => {
+    if (!nextClass) return;
+    jumpToClass(nextClass);
+  };
+
+  const jumpToNextWeekWithClasses = () => {
+    if (!nextClass) return;
+    setWeekStart(getWeekStartMonday(new Date(nextClass.start * 1000)));
+  };
+
+  // Set initial selected date for mobile
+  useEffect(() => {
+    if (availableDays.length > 0 && !selectedDate) {
+      const today = getDateKey(new Date());
+      setSelectedDate(availableDays.includes(today) ? today : availableDays[0]);
+    }
+  }, [availableDays, selectedDate]);
+
+  // Auto-jump: if we land on a week with no classes, jump to the week containing the next class.
+  useEffect(() => {
+    if (!weekHasClasses && nextClass) {
+      setWeekStart(getWeekStartMonday(new Date(nextClass.start * 1000)));
+      setSelectedDate(getDateKey(new Date(nextClass.start * 1000)));
+    }
+    // run once on mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleBook = async (classId: string) => {
+    setBookingState((prev) => ({ ...prev, [classId]: true }));
+    const toastId = toast.loading("Booking class...");
+    try {
+      const response = await fetch("/api/classes/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ classId }),
+      });
+      if (!response.ok) {
+        const { error } = await response.json();
+        throw new Error(error || "Booking failed.");
+      }
+      toast.success("Class booked successfully!", { id: toastId });
+    } catch (error: any) {
+      toast.error(error.message || "An error occurred.", { id: toastId });
+    } finally {
+      setBookingState((prev) => ({ ...prev, [classId]: false }));
+    }
+  };
+
+  return (
+    <>
+      <MobileScheduleView
+        groupedClasses={groupedClasses}
+        handleBook={handleBook}
+        bookingState={bookingState}
+        selectedDate={selectedDate}
+        setSelectedDate={setSelectedDate}
+        availableDays={availableDays}
+        nextClass={nextClass}
+        onJumpToNextClass={jumpToNextClass}
+        nowMs={nowMs}
+      />
+      <DesktopScheduleView
+        groupedClasses={groupedClasses}
+        handleBook={handleBook}
+        bookingState={bookingState}
+        weekStart={weekStart}
+        setWeekStart={setWeekStart}
+        nextClass={nextClass}
+        onJumpToNextClass={jumpToNextClass}
+        onJumpToNextWeekWithClasses={jumpToNextWeekWithClasses}
+        weekHasClasses={weekHasClasses}
+        nowMs={nowMs}
+      />
+    </>
+  );
 }
