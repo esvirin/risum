@@ -5,6 +5,7 @@ import {
   getCustomers,
   getPushPressCustomerByEmail,
   getUpcomingClasses,
+  getReservationsForClass,
 } from "@/lib/pushpress";
 import Link from "next/link";
 import PaymentsHistory from "@/components/PaymentsHistory";
@@ -43,7 +44,7 @@ export default async function CabinetPage() {
     getUpcomingClasses(),
     db.user.findUnique({
       where: { email },
-      select: { id: true }
+      select: { id: true, pushPressId: true }
     }),
     db.payment.findMany({
       where: { user: { email } },
@@ -74,6 +75,30 @@ export default async function CabinetPage() {
     const weekFromNow = new Date(now + 7 * 24 * 60 * 60 * 1000);
     return classDate <= weekFromNow;
   });
+
+  // My bookings (block on /cabinet): best-effort
+  // PushPress v3 doesn't expose a clean "list reservations by customer" endpoint in our OpenAPI.
+  // So we check reservations for the next N upcoming classes and filter for this user.
+  const myBookings = await (async () => {
+    if (!dbUser?.pushPressId) return [];
+
+    const candidates = futureClasses.slice(0, 10);
+    if (candidates.length === 0) return [];
+
+    const bookedFlags = await Promise.all(
+      candidates.map(async (cls) => {
+        try {
+          const reservations = await getReservationsForClass(cls.id, 1, 50);
+          const mine = reservations.find((r) => r.customerId === dbUser.pushPressId);
+          return mine ? cls : null;
+        } catch {
+          return null;
+        }
+      })
+    );
+
+    return bookedFlags.filter(Boolean) as typeof candidates;
+  })();
 
   // Member since date
   const memberSince = member.membershipDetails?.initialMembershipStartDate
@@ -189,6 +214,60 @@ export default async function CabinetPage() {
       </Card>
 
       <Separator />
+
+      {/* My Bookings */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-2xl font-semibold tracking-tight">My bookings</h2>
+            <p className="text-sm text-muted-foreground">Your upcoming reserved classes</p>
+          </div>
+          <Button asChild variant="ghost">
+            <Link href="/cabinet/schedule">
+              Manage
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Link>
+          </Button>
+        </div>
+
+        {myBookings.length === 0 ? (
+          <Card className="p-8 border-dashed bg-muted/5">
+            <CardContent className="p-0 flex items-center justify-between gap-4">
+              <div>
+                <div className="font-semibold">No bookings yet</div>
+                <div className="text-sm text-muted-foreground">Book your next class from the schedule.</div>
+              </div>
+              <Button asChild>
+                <Link href="/cabinet/schedule">Browse schedule</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-3 md:grid-cols-3">
+            {myBookings.slice(0, 3).map((cls) => {
+              const startDate = new Date(cls.start * 1000);
+              return (
+                <Card key={cls.id}>
+                  <CardHeader>
+                    <CardTitle className="text-base">{cls.title}</CardTitle>
+                    <CardDescription>
+                      {startDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })} · {startDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false })}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="text-sm text-muted-foreground">
+                    Class ID: {cls.id}
+                  </CardContent>
+                  <CardFooter>
+                    <Button asChild variant="outline" className="w-full">
+                      <Link href="/cabinet/schedule">Open schedule</Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
       {/* Upcoming Classes Preview */}
       <div className="space-y-4">
