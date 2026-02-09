@@ -569,9 +569,12 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Pus
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ classIds: uniq }),
         });
-        if (!res.ok) return;
+        if (!res.ok) {
+          if (!cancelled) setReservations({});
+          return;
+        }
         const data = (await res.json()) as { reservations?: ReservationMap };
-        if (!cancelled && data?.reservations) setReservations(data.reservations);
+        if (!cancelled) setReservations(data?.reservations || {});
       } catch {
         // ignore
       }
