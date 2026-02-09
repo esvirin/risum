@@ -28,10 +28,12 @@ export default async function PlansPage() {
 
     const [plans, enrollments] = await Promise.all([
         getPlans(),
-        user?.pushPressId ? getEnrollments(user.pushPressId, 'active') : Promise.resolve([])
+        // Pull all statuses; some accounts use pendactivation/paused and still should show as "current".
+        user?.pushPressId ? getEnrollments(user.pushPressId) : Promise.resolve([])
     ]);
 
-    const activePlanIds = enrollments.map(e => e.planId).filter(Boolean);
+    const activeLike = new Set(['active', 'pendactivation', 'paused']);
+    const activePlanIds = enrollments.filter(e => activeLike.has(e.status)).map(e => e.planId).filter(Boolean);
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto">
