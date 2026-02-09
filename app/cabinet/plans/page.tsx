@@ -31,6 +31,47 @@ export default async function PlansPage() {
         user?.pushPressId ? getEnrollments(user.pushPressId, 'active') : Promise.resolve([])
     ]);
 
+    // Fetch local payments to cover gaps in PushPress API
+    const localPayments = await db.payment.findMany({
+        where: {
+            userId: user?.id,
+            status: 'COMPLETED',
+            description: { contains: 'Plan Purchase' },
+            createdAt: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } // Last 30 days
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    // Merge payments into enrollments if not already present
+    const enrollmentPlanIds = new Set(enrollments.map(e => e.planId));
+
+    localPayments.forEach(payment => {
+        // Extract planId from description: "Plan Purchase: plan_id..."
+        const match = payment.description?.match(/Plan Purchase: ([^\s-]+(?:-[^\s-]+)*)/);
+        const planId = match ? match[1] : null;
+
+        if (planId && !enrollmentPlanIds.has(planId)) {
+            // Create a mock enrollment for display
+            // We assume it's active since it was paid recently
+            enrollments.push({
+                id: `local_payment_${payment.id}`,
+                customerId: user?.pushPressId || '',
+                companyId: '',
+                planId: planId,
+                status: 'active',
+                startDate: payment.createdAt.toISOString(),
+                endDate: null,
+                lastCharge: payment.createdAt.toISOString(),
+                nextCharge: null,
+                paidUntil: null,
+                billingSchedule: { period: 'month', interval: 1 }, // assumption
+                checkinDetails: { checkins: 0, limit: -1 },
+                entitlements: []
+            });
+            enrollmentPlanIds.add(planId);
+        }
+    });
+
     const activePlanIds = enrollments.map(e => e.planId).filter(Boolean);
 
     return (

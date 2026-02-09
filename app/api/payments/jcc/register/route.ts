@@ -21,7 +21,7 @@ export async function POST(req: Request) {
         const orderNumber = `PLN-${planId || 'MISC'}-${Date.now()}`;
 
         // In a real app, the returnUrl should be a page that handles the successful payment UI
-        const returnUrl = `${new URL(req.url).origin}/cabinet/plans?orderNumber=${orderNumber}`;
+        const returnUrl = `${new URL(req.url).origin}/cabinet/plans?orderNumber=${orderNumber}&planId=${planId}`;
 
         const response = await registerOrder({
             amount: Math.round(amount * 100), // convert to cents

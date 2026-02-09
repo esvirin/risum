@@ -26,12 +26,14 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
     // Handle return from JCC
     useEffect(() => {
         const orderId = searchParams.get('orderId');
+        const planId = searchParams.get('planId');
+
         if (orderId && !confirming) {
-            handleConfirmPayment(orderId);
+            handleConfirmPayment(orderId, planId || undefined);
         }
     }, [searchParams]);
 
-    const handleConfirmPayment = async (orderId: string) => {
+    const handleConfirmPayment = async (orderId: string, planId?: string) => {
         setConfirming(orderId);
         const loadingToast = toast.loading('Confirming payment...');
 
@@ -39,7 +41,7 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [], cu
             const response = await fetch('/api/payments/jcc/confirm', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderId }),
+                body: JSON.stringify({ orderId, planId }),
             });
 
             const data = await response.json();

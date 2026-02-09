@@ -362,38 +362,26 @@ export async function cancelReservation(reservationId: string): Promise<boolean>
 // ===== PLAN FUNCTIONS =====
 
 export async function getPlans(): Promise<PushPressPlan[]> {
+    // The /plans endpoint does not exist on this API tier.
+    // We use a discovery method by looking at recent enrollments to find active plan IDs.
     try {
-        // Primary method: List all plans
-        const data = await fetchPushPress(`/plans`);
-        return data.data?.resultArray || data.resultArray || [];
-    } catch (error: any) {
-        if (error.message?.includes('404')) {
-            console.warn("PushPress /plans endpoint not found. Attempting discovery via enrollments...");
+        const enrollmentsData = await fetchPushPress(`/enrollments?limit=100`);
+        const enrollments = enrollmentsData.data?.resultArray || [];
 
-            try {
-                // Discovery method: Look at recent enrollments to find active plan IDs
-                // This is a workaround suggested by the availability of /enrollments
-                const enrollmentsData = await fetchPushPress(`/enrollments?limit=100`);
-                const enrollments = enrollmentsData.data?.resultArray || [];
+        const uniquePlanIds = Array.from(new Set(
+            enrollments.map((e: any) => e.planId).filter(Boolean)
+        )) as string[];
 
-                const uniquePlanIds = Array.from(new Set(
-                    enrollments.map((e: any) => e.planId).filter(Boolean)
-                )) as string[];
+        if (uniquePlanIds.length === 0) return [];
 
-                if (uniquePlanIds.length === 0) return [];
+        // Fetch details for each discovered plan
+        const planDetails = await Promise.all(
+            uniquePlanIds.map(id => getPlan(id))
+        );
 
-                // Fetch details for each discovered plan
-                const planDetails = await Promise.all(
-                    uniquePlanIds.map(id => getPlan(id))
-                );
-
-                return planDetails.filter((p): p is PushPressPlan => p !== null);
-            } catch (discoveryError) {
-                console.error("Plan discovery failed:", discoveryError);
-                return [];
-            }
-        }
-        console.error("getPlans error:", error);
+        return planDetails.filter((p): p is PushPressPlan => p !== null);
+    } catch (error) {
+        console.error("getPlans (discovery) error:", error);
         return [];
     }
 }
