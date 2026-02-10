@@ -76,8 +76,16 @@ export default function PlansClient({ plans, activePlanIds, enrollments = [] }: 
                   <CardHeader className="pb-2">
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg">{plan?.name || 'Active Membership'}</CardTitle>
-                      <Badge className={enrol.status === 'active' ? "bg-green-500" : "bg-amber-500"}>
-                        {enrol.status}
+                      <Badge
+                        className={
+                          enrol.status === 'active'
+                            ? "bg-green-500"
+                            : enrol.status === 'alert'
+                              ? "bg-red-500"
+                              : "bg-amber-500"
+                        }
+                      >
+                        {enrol.status === 'alert' ? 'action needed' : enrol.status}
                       </Badge>
                     </div>
                     <CardDescription>

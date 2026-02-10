@@ -32,7 +32,7 @@ export default async function PlansPage() {
         user?.pushPressId ? getEnrollments(user.pushPressId) : Promise.resolve([])
     ]);
 
-    const activeLike = new Set(['active', 'pendactivation', 'paused']);
+    const activeLike = new Set(['active', 'pendactivation', 'paused', 'alert']);
     const activePlanIds = enrollments.filter(e => activeLike.has(e.status)).map(e => e.planId).filter(Boolean);
 
     return (
