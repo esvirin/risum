@@ -5,12 +5,30 @@ import { Card, CardContent } from "@/components/ui/card";
 import { SiteFooter } from "@/components/SiteFooter";
 
 const gallery = [
-  "Main training zone",
-  "Functional area",
-  "Recovery corner",
-  "Group class studio",
-  "Strength equipment",
-  "Reception & lounge",
+  {
+    title: "Main training zone",
+    image: "https://www.pilates.com/static/8fc3ce7eeb458d0cd82f31e714fc5a73/f2fae/banner1.jpg",
+  },
+  {
+    title: "Functional area",
+    image: "https://www.pilates.com/static/f61896851f0508b569a82a48a2b05f07/ab438/banner2.jpg",
+  },
+  {
+    title: "Reformer studio",
+    image: "https://www.pilates.com/static/e8eee38f6523156190cada91d33e6fba/ab438/2404_web-banner_1490x1064.jpg",
+  },
+  {
+    title: "Movement class",
+    image: "https://www.pilates.com/static/38e1023fac3b5b5c8329bfac34d1f665/97ce3/pilates-1.jpg",
+  },
+  {
+    title: "Core training",
+    image: "https://www.pilates.com/static/55b104e7f0747900592b7fd937e12641/97ce3/corealign.jpg",
+  },
+  {
+    title: "Studio atmosphere",
+    image: "https://www.pilates.com/static/bbe03475b8502a7e90aada7bab99dc99/ac7a2/desktop-2.jpg",
+  },
 ];
 
 export default function HomePage() {
@@ -70,8 +88,12 @@ export default function HomePage() {
           <p className="text-zinc-600 mt-2">Подборка ключевых зон Fit Space</p>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-8">
             {gallery.map((item, idx) => (
-              <div key={item} className="aspect-[4/3] bg-gradient-to-br from-zinc-200 to-zinc-100 border border-zinc-200 flex items-end p-4">
-                <span className="text-sm uppercase tracking-wider text-zinc-700">{String(idx + 1).padStart(2, "0")} — {item}</span>
+              <div
+                key={item.title}
+                className="aspect-[4/3] border border-zinc-200 bg-cover bg-center flex items-end p-4"
+                style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.08)), url(${item.image})` }}
+              >
+                <span className="text-sm uppercase tracking-wider text-white">{String(idx + 1).padStart(2, "0")} — {item.title}</span>
               </div>
             ))}
           </div>
