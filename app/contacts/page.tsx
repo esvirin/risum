@@ -8,7 +8,7 @@ export default function ContactsPage() {
       <main className="mx-auto max-w-6xl px-4 py-14 sm:py-20 space-y-12">
         <div>
           <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Contacts</p>
-          <h1 className="text-4xl sm:text-5xl tracking-tight mt-4">Studio location</h1>
+          <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] tracking-tight mt-4">Studio location</h1>
         </div>
 
         <section className="grid gap-8 lg:grid-cols-[1fr_1.2fr] items-start">

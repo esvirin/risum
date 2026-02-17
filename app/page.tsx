@@ -38,7 +38,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 grid gap-10 lg:grid-cols-[1.4fr_1fr] items-end">
           <div className="space-y-8">
             <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Risum Pilates Studio · Limassol</p>
-            <h1 className="text-4xl sm:text-6xl leading-[1.06] tracking-tight max-w-4xl">
+            <h1 className="font-display text-5xl sm:text-7xl leading-[0.95] tracking-tight max-w-4xl">
               Experience the premium Pilates lifestyle
             </h1>
             <p className="text-zinc-600 text-base sm:text-lg max-w-2xl">
@@ -63,7 +63,7 @@ export default function HomePage() {
           <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">About studio</p>
-              <h2 className="text-3xl sm:text-4xl mt-4 tracking-tight">Designed around your progress</h2>
+              <h2 className="font-display text-4xl sm:text-5xl mt-4 leading-[0.95] tracking-tight">Designed around your progress</h2>
             </div>
             <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8 text-zinc-700">
               <div>
@@ -92,7 +92,7 @@ export default function HomePage() {
           <div className="flex items-end justify-between mb-8">
             <div>
               <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Studio gallery</p>
-              <h2 className="text-3xl sm:text-4xl mt-3 tracking-tight">Interior & classes</h2>
+              <h2 className="font-display text-4xl sm:text-5xl mt-3 leading-[0.95] tracking-tight">Interior & classes</h2>
             </div>
           </div>
 

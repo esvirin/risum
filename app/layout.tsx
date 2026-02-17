@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto } from "next/font/google";
+import { Manrope, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
-const RobotoSans = Roboto({
-  variable: "--font-roboto-sans",
-  weight: ["400", "700"],
+const manrope = Manrope({
+  variable: "--font-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
+const cormorant = Cormorant_Garamond({
+  variable: "--font-display",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+});
 
 export const metadata: Metadata = {
   title: "Fit Space",
@@ -41,10 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${RobotoSans.variable}`}>
-        {children}
-      </body>
+    <html lang="en" className={`${manrope.variable} ${cormorant.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

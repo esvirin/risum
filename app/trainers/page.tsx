@@ -28,7 +28,7 @@ export default function TrainersPage() {
       <PublicNav />
       <main className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
         <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Team</p>
-        <h1 className="text-4xl sm:text-5xl tracking-tight mt-4">Trainers</h1>
+        <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] tracking-tight mt-4">Trainers</h1>
         <p className="text-zinc-600 mt-4 max-w-2xl">Команда Fit Space помогает достигать результата безопасно, системно и в комфортном темпе.</p>
 
         <div className="grid gap-8 md:grid-cols-3 mt-12">
@@ -36,7 +36,7 @@ export default function TrainersPage() {
             <article key={trainer.name} className="space-y-4">
               <div className="aspect-[4/5] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${trainer.image})` }} />
               <div className="space-y-2">
-                <h2 className="text-2xl tracking-tight">{trainer.name}</h2>
+                <h2 className="font-display text-3xl leading-[0.95] tracking-tight">{trainer.name}</h2>
                 <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">{trainer.role}</p>
                 <p className="text-zinc-700 text-sm leading-relaxed">{trainer.bio}</p>
               </div>
