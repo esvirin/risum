@@ -16,7 +16,7 @@ export function PublicNav() {
           <Link href="/contacts" className="hover:text-zinc-900">Контакты</Link>
         </div>
         <Button asChild className="rounded-none bg-zinc-900 hover:bg-zinc-800">
-          <Link href="/cabinet/schedule">Записаться</Link>
+          <a href="https://example.com/booking" target="_blank" rel="noreferrer">Записаться</a>
         </Button>
       </div>
     </header>

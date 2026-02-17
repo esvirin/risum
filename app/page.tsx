@@ -28,7 +28,7 @@ export default function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <Button asChild className="h-11 px-7 rounded-none bg-zinc-900 hover:bg-zinc-800">
-              <Link href="/cabinet/schedule">Онлайн запись</Link>
+              <a href="https://example.com/booking" target="_blank" rel="noreferrer">Онлайн запись</a>
             </Button>
             <Button asChild variant="outline" className="h-11 px-7 rounded-none border-zinc-300">
               <a href="https://apps.apple.com" target="_blank" rel="noreferrer">Скачать приложение</a>
