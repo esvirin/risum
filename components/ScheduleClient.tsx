@@ -549,86 +549,26 @@ export default function ScheduleClient({ initialClasses }: { initialClasses: Pus
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Fetch my reservations for classes visible in the current week
-  useEffect(() => {
-    const classIds = weekDays
-      .flatMap((d) => groupedClasses[getDateKey(d)] || [])
-      .map((c) => c.id);
-
-    const uniq = Array.from(new Set(classIds));
-    if (uniq.length === 0) {
-      setReservations({});
-      return;
-    }
-
-    let cancelled = false;
-    (async () => {
-      try {
-        const res = await fetch("/api/classes/reservations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ classIds: uniq }),
-        });
-        if (!res.ok) {
-          if (!cancelled) setReservations({});
-          return;
-        }
-        const data = (await res.json()) as { reservations?: ReservationMap };
-        if (!cancelled) setReservations(data?.reservations || {});
-      } catch {
-        // ignore
-      }
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [groupedClasses, weekDays]);
-
   const onBook = async (classId: string) => {
     setBookingState((prev) => ({ ...prev, [classId]: true }));
-    const toastId = toast.loading("Booking class...");
-    try {
-      const response = await fetch("/api/classes/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ classId }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload?.error || "Booking failed.");
+    const toastId = toast.loading("Booking (UI demo)...");
 
-      const reservationId = payload?.reservation?.id;
-      if (reservationId) {
-        setReservations((prev) => ({ ...prev, [classId]: { reservationId, status: payload?.reservation?.status || "created" } }));
-      }
+    await new Promise((r) => setTimeout(r, 500));
+    setReservations((prev) => ({ ...prev, [classId]: { reservationId: `demo-${classId}`, status: "reserved" } }));
 
-      toast.success("Class booked successfully!", { id: toastId });
-    } catch (error: any) {
-      toast.error(error?.message || "An error occurred.", { id: toastId });
-    } finally {
-      setBookingState((prev) => ({ ...prev, [classId]: false }));
-    }
+    toast.success("Booked in UI demo mode", { id: toastId });
+    setBookingState((prev) => ({ ...prev, [classId]: false }));
   };
 
-  const onCancel = async (reservationId: string, classId: string) => {
+  const onCancel = async (_reservationId: string, classId: string) => {
     setBookingState((prev) => ({ ...prev, [classId]: true }));
-    const toastId = toast.loading("Canceling...");
-    try {
-      const response = await fetch("/api/classes/cancel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reservationId }),
-      });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload?.error || "Cancellation failed.");
+    const toastId = toast.loading("Canceling (UI demo)...");
 
-      setReservations((prev) => ({ ...prev, [classId]: null }));
-      toast.success("Reservation canceled.", { id: toastId });
-    } catch (error: any) {
-      toast.error(error?.message || "An error occurred.", { id: toastId });
-    } finally {
-      setBookingState((prev) => ({ ...prev, [classId]: false }));
-    }
+    await new Promise((r) => setTimeout(r, 400));
+    setReservations((prev) => ({ ...prev, [classId]: null }));
+
+    toast.success("Canceled in UI demo mode", { id: toastId });
+    setBookingState((prev) => ({ ...prev, [classId]: false }));
   };
 
   return (
