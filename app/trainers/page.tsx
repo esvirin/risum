@@ -1,5 +1,6 @@
 import { PublicNav } from "@/components/PublicNav";
 import { Card, CardContent } from "@/components/ui/card";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const trainers = [
   {
@@ -45,6 +46,7 @@ export default function TrainersPage() {
           ))}
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

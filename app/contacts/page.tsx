@@ -1,5 +1,6 @@
 import { PublicNav } from "@/components/PublicNav";
 import { Button } from "@/components/ui/button";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export default function ContactsPage() {
   return (
@@ -16,7 +17,7 @@ export default function ContactsPage() {
           <div className="space-y-4">
             <div>
               <p className="text-sm uppercase text-zinc-500 tracking-wider">Телефон</p>
-              <a href="tel:+35700000000" className="text-xl font-medium hover:underline">+357 00 000 000</a>
+              <a href="tel:+35795505556" className="text-xl font-medium hover:underline">+357 95505556</a>
             </div>
             <div>
               <p className="text-sm uppercase text-zinc-500 tracking-wider">Email</p>
@@ -24,14 +25,14 @@ export default function ContactsPage() {
             </div>
             <div>
               <p className="text-sm uppercase text-zinc-500 tracking-wider">Адрес</p>
-              <p className="text-xl font-medium">Limassol, Cyprus</p>
+              <p className="text-xl font-medium">1st floor, 58 Kolonakiou Str, Limassol, 4103</p>
             </div>
             <div className="flex gap-3 pt-2">
               <Button asChild className="rounded-none bg-zinc-900 hover:bg-zinc-800">
                 <a href="https://maps.google.com" target="_blank" rel="noreferrer">Открыть в Google Maps</a>
               </Button>
               <Button asChild variant="outline" className="rounded-none border-zinc-300">
-                <a href="https://wa.me/35700000000" target="_blank" rel="noreferrer">WhatsApp</a>
+                <a href="https://wa.me/35795505556" target="_blank" rel="noreferrer">WhatsApp</a>
               </Button>
             </div>
           </div>
@@ -41,6 +42,7 @@ export default function ContactsPage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }

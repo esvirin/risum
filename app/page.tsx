@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { PublicNav } from "@/components/PublicNav";
 import { Card, CardContent } from "@/components/ui/card";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const gallery = [
   "Main training zone",
@@ -87,6 +88,8 @@ export default function HomePage() {
           </Button>
         </div>
       </section>
+
+      <SiteFooter />
     </div>
   );
 }
