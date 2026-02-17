@@ -1,32 +1,38 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 
 export function PublicNav() {
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-[#faf8f5]/95 backdrop-blur">
-      <div className="w-full border-b border-zinc-200/80 text-xs text-zinc-600">
-        <div className="container mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2 sm:flex-row sm:items-center sm:justify-between">
+    <header className="sticky top-0 z-50 bg-[#f7f4ef]/95 backdrop-blur border-b border-zinc-200">
+      <div className="border-b border-zinc-200/80">
+        <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
           <p>1st floor, 58 Kolonakiou Str, Limassol, 4103</p>
-          <a href="tel:+35795505556" className="font-medium text-zinc-800 hover:underline">
+          <a href="tel:+35795505556" className="text-zinc-800 hover:text-black">
             +357 95505556
           </a>
         </div>
       </div>
 
-      <div className="container flex h-14 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="text-lg font-semibold tracking-tight text-zinc-900">
-          Fit Space
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+        <Link href="/" className="text-xl tracking-tight text-zinc-900">
+          FIT SPACE
         </Link>
-        <div className="hidden md:flex items-center gap-6 text-sm text-zinc-700">
-          <Link href="/" className="hover:text-zinc-900">О студии</Link>
-          <Link href="/trainers" className="hover:text-zinc-900">Тренеры</Link>
-          <Link href="/contacts" className="hover:text-zinc-900">Контакты</Link>
-        </div>
-        <Button asChild className="rounded-none bg-zinc-900 hover:bg-zinc-800">
-          <a href="https://example.com/booking" target="_blank" rel="noreferrer">Записаться</a>
-        </Button>
+
+        <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide text-zinc-700">
+          <Link href="/" className="hover:text-black">Studio</Link>
+          <Link href="/trainers" className="hover:text-black">Trainers</Link>
+          <Link href="/contacts" className="hover:text-black">Contacts</Link>
+        </nav>
+
+        <a
+          href="https://example.com/booking"
+          target="_blank"
+          rel="noreferrer"
+          className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
+        >
+          Book
+        </a>
       </div>
     </header>
   );

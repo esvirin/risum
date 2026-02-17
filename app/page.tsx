@@ -1,7 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { PublicNav } from "@/components/PublicNav";
-import { Card, CardContent } from "@/components/ui/card";
 import { SiteFooter } from "@/components/SiteFooter";
 
 const gallery = [
@@ -33,81 +31,92 @@ const gallery = [
 
 export default function HomePage() {
   return (
-    <div className="bg-[#faf8f5] text-zinc-900">
+    <div className="bg-[#f7f4ef] text-zinc-900">
       <PublicNav />
 
-      <section className="py-20 sm:py-28 border-b border-zinc-200/80">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <p className="uppercase tracking-[0.2em] text-xs text-zinc-500 mb-4">Fit Space Studio</p>
-          <h1 className="text-4xl sm:text-6xl font-semibold tracking-tight leading-tight max-w-4xl">
-            Пространство для тренировок, восстановления и сильного тела
-          </h1>
-          <p className="text-zinc-600 text-lg mt-6 max-w-2xl">
-            Современная фитнес-студия с групповыми и персональными тренировками. Записывайтесь онлайн или через приложение.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 mt-8">
-            <Button asChild className="h-11 px-7 rounded-none bg-zinc-900 hover:bg-zinc-800">
-              <a href="https://example.com/booking" target="_blank" rel="noreferrer">Онлайн запись</a>
-            </Button>
-            <Button asChild variant="outline" className="h-11 px-7 rounded-none border-zinc-300">
-              <a href="https://apps.apple.com" target="_blank" rel="noreferrer">Скачать приложение</a>
-            </Button>
+      <section className="border-b border-zinc-200">
+        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 grid gap-10 lg:grid-cols-[1.4fr_1fr] items-end">
+          <div className="space-y-8">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Risum Pilates Studio · Limassol</p>
+            <h1 className="text-4xl sm:text-6xl leading-[1.06] tracking-tight max-w-4xl">
+              Experience the premium Pilates lifestyle
+            </h1>
+            <p className="text-zinc-600 text-base sm:text-lg max-w-2xl">
+              Functional and reformer classes in an elegant studio space. Book online in seconds and manage your visits in the app.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <a href="https://example.com/booking" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center border border-zinc-900 bg-zinc-900 px-8 py-3 text-xs uppercase tracking-[0.18em] text-white hover:bg-zinc-800">
+                Book online
+              </a>
+              <a href="https://apps.apple.com" target="_blank" rel="noreferrer" className="inline-flex items-center justify-center border border-zinc-300 px-8 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 hover:border-zinc-900">
+                Mobile app
+              </a>
+            </div>
           </div>
+
+          <div className="aspect-[3/4] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${gallery[0].image})` }} />
         </div>
       </section>
 
-      <section className="py-16 border-b border-zinc-200/80">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-3xl font-semibold tracking-tight">О студии</h2>
-          <div className="grid gap-6 md:grid-cols-3 mt-8">
-            <Card className="rounded-none border-zinc-200 bg-white shadow-none">
-              <CardContent className="p-6">
-                <h3 className="font-medium text-lg">Персональный подход</h3>
-                <p className="text-zinc-600 mt-2">Планы тренировок под вашу цель: сила, выносливость, снижение веса, восстановление.</p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-none border-zinc-200 bg-white shadow-none">
-              <CardContent className="p-6">
-                <h3 className="font-medium text-lg">Тренеры-практики</h3>
-                <p className="text-zinc-600 mt-2">Команда сертифицированных тренеров с опытом в функциональном и силовом тренинге.</p>
-              </CardContent>
-            </Card>
-            <Card className="rounded-none border-zinc-200 bg-white shadow-none">
-              <CardContent className="p-6">
-                <h3 className="font-medium text-lg">Комфортная среда</h3>
-                <p className="text-zinc-600 mt-2">Чистое пространство, современное оборудование, удобная локация и понятное расписание.</p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-16 border-b border-zinc-200/80">
-        <div className="container mx-auto px-4 max-w-6xl">
-          <h2 className="text-3xl font-semibold tracking-tight">Фотографии студии</h2>
-          <p className="text-zinc-600 mt-2">Подборка ключевых зон Fit Space</p>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-8">
-            {gallery.map((item, idx) => (
-              <div
-                key={item.title}
-                className="aspect-[4/3] border border-zinc-200 bg-cover bg-center flex items-end p-4"
-                style={{ backgroundImage: `linear-gradient(to top, rgba(0,0,0,0.45), rgba(0,0,0,0.08)), url(${item.image})` }}
-              >
-                <span className="text-sm uppercase tracking-wider text-white">{String(idx + 1).padStart(2, "0")} — {item.title}</span>
+      <section className="border-b border-zinc-200">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+          <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">About studio</p>
+              <h2 className="text-3xl sm:text-4xl mt-4 tracking-tight">Designed around your progress</h2>
+            </div>
+            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8 text-zinc-700">
+              <div>
+                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">Personal approach</h3>
+                <p>Programs adapted to your goal: strength, mobility, posture and recovery.</p>
               </div>
+              <div>
+                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">Expert coaches</h3>
+                <p>Certified trainers with practical experience in reformer and functional training.</p>
+              </div>
+              <div>
+                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">Elegant atmosphere</h3>
+                <p>Light interior, premium equipment, calm energy and thoughtful class flow.</p>
+              </div>
+              <div>
+                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">Flexible schedule</h3>
+                <p>Morning, daytime and evening groups with easy online booking.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-zinc-200">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+          <div className="flex items-end justify-between mb-8">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Studio gallery</p>
+              <h2 className="text-3xl sm:text-4xl mt-3 tracking-tight">Interior & classes</h2>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {gallery.map((item, idx) => (
+              <article key={item.title} className="group">
+                <div className="aspect-[4/5] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${item.image})` }} />
+                <p className="mt-3 text-xs uppercase tracking-[0.14em] text-zinc-500 group-hover:text-zinc-800 transition">
+                  {String(idx + 1).padStart(2, "0")} · {item.title}
+                </p>
+              </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-16">
-        <div className="container mx-auto px-4 max-w-6xl grid gap-4 sm:grid-cols-2">
-          <Button asChild variant="outline" className="h-14 rounded-none border-zinc-300 justify-between px-6">
-            <Link href="/trainers">Страница тренеров <span>→</span></Link>
-          </Button>
-          <Button asChild variant="outline" className="h-14 rounded-none border-zinc-300 justify-between px-6">
-            <Link href="/contacts">Контакты и локация <span>→</span></Link>
-          </Button>
+      <section>
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 grid gap-4 sm:grid-cols-2">
+          <Link href="/trainers" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
+            Trainers <span>→</span>
+          </Link>
+          <Link href="/contacts" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
+            Contacts / Location <span>→</span>
+          </Link>
         </div>
       </section>
 
