@@ -15,8 +15,8 @@ export function PublicNav() {
       </div>
 
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
-        <Link href="/" className="text-xl tracking-tight text-zinc-900">
-          FIT SPACE
+        <Link href="/" className="inline-flex items-center">
+          <img src="/logo-fitspace.svg" alt="Fit Space" className="h-7 w-auto" />
         </Link>
 
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide text-zinc-700">
