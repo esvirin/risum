@@ -121,12 +121,14 @@ export default function HomePage() {
           <p className="text-zinc-600 max-w-3xl mt-3">{t.home.scheduleLead}</p>
 
           <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4">
-            <iframe
-              title="Class schedule"
-              src={altegioLinks.scheduleWidget}
-              className="w-full min-h-[620px] border border-zinc-200 bg-white"
-              loading="lazy"
-            />
+            <div className="mx-auto w-full max-w-[980px]">
+              <iframe
+                title="Class schedule"
+                src={altegioLinks.scheduleWidget}
+                className="w-full min-h-[620px] border border-zinc-200 bg-white"
+                loading="lazy"
+              />
+            </div>
           </div>
 
           <div className="mt-4">
