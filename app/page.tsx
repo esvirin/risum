@@ -12,31 +12,27 @@ import { useI18n } from "@/components/LanguageProvider";
 const gallery = [
   {
     titleKey: 0,
-    image: "/instagram/priority-1.jpg",
+    image: "/instagram/fit-1.jpg",
   },
   {
     titleKey: 1,
-    image: "/instagram/priority-2.jpg",
+    image: "/instagram/fit-2.jpg",
   },
   {
     titleKey: 2,
-    image: "/instagram/priority-3.jpg",
+    image: "/instagram/fit-3.jpg",
   },
   {
     titleKey: 3,
-    image: "/instagram/priority-4.jpg",
+    image: "/instagram/fit-4.jpg",
   },
   {
     titleKey: 4,
-    image: "/instagram/priority-5.jpg",
+    image: "/instagram/fit-5.jpg",
   },
   {
     titleKey: 5,
-    image: "/instagram/priority-6.jpg",
-  },
-  {
-    titleKey: 6,
-    image: "/instagram/priority-7.jpg",
+    image: "/instagram/fit-6.jpg",
   },
 ];
 
