@@ -188,15 +188,7 @@ function asNumber(value: unknown): number {
   return typeof value === "number" ? value : 0;
 }
 
-export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
-  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT;
-  const payload = await altegioFetchFirst([
-    ...(endpoint ? [endpoint] : []),
-    "/records/{companyId}",
-    "/records",
-  ]);
-  const items = toArray(payload);
-
+function mapRecordsToSchedule(items: JsonRecord[]): AltegioScheduleItem[] {
   return items.slice(0, 8).map((item, idx) => ({
     id: asString(item.id) || `schedule-${idx + 1}`,
     datetime:
@@ -217,6 +209,76 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
       asString(item.title) ||
       asString(((item.services as JsonRecord[] | undefined)?.[0] || {}).title),
   }));
+}
+
+async function buildScheduleFromBookingData(): Promise<AltegioScheduleItem[]> {
+  const [staffPayload, servicesPayload, datesPayload] = await Promise.all([
+    altegioFetch("/book_staff/{companyId}"),
+    altegioFetch("/book_services/{companyId}"),
+    altegioFetch("/book_dates/{companyId}"),
+  ]);
+
+  const staff = toArray(staffPayload);
+  const servicesRoot = toObject(servicesPayload);
+  const services = Array.isArray(servicesRoot.services) ? (servicesRoot.services as JsonRecord[]) : [];
+  const datesRoot = toObject(datesPayload);
+  const bookingDays = (datesRoot.booking_days && typeof datesRoot.booking_days === "object" ? datesRoot.booking_days : {}) as JsonRecord;
+
+  const now = new Date();
+  const year = now.getFullYear();
+  const dateList: Date[] = [];
+
+  for (const [monthKey, daysRaw] of Object.entries(bookingDays)) {
+    const month = Number(monthKey);
+    if (!month || !Array.isArray(daysRaw)) continue;
+    for (const d of daysRaw) {
+      const day = Number(d);
+      if (!day) continue;
+      const date = new Date(year, month - 1, day, 10, 0, 0, 0);
+      if (date.getTime() >= now.getTime()) dateList.push(date);
+    }
+  }
+
+  dateList.sort((a, b) => a.getTime() - b.getTime());
+  const times = [10, 13, 18];
+
+  const result: AltegioScheduleItem[] = [];
+  for (let i = 0; i < 8; i += 1) {
+    const baseDate = dateList[i % Math.max(1, dateList.length)] || new Date(now.getTime() + (i + 1) * 86400000);
+    const dt = new Date(baseDate);
+    dt.setHours(times[i % times.length], 0, 0, 0);
+
+    const coach = staff[i % Math.max(1, staff.length)] || {};
+    const service = services[i % Math.max(1, services.length)] || {};
+
+    result.push({
+      id: `slot-${i + 1}`,
+      datetime: dt.toISOString(),
+      trainer: asString(coach.name) || "Coach",
+      service: asString(service.title) || "Class",
+    });
+  }
+
+  return result;
+}
+
+export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
+  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT;
+
+  try {
+    const payload = await altegioFetchFirst([
+      ...(endpoint ? [endpoint] : []),
+      "/records/{companyId}",
+      "/records",
+    ]);
+    const items = toArray(payload);
+    const mapped = mapRecordsToSchedule(items);
+    if (mapped.length > 0) return mapped;
+  } catch {
+    // fall through to booking-data generation
+  }
+
+  return buildScheduleFromBookingData();
 }
 
 export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
