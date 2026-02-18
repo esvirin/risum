@@ -4,6 +4,7 @@ import Link from "next/link";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AltegioScheduleList } from "@/components/AltegioScheduleList";
+import { AltegioServicesList } from "@/components/AltegioServicesList";
 import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
 
@@ -129,6 +130,18 @@ export default function HomePage() {
 
           <div className="mt-4">
             <AltegioScheduleList />
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-zinc-200">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Altegio</p>
+          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">Services & prices</h2>
+          <p className="text-zinc-600 mt-3 max-w-3xl">Live catalog from Altegio service categories and pricing.</p>
+
+          <div className="mt-8">
+            <AltegioServicesList />
           </div>
         </div>
       </section>

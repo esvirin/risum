@@ -15,6 +15,26 @@ export type AltegioTrainerItem = {
   specialization: string;
 };
 
+export type AltegioCompanyProfile = {
+  title: string;
+  address: string;
+  phone: string;
+  email: string;
+  site: string;
+  timezone: string;
+  currency: string;
+  lat: string;
+  lon: string;
+};
+
+export type AltegioServiceItem = {
+  id: string;
+  title: string;
+  category: string;
+  priceFrom: string;
+  priceTo: string;
+};
+
 function getBaseUrl(): string {
   const raw = process.env.ALTEGIO_API_BASE_URL || "https://api.alteg.io";
   return raw.endsWith("/") ? raw.slice(0, -1) : raw;
@@ -96,8 +116,23 @@ function toArray(payload: unknown): JsonRecord[] {
   return [];
 }
 
+function toObject(payload: unknown): JsonRecord {
+  if (payload && typeof payload === "object") {
+    const record = payload as JsonRecord;
+    if (record.data && typeof record.data === "object" && !Array.isArray(record.data)) {
+      return record.data as JsonRecord;
+    }
+    return record;
+  }
+  return {};
+}
+
 function asString(value: unknown): string {
   return typeof value === "string" ? value : "";
+}
+
+function asNumber(value: unknown): number {
+  return typeof value === "number" ? value : 0;
 }
 
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
@@ -131,7 +166,7 @@ export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
   const items = toArray(payload);
 
   return items.slice(0, 12).map((item, idx) => ({
-    id: asString(item.id) || `trainer-${idx + 1}`,
+    id: String(item.id ?? `trainer-${idx + 1}`),
     name:
       asString(item.name) ||
       asString(item.full_name) ||
@@ -143,4 +178,49 @@ export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
       asString(item.description) ||
       asString(item.role),
   }));
+}
+
+export async function getAltegioCompanyProfile(): Promise<AltegioCompanyProfile> {
+  const endpoint = process.env.ALTEGIO_COMPANY_ENDPOINT || "/company/{companyId}";
+  const item = toObject(await altegioFetch(endpoint));
+
+  return {
+    title: asString(item.public_title) || asString(item.title),
+    address: asString(item.address),
+    phone: asString(item.phone),
+    email: asString(item.email),
+    site: asString(item.site),
+    timezone: asString(item.timezone_name),
+    currency: asString(item.currency_short_title),
+    lat: String(item.coordinate_lat ?? ""),
+    lon: String(item.coordinate_lon ?? ""),
+  };
+}
+
+export async function getAltegioServices(): Promise<AltegioServiceItem[]> {
+  const categoriesPayload = await altegioFetch(process.env.ALTEGIO_SERVICE_CATEGORIES_ENDPOINT || "/service_categories/{companyId}");
+  const servicesPayload = await altegioFetch(process.env.ALTEGIO_SERVICES_ENDPOINT || "/services/{companyId}");
+
+  const categories = toArray(categoriesPayload);
+  const services = toArray(servicesPayload);
+
+  const categoryMap = new Map<string, string>();
+  for (const cat of categories) {
+    const key = String(cat.id ?? "");
+    categoryMap.set(key, asString(cat.title));
+  }
+
+  return services.slice(0, 30).map((item, idx) => {
+    const categoryId = String(item.category_id ?? "");
+    const priceMin = asNumber(item.price_min);
+    const priceMax = asNumber(item.price_max);
+
+    return {
+      id: String(item.id ?? `service-${idx + 1}`),
+      title: asString(item.booking_title) || asString(item.title) || `Service ${idx + 1}`,
+      category: categoryMap.get(categoryId) || "",
+      priceFrom: priceMin > 0 ? String(priceMin) : "",
+      priceTo: priceMax > 0 ? String(priceMax) : "",
+    };
+  });
 }
