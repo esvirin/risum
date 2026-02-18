@@ -1,7 +1,7 @@
-const DEFAULT_BOOKING_URL = "https://n123456.alteg.io";
-const DEFAULT_CABINET_URL = "https://n123456.alteg.io/login";
-const DEFAULT_SCHEDULE_WIDGET_URL = "https://n123456.alteg.io/widget/calendar";
-const DEFAULT_TRAINERS_WIDGET_URL = "https://n123456.alteg.io/widget/staff";
+const DEFAULT_BOOKING_URL = "https://n1416681.alteg.io/";
+const DEFAULT_CABINET_URL = "https://n1416681.alteg.io/login";
+const DEFAULT_SCHEDULE_WIDGET_URL = "https://n1416681.alteg.io/widget/calendar";
+const DEFAULT_TRAINERS_WIDGET_URL = "https://n1416681.alteg.io/widget/staff";
 const DEFAULT_IOS_APP_URL = "https://apps.apple.com/app/altegio/id1477754250";
 const DEFAULT_ANDROID_APP_URL = "https://play.google.com/store/apps/details?id=com.yclients.mobile";
 
