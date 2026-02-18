@@ -36,15 +36,13 @@ Set public links/widgets in `.env`:
 ```bash
 NEXT_PUBLIC_ALTEGIO_BOOKING_URL=https://your-company.alteg.io
 NEXT_PUBLIC_ALTEGIO_CABINET_URL=https://your-company.alteg.io/login
-NEXT_PUBLIC_ALTEGIO_SCHEDULE_WIDGET_URL=https://your-company.alteg.io/widget/calendar
 NEXT_PUBLIC_ALTEGIO_TRAINERS_WIDGET_URL=https://your-company.alteg.io/widget/staff
 NEXT_PUBLIC_ALTEGIO_IOS_APP_URL=https://apps.apple.com/app/altegio/id1477754250
 NEXT_PUBLIC_ALTEGIO_ANDROID_APP_URL=https://play.google.com/store/apps/details?id=com.yclients.mobile
 ```
 
 Used in:
-- Home page schedule embed (`app/page.tsx`)
-- Trainers embed (`app/trainers/page.tsx`)
+- Trainers external link (`app/trainers/page.tsx`)
 - Navigation and CTA links (`components/PublicNav.tsx`, `app/page.tsx`)
 
 Server API requests (optional, used by `/api/altegio/*`):

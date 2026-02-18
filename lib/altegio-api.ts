@@ -80,10 +80,8 @@ async function getUserTokenByLogin(partnerToken: string): Promise<string> {
     return cachedUserToken;
   }
 
-  const login =
-    envValue("ALTEGIO_USER_LOGIN") || envValue("ALTEGIO_API_LOGIN") || envValue("API_LOGIN");
-  const password =
-    envValue("ALTEGIO_USER_PASSWORD") || envValue("ALTEGIO_API_PASSWORD") || envValue("API_PASSWORD");
+  const login = envValue("ALTEGIO_USER_LOGIN");
+  const password = envValue("ALTEGIO_USER_PASSWORD");
 
   if (!login || !password) return "";
 
@@ -114,8 +112,7 @@ async function getHeaders(): Promise<Headers> {
   const headers = new Headers();
   headers.set("Accept", "application/vnd.api.v2+json");
 
-  const partnerToken =
-    envValue("ALTEGIO_PARTNER_TOKEN") || envValue("ALTEGIO_API_TOKEN") || envValue("ALTEGIO_API_KEY");
+  const partnerToken = envValue("ALTEGIO_PARTNER_TOKEN");
 
   if (partnerToken) {
     const runtimeUserToken = await getUserTokenByLogin(partnerToken);
