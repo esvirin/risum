@@ -113,6 +113,23 @@ async function altegioFetch(pathOrUrl: string): Promise<unknown> {
   return res.json();
 }
 
+async function altegioFetchFirst(paths: string[]): Promise<unknown> {
+  let lastError: Error | null = null;
+
+  for (const p of paths) {
+    try {
+      return await altegioFetch(p);
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error("Unknown fetch error");
+      if (!/404/.test(lastError.message)) {
+        throw lastError;
+      }
+    }
+  }
+
+  throw lastError || new Error("Booking provider request failed");
+}
+
 function toArray(payload: unknown): JsonRecord[] {
   if (Array.isArray(payload)) return payload as JsonRecord[];
   if (payload && typeof payload === "object") {
@@ -145,8 +162,12 @@ function asNumber(value: unknown): number {
 }
 
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
-  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT || "/records/{companyId}";
-  const payload = await altegioFetch(endpoint);
+  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT;
+  const payload = await altegioFetchFirst([
+    ...(endpoint ? [endpoint] : []),
+    "/records/{companyId}",
+    "/records",
+  ]);
   const items = toArray(payload);
 
   return items.slice(0, 8).map((item, idx) => ({
@@ -160,18 +181,24 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
       asString(item.staff_name) ||
       asString(item.trainer_name) ||
       asString(item.master_name) ||
-      asString(item.employee_name),
+      asString(item.employee_name) ||
+      asString((item.staff as JsonRecord | undefined)?.name),
     service:
       asString(item.service_name) ||
       asString(item.activity_name) ||
       asString(item.service) ||
-      asString(item.title),
+      asString(item.title) ||
+      asString(((item.services as JsonRecord[] | undefined)?.[0] || {}).title),
   }));
 }
 
 export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
-  const endpoint = process.env.ALTEGIO_TRAINERS_ENDPOINT || "/staff/{companyId}";
-  const payload = await altegioFetch(endpoint);
+  const endpoint = process.env.ALTEGIO_TRAINERS_ENDPOINT;
+  const payload = await altegioFetchFirst([
+    ...(endpoint ? [endpoint] : []),
+    "/staff/{companyId}",
+    "/staff",
+  ]);
   const items = toArray(payload);
 
   return items.slice(0, 12).map((item, idx) => ({
