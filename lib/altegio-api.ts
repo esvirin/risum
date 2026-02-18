@@ -107,7 +107,7 @@ async function altegioFetch(pathOrUrl: string): Promise<unknown> {
   });
 
   if (!res.ok) {
-    throw new Error(`Altegio request failed: ${res.status}`);
+    throw new Error(`Booking provider request failed: ${res.status}`);
   }
 
   return res.json();

@@ -27,7 +27,7 @@ export default function TrainersPage() {
 
           <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4">
             <iframe
-              title="Altegio trainers"
+              title="Trainers"
               src={altegioLinks.trainersWidget}
               className="w-full min-h-[620px] border border-zinc-200 bg-white"
               loading="lazy"

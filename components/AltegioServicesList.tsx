@@ -37,7 +37,7 @@ export function AltegioServicesList() {
 
   return (
     <div className="border border-zinc-200 bg-[#f8f6f1] p-5 sm:p-6">
-      <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-4">Altegio · Services</p>
+      <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-4">Online booking · Services</p>
       {loading ? (
         <p className="text-sm text-zinc-500">Loading...</p>
       ) : items.length === 0 ? (

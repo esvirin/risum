@@ -6,7 +6,7 @@ export async function GET() {
     const data = await getAltegioBookformConfig();
     return NextResponse.json({ data });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown Altegio error";
+    const message = error instanceof Error ? error.message : "Unknown booking provider error";
     return NextResponse.json({ data: null, error: message }, { status: 502 });
   }
 }
