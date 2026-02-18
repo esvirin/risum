@@ -25,12 +25,12 @@ export default function TrainersPage() {
           <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.trainers.altegioTitle}</h2>
           <p className="text-zinc-600 max-w-2xl mt-3">{t.trainers.altegioLead}</p>
 
-          <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4">
-            <div className="mx-auto w-full max-w-[980px]">
+          <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4 overflow-x-hidden">
+            <div className="mx-auto w-full max-w-[600px]">
               <iframe
                 title="Trainers"
                 src={altegioLinks.trainersWidget}
-                className="w-full min-h-[620px] border border-zinc-200 bg-white"
+                className="mx-auto block h-[720px] w-full max-w-[600px] border border-zinc-200 bg-white"
                 loading="lazy"
               />
             </div>
