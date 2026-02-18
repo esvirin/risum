@@ -7,6 +7,13 @@ function envValue(key: string): string {
   return typeof value === "string" ? value.trim() : "";
 }
 
+function getCompanyId(): string {
+  const raw = envValue("ALTEGIO_COMPANY_ID");
+  // align with the active Fit Space location in max@risumcyprus.eu cabinet
+  if (raw === "1348179") return "756580";
+  return raw || "756580";
+}
+
 export type AltegioScheduleItem = {
   id: string;
   datetime: string;
@@ -57,7 +64,7 @@ function getBaseUrl(): string {
 function resolveEndpoint(pathOrUrl: string): string {
   if (pathOrUrl.startsWith("http")) return pathOrUrl;
 
-  const companyId = envValue("ALTEGIO_COMPANY_ID");
+  const companyId = getCompanyId();
   const withCompany = pathOrUrl.replaceAll("{companyId}", companyId);
   const path = withCompany.startsWith("/") ? withCompany : `/${withCompany}`;
   const apiPath = path.startsWith("/api/") ? path : `/api/v1${path}`;
@@ -126,7 +133,7 @@ async function getHeaders(): Promise<Headers> {
 }
 
 async function altegioFetch(pathOrUrl: string): Promise<unknown> {
-  const companyId = envValue("ALTEGIO_COMPANY_ID");
+  const companyId = getCompanyId();
   const url = new URL(resolveEndpoint(pathOrUrl));
   if (companyId && !url.searchParams.has("company_id")) {
     url.searchParams.set("company_id", companyId);
