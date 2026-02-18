@@ -134,12 +134,16 @@ export default function HomePage() {
           <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.accountTitle}</h2>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <a href={altegioLinks.iosApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-              {t.home.iosApp} <span>→</span>
-            </a>
-            <a href={altegioLinks.androidApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-              {t.home.androidApp} <span>→</span>
-            </a>
+            {altegioLinks.iosApp ? (
+              <a href={altegioLinks.iosApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
+                {t.home.iosApp} <span>→</span>
+              </a>
+            ) : null}
+            {altegioLinks.androidApp ? (
+              <a href={altegioLinks.androidApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
+                {t.home.androidApp} <span>→</span>
+              </a>
+            ) : null}
             <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
               {t.home.personalCabinet} <span>→</span>
             </a>

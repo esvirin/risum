@@ -23,18 +23,25 @@ function getBaseUrl(): string {
 function resolveEndpoint(pathOrUrl: string): string {
   if (pathOrUrl.startsWith("http")) return pathOrUrl;
 
-  const path = pathOrUrl.startsWith("/") ? pathOrUrl : `/${pathOrUrl}`;
+  const companyId = process.env.ALTEGIO_COMPANY_ID || "";
+  const withCompany = pathOrUrl.replaceAll("{companyId}", companyId);
+  const path = withCompany.startsWith("/") ? withCompany : `/${withCompany}`;
   const apiPath = path.startsWith("/api/") ? path : `/api/v1${path}`;
   return `${getBaseUrl()}${apiPath}`;
 }
 
 function getHeaders(): Headers {
   const headers = new Headers();
-  headers.set("Accept", "application/json");
+  headers.set("Accept", "application/vnd.api.v2+json");
 
   const partnerToken =
     process.env.ALTEGIO_PARTNER_TOKEN || process.env.ALTEGIO_API_TOKEN || process.env.ALTEGIO_API_KEY;
   const userToken = process.env.ALTEGIO_USER_TOKEN;
+
+  if (partnerToken && userToken) {
+    headers.set("Authorization", `Bearer ${partnerToken}, User ${userToken}`);
+    return headers;
+  }
 
   if (partnerToken) {
     headers.set("Authorization", `Bearer ${partnerToken}`);
@@ -94,7 +101,7 @@ function asString(value: unknown): string {
 }
 
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
-  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT || "/bookings";
+  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT || "/records/{companyId}";
   const payload = await altegioFetch(endpoint);
   const items = toArray(payload);
 
@@ -119,7 +126,7 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
 }
 
 export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
-  const endpoint = process.env.ALTEGIO_TRAINERS_ENDPOINT || "/staff";
+  const endpoint = process.env.ALTEGIO_TRAINERS_ENDPOINT || "/staff/{companyId}";
   const payload = await altegioFetch(endpoint);
   const items = toArray(payload);
 
