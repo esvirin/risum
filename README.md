@@ -29,6 +29,24 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Altegio Integration
+
+Set public links/widgets in `.env`:
+
+```bash
+NEXT_PUBLIC_ALTEGIO_BOOKING_URL=https://your-company.alteg.io
+NEXT_PUBLIC_ALTEGIO_CABINET_URL=https://your-company.alteg.io/login
+NEXT_PUBLIC_ALTEGIO_SCHEDULE_WIDGET_URL=https://your-company.alteg.io/widget/calendar
+NEXT_PUBLIC_ALTEGIO_TRAINERS_WIDGET_URL=https://your-company.alteg.io/widget/staff
+NEXT_PUBLIC_ALTEGIO_IOS_APP_URL=https://apps.apple.com/app/altegio/id1477754250
+NEXT_PUBLIC_ALTEGIO_ANDROID_APP_URL=https://play.google.com/store/apps/details?id=com.yclients.mobile
+```
+
+Used in:
+- Home page schedule embed (`app/page.tsx`)
+- Trainers embed (`app/trainers/page.tsx`)
+- Navigation and CTA links (`components/PublicNav.tsx`, `app/page.tsx`)
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

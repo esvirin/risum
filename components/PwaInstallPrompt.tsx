@@ -4,35 +4,38 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
+
+function isStandaloneMode(): boolean {
+  if (typeof window === "undefined") return false;
+  const nav = navigator as Navigator & { standalone?: boolean };
+  return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
+}
+
 export function PwaInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
-  const [isAppInstalled, setIsAppInstalled] = useState(false);
+  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
+  const isAppInstalled = isStandaloneMode();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
+      const event = e as BeforeInstallPromptEvent;
       e.preventDefault();
-      setDeferredPrompt(e);
-      // Check if the app is already installed
-      if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
-        setIsAppInstalled(true);
-      }
+      setDeferredPrompt(event);
+    };
+
+    const handleAppInstalled = () => {
+      setDeferredPrompt(null);
     };
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-
-    // Check if the app is launched in standalone mode (PWA installed)
-    if (window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone) {
-      setIsAppInstalled(true);
-    }
-
-    // Event listener for when the app is installed
-    window.addEventListener('appinstalled', () => {
-      setIsAppInstalled(true);
-    });
-
+    window.addEventListener("appinstalled", handleAppInstalled);
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
     };
   }, []);
 
