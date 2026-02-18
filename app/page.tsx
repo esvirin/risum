@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { AltegioScheduleList } from "@/components/AltegioScheduleList";
 import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
 
@@ -131,6 +132,7 @@ export default function HomePage() {
             className="w-full min-h-[620px] border border-zinc-200 bg-white"
             loading="lazy"
           />
+          <AltegioScheduleList />
         </div>
       </section>
 

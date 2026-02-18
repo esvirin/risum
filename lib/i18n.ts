@@ -33,12 +33,15 @@ export const translations = {
       scheduleBadge: "Altegio",
       scheduleTitle: "Расписание занятий",
       scheduleLead: "Актуальное расписание из Altegio: выберите занятие и забронируйте слот в пару кликов.",
+      scheduleApiTitle: "Ближайшие занятия (API)",
       accountBadge: "Аккаунт",
       accountTitle: "Управляйте записями в Altegio",
       iosApp: "iOS приложение",
       androidApp: "Android приложение",
       trainersLink: "Тренеры",
       contactsLink: "Контакты / Локация",
+      loading: "Загрузка...",
+      noData: "Данные пока недоступны",
       galleryTitles: [
         "Главная тренировочная зона",
         "Функциональная зона",
@@ -55,6 +58,9 @@ export const translations = {
       altegioBadge: "Altegio",
       altegioTitle: "Тренеры в виджете записи",
       altegioLead: "Актуальный состав тренеров и доступные слоты подтягиваются из Altegio в реальном времени.",
+      altegioApiTitle: "Тренеры (API)",
+      loading: "Загрузка...",
+      noData: "Данные пока недоступны",
       cards: [
         {
           name: "Анна Королёва",
@@ -117,12 +123,15 @@ export const translations = {
       scheduleBadge: "Altegio",
       scheduleTitle: "Class schedule",
       scheduleLead: "Live schedule from Altegio: choose a class and reserve your spot in a few clicks.",
+      scheduleApiTitle: "Upcoming classes (API)",
       accountBadge: "Account",
       accountTitle: "Manage everything in Altegio",
       iosApp: "iOS app",
       androidApp: "Android app",
       trainersLink: "Trainers",
       contactsLink: "Contacts / Location",
+      loading: "Loading...",
+      noData: "Data is currently unavailable",
       galleryTitles: [
         "Main training zone",
         "Functional area",
@@ -139,6 +148,9 @@ export const translations = {
       altegioBadge: "Altegio",
       altegioTitle: "Coaches in booking widget",
       altegioLead: "Live trainer lineup and available slots are synced from Altegio in real time.",
+      altegioApiTitle: "Coaches (API)",
+      loading: "Loading...",
+      noData: "Data is currently unavailable",
       cards: [
         {
           name: "Anna Koroleva",

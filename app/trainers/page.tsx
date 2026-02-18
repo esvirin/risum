@@ -2,6 +2,7 @@
 
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { AltegioTrainersList } from "@/components/AltegioTrainersList";
 import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
 
@@ -54,6 +55,7 @@ export default function TrainersPage() {
             className="w-full min-h-[620px] border border-zinc-200 bg-white"
             loading="lazy"
           />
+          <AltegioTrainersList />
         </section>
       </main>
       <SiteFooter />

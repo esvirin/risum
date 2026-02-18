@@ -47,6 +47,26 @@ Used in:
 - Trainers embed (`app/trainers/page.tsx`)
 - Navigation and CTA links (`components/PublicNav.tsx`, `app/page.tsx`)
 
+Server API requests (optional, used by `/api/altegio/*`):
+
+```bash
+# Base URL (project uses your .env value, ex: https://api.alteg.io)
+ALTEGIO_API_BASE_URL=https://api.alteg.io
+
+# Preferred keys from this project
+ALTEGIO_PARTNER_TOKEN=...
+ALTEGIO_USER_TOKEN=...
+ALTEGIO_COMPANY_ID=...
+
+# Optional login/password fallback
+ALTEGIO_USER_LOGIN=...
+ALTEGIO_USER_PASSWORD=...
+
+# Endpoints (can be absolute URL or path)
+ALTEGIO_SCHEDULE_ENDPOINT=/bookings
+ALTEGIO_TRAINERS_ENDPOINT=/staff
+```
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.

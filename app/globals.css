@@ -4,6 +4,8 @@
 
 @layer base {
     :root {
+        --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        --font-display: Georgia, "Times New Roman", serif;
         /* 
       Pilates.com Inspired Theme: 
       Clean, minimal, light, with nature-inspired greens or soft neutrals.
