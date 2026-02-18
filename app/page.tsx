@@ -113,18 +113,23 @@ export default function HomePage() {
       </section>
 
       <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 space-y-6">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
           <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.scheduleBadge}</p>
           <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.scheduleTitle}</h2>
-          <p className="text-zinc-600 max-w-3xl">{t.home.scheduleLead}</p>
+          <p className="text-zinc-600 max-w-3xl mt-3">{t.home.scheduleLead}</p>
 
-          <iframe
-            title="Altegio class schedule"
-            src={altegioLinks.scheduleWidget}
-            className="w-full min-h-[620px] border border-zinc-200 bg-white"
-            loading="lazy"
-          />
-          <AltegioScheduleList />
+          <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4">
+            <iframe
+              title="Altegio class schedule"
+              src={altegioLinks.scheduleWidget}
+              className="w-full min-h-[620px] border border-zinc-200 bg-white"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="mt-4">
+            <AltegioScheduleList />
+          </div>
         </div>
       </section>
 

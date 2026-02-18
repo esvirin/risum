@@ -38,18 +38,18 @@ export function AltegioTrainersList() {
   }, []);
 
   return (
-    <div className="border border-zinc-200 bg-white p-5">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500 mb-4">{t.trainers.altegioApiTitle}</p>
+    <div className="border border-zinc-200 bg-[#f8f6f1] p-5 sm:p-6">
+      <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-4">{t.trainers.altegioApiTitle}</p>
       {loading ? (
         <p className="text-sm text-zinc-500">{t.trainers.loading}</p>
       ) : items.length === 0 ? (
         <p className="text-sm text-zinc-500">{t.trainers.noData}</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="grid gap-3 sm:grid-cols-2">
           {items.map((item) => (
-            <li key={item.id} className="border-b border-zinc-100 pb-3 last:border-b-0 last:pb-0">
-              <p className="text-sm font-medium text-zinc-900">{item.name || "-"}</p>
-              <p className="text-xs uppercase tracking-[0.12em] text-zinc-500 mt-1">{item.specialization || "-"}</p>
+            <li key={item.id} className="border border-zinc-200 bg-white p-4">
+              <p className="font-display text-2xl leading-[0.95] tracking-tight text-zinc-900">{item.name || "-"}</p>
+              <p className="text-[11px] uppercase tracking-[0.14em] text-zinc-500 mt-2">{item.specialization || "-"}</p>
             </li>
           ))}
         </ul>

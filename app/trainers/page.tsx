@@ -41,18 +41,23 @@ export default function TrainersPage() {
           ))}
         </div>
 
-        <section className="mt-16 space-y-6 border-t border-zinc-200 pt-12">
+        <section className="mt-16 border-t border-zinc-200 pt-12">
           <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.trainers.altegioBadge}</p>
           <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.trainers.altegioTitle}</h2>
-          <p className="text-zinc-600 max-w-2xl">{t.trainers.altegioLead}</p>
+          <p className="text-zinc-600 max-w-2xl mt-3">{t.trainers.altegioLead}</p>
 
-          <iframe
-            title="Altegio trainers"
-            src={altegioLinks.trainersWidget}
-            className="w-full min-h-[620px] border border-zinc-200 bg-white"
-            loading="lazy"
-          />
-          <AltegioTrainersList />
+          <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4">
+            <iframe
+              title="Altegio trainers"
+              src={altegioLinks.trainersWidget}
+              className="w-full min-h-[620px] border border-zinc-200 bg-white"
+              loading="lazy"
+            />
+          </div>
+
+          <div className="mt-4">
+            <AltegioTrainersList />
+          </div>
         </section>
       </main>
       <SiteFooter />
