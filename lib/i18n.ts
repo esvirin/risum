@@ -49,6 +49,7 @@ export const translations = {
         "Групповое занятие",
         "Тренировка core",
         "Атмосфера студии",
+        "Студийный момент",
       ],
     },
     trainers: {
@@ -139,6 +140,7 @@ export const translations = {
         "Group movement class",
         "Core training",
         "Studio atmosphere",
+        "Studio moment",
       ],
     },
     trainers: {
