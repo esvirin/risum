@@ -145,6 +145,24 @@ export default function HomePage() {
       </section>
 
       <section className="border-b border-zinc-200">
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.lagreeBadge}</p>
+            <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.lagreeTitle}</h2>
+            <p className="text-zinc-600 mt-4 max-w-3xl">{t.home.lagreeLead}</p>
+          </div>
+
+          <div className="border border-zinc-200 bg-[#f8f6f1] p-6">
+            <ul className="space-y-3 text-sm text-zinc-700">
+              <li>• {t.home.lagreePoint1}</li>
+              <li>• {t.home.lagreePoint2}</li>
+              <li>• {t.home.lagreePoint3}</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-zinc-200">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
           <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.accountBadge}</p>
           <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.accountTitle}</h2>
