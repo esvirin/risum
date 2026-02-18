@@ -12,27 +12,27 @@ import { useI18n } from "@/components/LanguageProvider";
 const gallery = [
   {
     titleKey: 0,
-    image: "https://www.pilates.com/static/8fc3ce7eeb458d0cd82f31e714fc5a73/f2fae/banner1.jpg",
+    image: "/instagram/studio-1.jpg",
   },
   {
     titleKey: 1,
-    image: "https://www.pilates.com/static/f61896851f0508b569a82a48a2b05f07/ab438/banner2.jpg",
+    image: "/instagram/studio-2.jpg",
   },
   {
     titleKey: 2,
-    image: "https://www.pilates.com/static/e8eee38f6523156190cada91d33e6fba/ab438/2404_web-banner_1490x1064.jpg",
+    image: "/instagram/studio-3.jpg",
   },
   {
     titleKey: 3,
-    image: "https://www.pilates.com/static/38e1023fac3b5b5c8329bfac34d1f665/97ce3/pilates-1.jpg",
+    image: "/instagram/studio-4.jpg",
   },
   {
     titleKey: 4,
-    image: "https://www.pilates.com/static/55b104e7f0747900592b7fd937e12641/97ce3/corealign.jpg",
+    image: "/instagram/studio-5.jpg",
   },
   {
     titleKey: 5,
-    image: "https://www.pilates.com/static/bbe03475b8502a7e90aada7bab99dc99/ac7a2/desktop-2.jpg",
+    image: "/instagram/studio-6.jpg",
   },
 ];
 
