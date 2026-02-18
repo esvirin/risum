@@ -12,15 +12,15 @@ export default function ContactsPage() {
       <PublicNav />
       <main className="mx-auto max-w-6xl px-4 py-14 sm:py-20 space-y-12">
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.contacts.badge}</p>
-          <h1 className="font-display text-5xl sm:text-6xl leading-[0.95] tracking-tight mt-4">{t.contacts.title}</h1>
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.contacts.badge}</p>
+          <h1 className="mt-4 font-display text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.contacts.title}</h1>
         </div>
 
-        <section className="grid gap-8 lg:grid-cols-[1fr_1.2fr] items-start">
-          <div className="space-y-7">
+        <section className="grid gap-8 lg:grid-cols-[1fr_1.2fr] items-start border-t border-zinc-200 pt-10">
+          <div className="space-y-8">
             <div>
               <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500 mb-2">{t.contacts.phone}</p>
-              <a href="tel:+35795505556" className="text-2xl tracking-tight hover:underline">+357 95505556</a>
+              <a href="tel:+35795505556" className="font-display text-4xl leading-[0.95] hover:underline">+357 95505556</a>
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500 mb-2">{t.contacts.address}</p>

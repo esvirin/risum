@@ -42,16 +42,15 @@ export default function HomePage() {
       <PublicNav />
 
       <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-16 sm:py-24 grid gap-10 lg:grid-cols-[1.4fr_1fr] items-end">
-          <div className="space-y-8">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.home.badge}</p>
-            <h1 className="font-display text-5xl sm:text-7xl leading-[0.95] tracking-tight max-w-4xl">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20 grid gap-10 lg:grid-cols-[1.35fr_1fr] items-end">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.badge}</p>
+            <h1 className="mt-6 font-display text-[54px] leading-[0.9] tracking-tight sm:text-[86px] max-w-4xl">
               {t.home.title}
             </h1>
-            <p className="text-zinc-600 text-base sm:text-lg max-w-2xl">
-              {t.home.lead}
-            </p>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <p className="mt-7 text-zinc-600 text-base sm:text-lg max-w-2xl leading-relaxed">{t.home.lead}</p>
+
+            <div className="mt-9 flex flex-col sm:flex-row gap-3">
               <a href={altegioLinks.booking} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center border border-zinc-900 bg-zinc-900 px-8 py-3 text-xs uppercase tracking-[0.18em] text-white hover:bg-zinc-800">
                 {t.home.bookOnline}
               </a>
@@ -67,27 +66,28 @@ export default function HomePage() {
 
       <section className="border-b border-zinc-200">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <div className="grid gap-10 lg:grid-cols-[1fr_2fr]">
+          <div className="grid gap-10 lg:grid-cols-[0.9fr_2fr]">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.home.aboutBadge}</p>
-              <h2 className="font-display text-4xl sm:text-5xl mt-4 leading-[0.95] tracking-tight">{t.home.aboutTitle}</h2>
+              <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.aboutBadge}</p>
+              <h2 className="mt-4 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.aboutTitle}</h2>
             </div>
-            <div className="grid sm:grid-cols-2 gap-x-10 gap-y-8 text-zinc-700">
-              <div>
-                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">{t.home.featurePersonalTitle}</h3>
-                <p>{t.home.featurePersonalText}</p>
+
+            <div className="grid sm:grid-cols-2 border border-zinc-200 bg-[#f8f6f1]">
+              <div className="p-7 border-b sm:border-b-0 sm:border-r border-zinc-200">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">01 · {t.home.featurePersonalTitle}</p>
+                <p className="text-zinc-700 leading-relaxed">{t.home.featurePersonalText}</p>
               </div>
-              <div>
-                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">{t.home.featureCoachesTitle}</h3>
-                <p>{t.home.featureCoachesText}</p>
+              <div className="p-7 border-b sm:border-b-0 border-zinc-200">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">02 · {t.home.featureCoachesTitle}</p>
+                <p className="text-zinc-700 leading-relaxed">{t.home.featureCoachesText}</p>
               </div>
-              <div>
-                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">{t.home.featureAtmosphereTitle}</h3>
-                <p>{t.home.featureAtmosphereText}</p>
+              <div className="p-7 border-t border-zinc-200 sm:border-r">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">03 · {t.home.featureAtmosphereTitle}</p>
+                <p className="text-zinc-700 leading-relaxed">{t.home.featureAtmosphereText}</p>
               </div>
-              <div>
-                <h3 className="uppercase text-xs tracking-[0.16em] text-zinc-500 mb-3">{t.home.featureScheduleTitle}</h3>
-                <p>{t.home.featureScheduleText}</p>
+              <div className="p-7 border-t border-zinc-200">
+                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">04 · {t.home.featureScheduleTitle}</p>
+                <p className="text-zinc-700 leading-relaxed">{t.home.featureScheduleText}</p>
               </div>
             </div>
           </div>
@@ -96,18 +96,14 @@ export default function HomePage() {
 
       <section className="border-b border-zinc-200">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.home.galleryBadge}</p>
-              <h2 className="font-display text-4xl sm:text-5xl mt-3 leading-[0.95] tracking-tight">{t.home.galleryTitle}</h2>
-            </div>
-          </div>
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.galleryBadge}</p>
+          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.galleryTitle}</h2>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
             {gallery.map((item, idx) => (
-              <article key={item.titleKey} className="group">
-                <div className="aspect-[4/5] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${item.image})` }} />
-                <p className="mt-3 text-xs uppercase tracking-[0.14em] text-zinc-500 group-hover:text-zinc-800 transition">
+              <article key={item.titleKey} className={`group ${idx === 0 ? "md:col-span-2" : ""}`}>
+                <div className={`border border-zinc-200 bg-cover bg-center ${idx === 0 ? "aspect-[16/8]" : "aspect-[4/5]"}`} style={{ backgroundImage: `url(${item.image})` }} />
+                <p className="mt-3 text-xs uppercase tracking-[0.16em] text-zinc-500 group-hover:text-zinc-900 transition">
                   {String(idx + 1).padStart(2, "0")} · {t.home.galleryTitles[item.titleKey]}
                 </p>
               </article>
@@ -118,13 +114,9 @@ export default function HomePage() {
 
       <section className="border-b border-zinc-200">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 space-y-6">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.home.scheduleBadge}</p>
-            <h2 className="font-display text-4xl sm:text-5xl mt-3 leading-[0.95] tracking-tight">{t.home.scheduleTitle}</h2>
-            <p className="text-zinc-600 mt-3 max-w-3xl">
-              {t.home.scheduleLead}
-            </p>
-          </div>
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.scheduleBadge}</p>
+          <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.scheduleTitle}</h2>
+          <p className="text-zinc-600 max-w-3xl">{t.home.scheduleLead}</p>
 
           <iframe
             title="Altegio class schedule"
@@ -138,14 +130,10 @@ export default function HomePage() {
 
       <section className="border-b border-zinc-200">
         <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <div className="flex items-end justify-between mb-8">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">{t.home.accountBadge}</p>
-              <h2 className="font-display text-4xl sm:text-5xl mt-3 leading-[0.95] tracking-tight">{t.home.accountTitle}</h2>
-            </div>
-          </div>
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.accountBadge}</p>
+          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.accountTitle}</h2>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
             <a href={altegioLinks.iosApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
               {t.home.iosApp} <span>→</span>
             </a>
