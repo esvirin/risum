@@ -15,7 +15,7 @@ export default function TrainersPage() {
       <PublicNav />
       <main className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
         <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.trainers.badge}</p>
-        <h1 className="mt-4 font-display text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.trainers.title}</h1>
+        <h1 className="mt-4 text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.trainers.title}</h1>
         <p className="mt-5 text-zinc-600 max-w-2xl">{t.trainers.lead}</p>
 
         <AltegioTrainersGrid />

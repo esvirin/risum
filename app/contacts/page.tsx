@@ -14,7 +14,7 @@ export default function ContactsPage() {
       <main className="mx-auto max-w-6xl px-4 py-14 sm:py-20 space-y-12">
         <div>
           <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.contacts.badge}</p>
-          <h1 className="mt-4 font-display text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.contacts.title}</h1>
+          <h1 className="mt-4 text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.contacts.title}</h1>
         </div>
 
         <section className="grid gap-8 lg:grid-cols-[1fr_1.2fr] items-start border-t border-zinc-200 pt-10">

@@ -51,7 +51,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20 grid gap-10 lg:grid-cols-[1.35fr_1fr] items-end">
           <div>
             <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.badge}</p>
-            <h1 className="mt-6 font-display text-[54px] leading-[0.9] tracking-tight sm:text-[86px] max-w-4xl">
+            <h1 className="mt-6 text-[54px] leading-[0.9] tracking-tight sm:text-[86px] max-w-4xl">
               {t.home.title}
             </h1>
             <p className="mt-7 text-zinc-600 text-base sm:text-lg max-w-2xl leading-relaxed">{t.home.lead}</p>
