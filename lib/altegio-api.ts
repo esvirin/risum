@@ -2,6 +2,11 @@ import "server-only";
 
 type JsonRecord = Record<string, unknown>;
 
+function envValue(key: string): string {
+  const value = process.env[key];
+  return typeof value === "string" ? value.trim() : "";
+}
+
 export type AltegioScheduleItem = {
   id: string;
   datetime: string;
@@ -45,14 +50,14 @@ export type AltegioBookformConfig = {
 };
 
 function getBaseUrl(): string {
-  const raw = process.env.ALTEGIO_API_BASE_URL || "https://api.alteg.io";
+  const raw = envValue("ALTEGIO_API_BASE_URL") || "https://api.alteg.io";
   return raw.endsWith("/") ? raw.slice(0, -1) : raw;
 }
 
 function resolveEndpoint(pathOrUrl: string): string {
   if (pathOrUrl.startsWith("http")) return pathOrUrl;
 
-  const companyId = process.env.ALTEGIO_COMPANY_ID || "";
+  const companyId = envValue("ALTEGIO_COMPANY_ID");
   const withCompany = pathOrUrl.replaceAll("{companyId}", companyId);
   const path = withCompany.startsWith("/") ? withCompany : `/${withCompany}`;
   const apiPath = path.startsWith("/api/") ? path : `/api/v1${path}`;
@@ -69,9 +74,9 @@ async function getUserTokenByLogin(partnerToken: string): Promise<string> {
   }
 
   const login =
-    process.env.ALTEGIO_USER_LOGIN || process.env.ALTEGIO_API_LOGIN || process.env.API_LOGIN;
+    envValue("ALTEGIO_USER_LOGIN") || envValue("ALTEGIO_API_LOGIN") || envValue("API_LOGIN");
   const password =
-    process.env.ALTEGIO_USER_PASSWORD || process.env.ALTEGIO_API_PASSWORD || process.env.API_PASSWORD;
+    envValue("ALTEGIO_USER_PASSWORD") || envValue("ALTEGIO_API_PASSWORD") || envValue("API_PASSWORD");
 
   if (!login || !password) return "";
 
@@ -103,11 +108,11 @@ async function getHeaders(): Promise<Headers> {
   headers.set("Accept", "application/vnd.api.v2+json");
 
   const partnerToken =
-    process.env.ALTEGIO_PARTNER_TOKEN || process.env.ALTEGIO_API_TOKEN || process.env.ALTEGIO_API_KEY;
+    envValue("ALTEGIO_PARTNER_TOKEN") || envValue("ALTEGIO_API_TOKEN") || envValue("ALTEGIO_API_KEY");
 
   if (partnerToken) {
     const runtimeUserToken = await getUserTokenByLogin(partnerToken);
-    const userToken = runtimeUserToken || process.env.ALTEGIO_USER_TOKEN || "";
+    const userToken = runtimeUserToken || envValue("ALTEGIO_USER_TOKEN") || "";
     if (userToken) {
       headers.set("Authorization", `Bearer ${partnerToken}, User ${userToken}`);
       return headers;
@@ -121,7 +126,7 @@ async function getHeaders(): Promise<Headers> {
 }
 
 async function altegioFetch(pathOrUrl: string): Promise<unknown> {
-  const companyId = process.env.ALTEGIO_COMPANY_ID;
+  const companyId = envValue("ALTEGIO_COMPANY_ID");
   const url = new URL(resolveEndpoint(pathOrUrl));
   if (companyId && !url.searchParams.has("company_id")) {
     url.searchParams.set("company_id", companyId);
@@ -263,7 +268,7 @@ async function buildScheduleFromBookingData(): Promise<AltegioScheduleItem[]> {
 }
 
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
-  const endpoint = process.env.ALTEGIO_SCHEDULE_ENDPOINT;
+  const endpoint = envValue("ALTEGIO_SCHEDULE_ENDPOINT");
 
   try {
     const payload = await altegioFetchFirst([
@@ -282,7 +287,7 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
 }
 
 export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
-  const endpoint = process.env.ALTEGIO_TRAINERS_ENDPOINT;
+  const endpoint = envValue("ALTEGIO_TRAINERS_ENDPOINT");
   const payload = await altegioFetchFirst([
     ...(endpoint ? [endpoint] : []),
     "/staff/{companyId}",
@@ -306,7 +311,7 @@ export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
 }
 
 export async function getAltegioCompanyProfile(): Promise<AltegioCompanyProfile> {
-  const endpoint = process.env.ALTEGIO_COMPANY_ENDPOINT || "/company/{companyId}";
+  const endpoint = envValue("ALTEGIO_COMPANY_ENDPOINT") || "/company/{companyId}";
   const item = toObject(await altegioFetch(endpoint));
 
   return {
@@ -323,7 +328,7 @@ export async function getAltegioCompanyProfile(): Promise<AltegioCompanyProfile>
 }
 
 export async function getAltegioBookformConfig(): Promise<AltegioBookformConfig> {
-  const endpoint = process.env.ALTEGIO_BOOKFORM_ENDPOINT || "/bookform/{companyId}";
+  const endpoint = envValue("ALTEGIO_BOOKFORM_ENDPOINT") || "/bookform/{companyId}";
   const item = toObject(await altegioFetch(endpoint));
   const style = (item.style && typeof item.style === "object" ? item.style : {}) as JsonRecord;
   const rawSteps = Array.isArray(item.steps) ? (item.steps as JsonRecord[]) : [];
@@ -343,8 +348,8 @@ export async function getAltegioBookformConfig(): Promise<AltegioBookformConfig>
 }
 
 export async function getAltegioServices(): Promise<AltegioServiceItem[]> {
-  const categoriesPayload = await altegioFetch(process.env.ALTEGIO_SERVICE_CATEGORIES_ENDPOINT || "/service_categories/{companyId}");
-  const servicesPayload = await altegioFetch(process.env.ALTEGIO_SERVICES_ENDPOINT || "/services/{companyId}");
+  const categoriesPayload = await altegioFetch(envValue("ALTEGIO_SERVICE_CATEGORIES_ENDPOINT") || "/service_categories/{companyId}");
+  const servicesPayload = await altegioFetch(envValue("ALTEGIO_SERVICES_ENDPOINT") || "/services/{companyId}");
 
   const categories = toArray(categoriesPayload);
   const services = toArray(servicesPayload);

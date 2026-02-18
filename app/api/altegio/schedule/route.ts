@@ -7,6 +7,6 @@ export async function GET() {
     return NextResponse.json({ data, source: "api" });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown booking provider error";
-    return NextResponse.json({ data: [], error: message }, { status: 502 });
+    return NextResponse.json({ data: [], source: "api", error: message }, { status: 502 });
   }
 }
