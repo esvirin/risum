@@ -35,6 +35,15 @@ export type AltegioServiceItem = {
   priceTo: string;
 };
 
+export type AltegioBookformConfig = {
+  url: string;
+  lang: string;
+  primaryPalette: string;
+  accentPalette: string;
+  mainColor: string;
+  steps: Array<{ step: string; title: string; num: string }>;
+};
+
 function getBaseUrl(): string {
   const raw = process.env.ALTEGIO_API_BASE_URL || "https://api.alteg.io";
   return raw.endsWith("/") ? raw.slice(0, -1) : raw;
@@ -194,6 +203,26 @@ export async function getAltegioCompanyProfile(): Promise<AltegioCompanyProfile>
     currency: asString(item.currency_short_title),
     lat: String(item.coordinate_lat ?? ""),
     lon: String(item.coordinate_lon ?? ""),
+  };
+}
+
+export async function getAltegioBookformConfig(): Promise<AltegioBookformConfig> {
+  const endpoint = process.env.ALTEGIO_BOOKFORM_ENDPOINT || "/bookform/{companyId}";
+  const item = toObject(await altegioFetch(endpoint));
+  const style = (item.style && typeof item.style === "object" ? item.style : {}) as JsonRecord;
+  const rawSteps = Array.isArray(item.steps) ? (item.steps as JsonRecord[]) : [];
+
+  return {
+    url: asString(item.url),
+    lang: asString(item.lang),
+    primaryPalette: asString(style.primaryPalette),
+    accentPalette: asString(style.accentPalette),
+    mainColor: asString(style.main_color),
+    steps: rawSteps.map((s) => ({
+      step: asString(s.step),
+      title: asString(s.title),
+      num: String(s.num ?? ""),
+    })),
   };
 }
 
