@@ -59,35 +59,62 @@ function resolveEndpoint(pathOrUrl: string): string {
   return `${getBaseUrl()}${apiPath}`;
 }
 
-function getHeaders(): Headers {
-  const headers = new Headers();
-  headers.set("Accept", "application/vnd.api.v2+json");
+let cachedUserToken = "";
+let cachedUserTokenAt = 0;
 
-  const partnerToken =
-    process.env.ALTEGIO_PARTNER_TOKEN || process.env.ALTEGIO_API_TOKEN || process.env.ALTEGIO_API_KEY;
-  const userToken = process.env.ALTEGIO_USER_TOKEN;
-
-  if (partnerToken && userToken) {
-    headers.set("Authorization", `Bearer ${partnerToken}, User ${userToken}`);
-    return headers;
+async function getUserTokenByLogin(partnerToken: string): Promise<string> {
+  const now = Date.now();
+  if (cachedUserToken && now - cachedUserTokenAt < 10 * 60 * 1000) {
+    return cachedUserToken;
   }
-
-  if (partnerToken) {
-    headers.set("Authorization", `Bearer ${partnerToken}`);
-    headers.set("X-Partner-Token", partnerToken);
-  }
-  if (userToken) {
-    headers.set("X-User-Token", userToken);
-  }
-  if (partnerToken || userToken) return headers;
 
   const login =
     process.env.ALTEGIO_USER_LOGIN || process.env.ALTEGIO_API_LOGIN || process.env.API_LOGIN;
   const password =
     process.env.ALTEGIO_USER_PASSWORD || process.env.ALTEGIO_API_PASSWORD || process.env.API_PASSWORD;
-  if (login && password) {
-    const basic = Buffer.from(`${login}:${password}`).toString("base64");
-    headers.set("Authorization", `Basic ${basic}`);
+
+  if (!login || !password) return "";
+
+  const authUrl = `${getBaseUrl()}/api/v1/auth`;
+  const res = await fetch(authUrl, {
+    method: "POST",
+    headers: {
+      Accept: "application/vnd.api.v2+json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${partnerToken}`,
+    },
+    body: JSON.stringify({ login, password }),
+    cache: "no-store",
+  });
+
+  if (!res.ok) return "";
+  const payload = (await res.json()) as JsonRecord;
+  const data = (payload.data && typeof payload.data === "object" ? payload.data : {}) as JsonRecord;
+  const token = asString(data.user_token);
+  if (token) {
+    cachedUserToken = token;
+    cachedUserTokenAt = now;
+  }
+  return token;
+}
+
+async function getHeaders(): Promise<Headers> {
+  const headers = new Headers();
+  headers.set("Accept", "application/vnd.api.v2+json");
+
+  const partnerToken =
+    process.env.ALTEGIO_PARTNER_TOKEN || process.env.ALTEGIO_API_TOKEN || process.env.ALTEGIO_API_KEY;
+
+  if (partnerToken) {
+    const runtimeUserToken = await getUserTokenByLogin(partnerToken);
+    const userToken = runtimeUserToken || process.env.ALTEGIO_USER_TOKEN || "";
+    if (userToken) {
+      headers.set("Authorization", `Bearer ${partnerToken}, User ${userToken}`);
+      return headers;
+    }
+    headers.set("Authorization", `Bearer ${partnerToken}`);
+    headers.set("X-Partner-Token", partnerToken);
+    return headers;
   }
 
   return headers;
@@ -102,7 +129,7 @@ async function altegioFetch(pathOrUrl: string): Promise<unknown> {
 
   const res = await fetch(url.toString(), {
     method: "GET",
-    headers: getHeaders(),
+    headers: await getHeaders(),
     cache: "no-store",
   });
 
