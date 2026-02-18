@@ -43,7 +43,7 @@ export function AltegioTrainersGrid() {
       {items.map((trainer, idx) => (
         <article key={trainer.id} className="border border-zinc-200 bg-[#f8f6f1] p-4 space-y-4">
           <div
-            className="aspect-[4/5] border border-zinc-200 bg-contain bg-center bg-no-repeat bg-white"
+            className="aspect-[4/5] border border-zinc-200 bg-cover bg-center"
             style={{ backgroundImage: `url(/instagram/studio-${(idx % 6) + 1}.jpg)` }}
           />
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">{String(idx + 1).padStart(2, "0")}</p>

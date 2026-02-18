@@ -62,7 +62,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <div className="aspect-[3/4] border border-zinc-200 bg-contain bg-center bg-no-repeat bg-white" style={{ backgroundImage: `url(${gallery[0].image})` }} />
+          <div className="aspect-[3/4] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${gallery[0].image})` }} />
         </div>
       </section>
 
@@ -104,7 +104,7 @@ export default function HomePage() {
           <div className="mt-8 grid gap-4 md:grid-cols-2">
             {gallery.map((item, idx) => (
               <article key={item.titleKey} className={`group ${idx === 0 ? "md:col-span-2" : ""}`}>
-                <div className={`border border-zinc-200 bg-contain bg-center bg-no-repeat bg-white ${idx === 0 ? "aspect-[16/8]" : "aspect-[4/5]"}`} style={{ backgroundImage: `url(${item.image})` }} />
+                <div className={`border border-zinc-200 bg-cover bg-center ${idx === 0 ? "aspect-[16/8]" : "aspect-[4/5]"}`} style={{ backgroundImage: `url(${item.image})` }} />
                 <p className="mt-3 text-xs uppercase tracking-[0.16em] text-zinc-500 group-hover:text-zinc-900 transition">
                   {String(idx + 1).padStart(2, "0")} · {t.home.galleryTitles[item.titleKey]}
                 </p>
