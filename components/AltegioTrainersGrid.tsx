@@ -41,7 +41,11 @@ export function AltegioTrainersGrid() {
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-3">
       {items.map((trainer, idx) => (
-        <article key={trainer.id} className="border border-zinc-200 bg-[#f8f6f1] p-6 space-y-3">
+        <article key={trainer.id} className="border border-zinc-200 bg-[#f8f6f1] p-4 space-y-4">
+          <div
+            className="aspect-[4/5] border border-zinc-200 bg-cover bg-center"
+            style={{ backgroundImage: `url(/instagram/studio-${(idx % 6) + 1}.jpg)` }}
+          />
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">{String(idx + 1).padStart(2, "0")}</p>
           <h2 className="font-display text-4xl leading-[0.9] tracking-tight text-zinc-900">{trainer.name || "-"}</h2>
           <p className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">{trainer.specialization || "-"}</p>
