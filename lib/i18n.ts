@@ -100,7 +100,7 @@ export const translations = {
     schedule: {
       badge: "Онлайн-запись",
       title: "Расписание по дням",
-      lead: "Таблица с реальными слотами из Altegio, сгруппированными по дням.",
+      lead: "Таблица расписания занятий по дням.",
       table: {
         time: "Время",
         className: "Занятие",
@@ -208,7 +208,7 @@ export const translations = {
     schedule: {
       badge: "Online booking",
       title: "Schedule by day",
-      lead: "Table with real slots from Altegio grouped by day.",
+      lead: "Class schedule table by day.",
       table: {
         time: "Time",
         className: "Class",
