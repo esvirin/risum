@@ -228,7 +228,7 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
       "/records",
     ]);
     const items = toArray(payload);
-    const mapped = mapRecordsToSchedule(items);
+    const mapped = mapRecordsToSchedule(items).filter((item) => item.datetime && item.service && item.trainer);
     if (mapped.length > 0) return mapped;
   } catch {
     // fall through to booking-data generation
@@ -246,19 +246,22 @@ export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {
   ]);
   const items = toArray(payload);
 
-  return items.slice(0, 12).map((item, idx) => ({
-    id: String(item.id ?? `trainer-${idx + 1}`),
-    name:
-      asString(item.name) ||
-      asString(item.full_name) ||
-      asString(item.title) ||
-      asString(item.first_name),
-    specialization:
-      asString(item.specialization) ||
-      asString(item.position) ||
-      asString(item.description) ||
-      asString(item.role),
-  }));
+  return items
+    .slice(0, 12)
+    .map((item, idx) => ({
+      id: String(item.id ?? `trainer-${idx + 1}`),
+      name:
+        asString(item.name) ||
+        asString(item.full_name) ||
+        asString(item.title) ||
+        asString(item.first_name),
+      specialization:
+        asString(item.specialization) ||
+        asString(item.position) ||
+        asString(item.description) ||
+        asString(item.role),
+    }))
+    .filter((item) => item.name);
 }
 
 export async function getAltegioCompanyProfile(): Promise<AltegioCompanyProfile> {
@@ -311,17 +314,20 @@ export async function getAltegioServices(): Promise<AltegioServiceItem[]> {
     categoryMap.set(key, asString(cat.title));
   }
 
-  return services.slice(0, 30).map((item, idx) => {
-    const categoryId = String(item.category_id ?? "");
-    const priceMin = asNumber(item.price_min);
-    const priceMax = asNumber(item.price_max);
+  return services
+    .slice(0, 30)
+    .map((item, idx) => {
+      const categoryId = String(item.category_id ?? "");
+      const priceMin = asNumber(item.price_min);
+      const priceMax = asNumber(item.price_max);
 
-    return {
-      id: String(item.id ?? `service-${idx + 1}`),
-      title: asString(item.booking_title) || asString(item.title) || `Service ${idx + 1}`,
-      category: categoryMap.get(categoryId) || "",
-      priceFrom: priceMin > 0 ? String(priceMin) : "",
-      priceTo: priceMax > 0 ? String(priceMax) : "",
-    };
-  });
+      return {
+        id: String(item.id ?? `service-${idx + 1}`),
+        title: asString(item.booking_title) || asString(item.title),
+        category: categoryMap.get(categoryId) || "",
+        priceFrom: priceMin > 0 ? String(priceMin) : "",
+        priceTo: priceMax > 0 ? String(priceMax) : "",
+      };
+    })
+    .filter((item) => item.title);
 }

@@ -95,8 +95,8 @@ export function AltegioScheduleList() {
                       <p className="font-display text-3xl leading-none text-zinc-900">{formatTime(item.datetime)}</p>
                     </div>
                     <div>
-                      <p className="text-base font-medium text-zinc-900">{item.service || "Class"}</p>
-                      <p className="mt-1 text-xs uppercase tracking-[0.14em] text-zinc-500">{item.trainer || "Coach"}</p>
+                      <p className="text-base font-medium text-zinc-900">{item.service}</p>
+                      <p className="mt-1 text-xs uppercase tracking-[0.14em] text-zinc-500">{item.trainer}</p>
                     </div>
                   </li>
                 ))}
