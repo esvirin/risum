@@ -9,9 +9,7 @@ function envValue(key: string): string {
 
 function getCompanyId(): string {
   const raw = envValue("ALTEGIO_COMPANY_ID");
-  // align with the active Fit Space location in max@risumcyprus.eu cabinet
-  if (raw === "1348179") return "756580";
-  return raw || "756580";
+  return raw;
 }
 
 export type AltegioScheduleItem = {
@@ -220,57 +218,6 @@ function mapRecordsToSchedule(items: JsonRecord[]): AltegioScheduleItem[] {
   }));
 }
 
-async function buildScheduleFromBookingData(): Promise<AltegioScheduleItem[]> {
-  const [staffPayload, servicesPayload, datesPayload] = await Promise.all([
-    altegioFetch("/book_staff/{companyId}"),
-    altegioFetch("/book_services/{companyId}"),
-    altegioFetch("/book_dates/{companyId}"),
-  ]);
-
-  const staff = toArray(staffPayload);
-  const servicesRoot = toObject(servicesPayload);
-  const services = Array.isArray(servicesRoot.services) ? (servicesRoot.services as JsonRecord[]) : [];
-  const datesRoot = toObject(datesPayload);
-  const bookingDays = (datesRoot.booking_days && typeof datesRoot.booking_days === "object" ? datesRoot.booking_days : {}) as JsonRecord;
-
-  const now = new Date();
-  const year = now.getFullYear();
-  const dateList: Date[] = [];
-
-  for (const [monthKey, daysRaw] of Object.entries(bookingDays)) {
-    const month = Number(monthKey);
-    if (!month || !Array.isArray(daysRaw)) continue;
-    for (const d of daysRaw) {
-      const day = Number(d);
-      if (!day) continue;
-      const date = new Date(year, month - 1, day, 10, 0, 0, 0);
-      if (date.getTime() >= now.getTime()) dateList.push(date);
-    }
-  }
-
-  dateList.sort((a, b) => a.getTime() - b.getTime());
-  const times = [10, 13, 18];
-
-  const result: AltegioScheduleItem[] = [];
-  for (let i = 0; i < 8; i += 1) {
-    const baseDate = dateList[i % Math.max(1, dateList.length)] || new Date(now.getTime() + (i + 1) * 86400000);
-    const dt = new Date(baseDate);
-    dt.setHours(times[i % times.length], 0, 0, 0);
-
-    const coach = staff[i % Math.max(1, staff.length)] || {};
-    const service = services[i % Math.max(1, services.length)] || {};
-
-    result.push({
-      id: `slot-${i + 1}`,
-      datetime: dt.toISOString(),
-      trainer: asString(coach.name) || "Coach",
-      service: asString(service.title) || "Class",
-    });
-  }
-
-  return result;
-}
-
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
   const endpoint = envValue("ALTEGIO_SCHEDULE_ENDPOINT");
 
@@ -287,7 +234,7 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
     // fall through to booking-data generation
   }
 
-  return buildScheduleFromBookingData();
+  return [];
 }
 
 export async function getAltegioTrainers(): Promise<AltegioTrainerItem[]> {

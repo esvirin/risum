@@ -5,7 +5,6 @@ import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AltegioScheduleList } from "@/components/AltegioScheduleList";
 import { AltegioServicesList } from "@/components/AltegioServicesList";
-import { AltegioBookformCard } from "@/components/AltegioBookformCard";
 import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
 
@@ -127,19 +126,13 @@ export default function HomePage() {
       </section>
 
       <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 grid gap-6 lg:grid-cols-2">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Online booking</p>
-            <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">Services & prices</h2>
-            <p className="text-zinc-600 mt-3 max-w-3xl">Live catalog from service categories and pricing.</p>
+        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
+          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Online booking</p>
+          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">Services & prices</h2>
+          <p className="text-zinc-600 mt-3 max-w-3xl">Live catalog from service categories and pricing.</p>
 
-            <div className="mt-8">
-              <AltegioServicesList />
-            </div>
-          </div>
-
-          <div className="lg:pt-[52px]">
-            <AltegioBookformCard />
+          <div className="mt-8">
+            <AltegioServicesList />
           </div>
         </div>
       </section>
