@@ -196,30 +196,103 @@ function asNumber(value: unknown): number {
 }
 
 function mapRecordsToSchedule(items: JsonRecord[]): AltegioScheduleItem[] {
-  return items.slice(0, 8).map((item, idx) => ({
-    id: asString(item.id) || `schedule-${idx + 1}`,
-    datetime:
-      asString(item.datetime) ||
-      asString(item.start_time) ||
-      asString(item.start) ||
-      asString(item.date),
-    trainer:
-      asString(item.staff_name) ||
-      asString(item.trainer_name) ||
-      asString(item.master_name) ||
-      asString(item.employee_name) ||
-      asString((item.staff as JsonRecord | undefined)?.name),
-    service:
-      asString(item.service_name) ||
-      asString(item.activity_name) ||
-      asString(item.service) ||
-      asString(item.title) ||
-      asString(((item.services as JsonRecord[] | undefined)?.[0] || {}).title),
-  }));
+  return items
+    .slice(0, 30)
+    .map((item, idx) => ({
+      id: asString(item.id) || `schedule-${idx + 1}`,
+      datetime:
+        asString(item.datetime) ||
+        asString(item.start_time) ||
+        asString(item.start) ||
+        asString(item.date),
+      trainer:
+        asString(item.staff_name) ||
+        asString(item.trainer_name) ||
+        asString(item.master_name) ||
+        asString(item.employee_name) ||
+        asString((item.staff as JsonRecord | undefined)?.name),
+      service:
+        asString(item.service_name) ||
+        asString(item.activity_name) ||
+        asString(item.service) ||
+        asString(item.title) ||
+        asString(((item.services as JsonRecord[] | undefined)?.[0] || {}).title),
+    }))
+    .filter((item) => item.datetime && item.trainer && item.service);
+}
+
+function mapTimetableAttendanceToSchedule(payload: unknown): AltegioScheduleItem[] {
+  if (!payload || typeof payload !== "object") return [];
+  const root = payload as JsonRecord;
+  const included = Array.isArray(root.included) ? (root.included as JsonRecord[]) : [];
+
+  const staffMap = new Map<string, string>();
+  const serviceMap = new Map<string, string>();
+
+  for (const item of included) {
+    const type = asString(item.type);
+    const id = String(item.id ?? "");
+    const attributes = (item.attributes && typeof item.attributes === "object" ? item.attributes : {}) as JsonRecord;
+
+    if (type === "staff" && id) {
+      const name = asString(attributes.name);
+      if (name) staffMap.set(id, name);
+    }
+
+    if (type === "service" && id) {
+      const title = asString(attributes.title);
+      if (title) serviceMap.set(id, title);
+    }
+  }
+
+  const activities = included.filter((item) => asString(item.type) === "activity");
+
+  return activities
+    .map((item, idx) => {
+      const id = String(item.id ?? `activity-${idx + 1}`);
+      const attributes = (item.attributes && typeof item.attributes === "object" ? item.attributes : {}) as JsonRecord;
+      const relationships = (item.relationships && typeof item.relationships === "object" ? item.relationships : {}) as JsonRecord;
+
+      const relMaster = (relationships.master && typeof relationships.master === "object" ? (relationships.master as JsonRecord).data : null) as JsonRecord | null;
+      const relService = (relationships.service && typeof relationships.service === "object" ? (relationships.service as JsonRecord).data : null) as JsonRecord | null;
+
+      const masterId = String((relMaster && relMaster.id) ?? attributes.master_id ?? attributes.staff_id ?? "");
+      const serviceId = String((relService && relService.id) ?? attributes.service_id ?? "");
+
+      const datetime = asString(attributes.date);
+      const trainer = staffMap.get(masterId) || "";
+      const service = serviceMap.get(serviceId) || "";
+
+      return { id, datetime, trainer, service };
+    })
+    .filter((item) => item.datetime && item.trainer && item.service)
+    .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+    .slice(0, 30);
 }
 
 export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
   const endpoint = envValue("ALTEGIO_SCHEDULE_ENDPOINT");
+
+  const today = new Date();
+  const dates: string[] = [];
+  for (let i = 0; i < 14; i += 1) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    dates.push(d.toISOString().slice(0, 10));
+  }
+
+  const params = new URLSearchParams();
+  for (const date of dates) params.append("dates[]", date);
+  params.append("attendance_for_week", "1");
+  ["activities", "activities.service", "activities.master"].forEach((include) => params.append("include[]", include));
+
+  try {
+    const attendancePayload = await altegioFetch(`/company/{companyId}/timetable/attendance_day?${params.toString()}`);
+    const fromAttendance = mapTimetableAttendanceToSchedule(attendancePayload);
+    if (fromAttendance.length > 0) return fromAttendance;
+  } catch {
+    // try records fallback below
+  }
 
   try {
     const payload = await altegioFetchFirst([
@@ -227,11 +300,10 @@ export async function getAltegioSchedule(): Promise<AltegioScheduleItem[]> {
       "/records/{companyId}",
       "/records",
     ]);
-    const items = toArray(payload);
-    const mapped = mapRecordsToSchedule(items).filter((item) => item.datetime && item.service && item.trainer);
+    const mapped = mapRecordsToSchedule(toArray(payload));
     if (mapped.length > 0) return mapped;
   } catch {
-    // fall through to booking-data generation
+    // no fallback mocks, real data only
   }
 
   return [];
