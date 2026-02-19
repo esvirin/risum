@@ -65,7 +65,7 @@ export function AltegioScheduleList() {
       const key = formatDate(item.datetime);
       map.set(key, [...(map.get(key) || []), item]);
     }
-    return [...map.entries()];
+    return [...map.entries()].slice(0, 7);
   }, [items]);
 
   return (
