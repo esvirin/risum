@@ -28,6 +28,7 @@ export function PublicNav() {
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide text-zinc-700">
           <Link href="/" className="hover:text-black">{t.nav.studio}</Link>
           <Link href="/trainers" className="hover:text-black">{t.nav.trainers}</Link>
+          <Link href="/schedule" className="hover:text-black">{t.nav.schedule}</Link>
           <Link href="/contacts" className="hover:text-black">{t.nav.contacts}</Link>
           <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="hover:text-black">
             {t.nav.cabinet}

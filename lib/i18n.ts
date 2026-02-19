@@ -8,6 +8,7 @@ export const translations = {
     nav: {
       studio: "Студия",
       trainers: "Тренеры",
+      schedule: "Расписание",
       contacts: "Контакты",
       cabinet: "Кабинет",
       book: "Запись",
@@ -96,6 +97,16 @@ export const translations = {
       whatsapp: "WhatsApp",
       mapTitle: "Локация Fit Space",
     },
+    schedule: {
+      badge: "Онлайн-запись",
+      title: "Расписание по дням",
+      lead: "Таблица с реальными слотами из Altegio, сгруппированными по дням.",
+      table: {
+        time: "Время",
+        className: "Занятие",
+        trainer: "Тренер",
+      },
+    },
     footer: {
       company: "Risum Cyprus Limited",
       copy: "© 2026 Fit Space",
@@ -105,6 +116,7 @@ export const translations = {
     nav: {
       studio: "Studio",
       trainers: "Trainers",
+      schedule: "Schedule",
       contacts: "Contacts",
       cabinet: "Cabinet",
       book: "Book",
@@ -192,6 +204,16 @@ export const translations = {
       openMap: "Open map",
       whatsapp: "WhatsApp",
       mapTitle: "Fit Space location",
+    },
+    schedule: {
+      badge: "Online booking",
+      title: "Schedule by day",
+      lead: "Table with real slots from Altegio grouped by day.",
+      table: {
+        time: "Time",
+        className: "Class",
+        trainer: "Trainer",
+      },
     },
     footer: {
       company: "Risum Cyprus Limited",
