@@ -11,27 +11,27 @@ import { useI18n } from "@/components/LanguageProvider";
 
 const gallery = [
   {
-    titleKey: 0,
+    titleKey: 1,
     image: "/instagram/fit-1.jpg",
   },
   {
-    titleKey: 1,
+    titleKey: 2,
     image: "/instagram/fit-2.jpg",
   },
   {
-    titleKey: 2,
+    titleKey: 3,
     image: "/instagram/fit-3.jpg",
   },
   {
-    titleKey: 3,
+    titleKey: 4,
     image: "/instagram/fit-4.jpg",
   },
   {
-    titleKey: 4,
+    titleKey: 5,
     image: "/instagram/fit-5.jpg",
   },
   {
-    titleKey: 5,
+    titleKey: 6,
     image: "/instagram/fit-6.jpg",
   },
 ];
