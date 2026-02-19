@@ -2,7 +2,6 @@
 
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { AltegioCompanyCard } from "@/components/AltegioCompanyCard";
 import { useI18n } from "@/components/LanguageProvider";
 
 export default function ContactsPage() {
@@ -51,7 +50,6 @@ export default function ContactsPage() {
           />
         </section>
 
-        <AltegioCompanyCard />
       </main>
       <SiteFooter />
     </div>
