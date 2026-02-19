@@ -2,7 +2,6 @@
 
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { AltegioTrainersList } from "@/components/AltegioTrainersList";
 import { AltegioTrainersGrid } from "@/components/AltegioTrainersGrid";
 import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
@@ -18,15 +17,13 @@ export default function TrainersPage() {
         <h1 className="mt-4 text-5xl sm:text-7xl leading-[0.9] tracking-tight">{t.trainers.title}</h1>
         <p className="mt-5 text-zinc-600 max-w-2xl">{t.trainers.lead}</p>
 
-        <AltegioTrainersGrid />
+        <div className="mt-10 flex flex-col gap-12 lg:flex-row lg:items-start lg:gap-10">
+          <section className="min-w-0 flex-1">
+            <AltegioTrainersGrid />
+          </section>
 
-        <section className="mt-16 border-t border-zinc-200 pt-12">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.trainers.altegioBadge}</p>
-          <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.trainers.altegioTitle}</h2>
-          <p className="text-zinc-600 max-w-2xl mt-3">{t.trainers.altegioLead}</p>
-
-          <div className="mt-8 border border-zinc-200 bg-[#f8f6f1] p-3 sm:p-4 overflow-x-hidden">
-            <div className="mx-auto w-full max-w-[600px]">
+          <section className="w-full lg:w-[600px] lg:flex-none">
+            <div className="border border-zinc-200 bg-[#f8f6f1] p-3 overflow-x-hidden">
               <iframe
                 title="Trainers"
                 src={altegioLinks.trainersWidget}
@@ -34,12 +31,8 @@ export default function TrainersPage() {
                 loading="lazy"
               />
             </div>
-          </div>
-
-          <div className="mt-4">
-            <AltegioTrainersList />
-          </div>
-        </section>
+          </section>
+        </div>
       </main>
       <SiteFooter />
     </div>
