@@ -17,6 +17,8 @@ export type AltegioScheduleItem = {
   datetime: string;
   trainer: string;
   service: string;
+  clientsCount?: number;
+  capacity?: number;
 };
 
 export type AltegioTrainerItem = {
@@ -217,8 +219,20 @@ function mapRecordsToSchedule(items: JsonRecord[]): AltegioScheduleItem[] {
         asString(item.service) ||
         asString(item.title) ||
         asString(((item.services as JsonRecord[] | undefined)?.[0] || {}).title),
+      clientsCount: typeof item.clients_count === "number" ? item.clients_count : undefined,
+      capacity: typeof item.capacity === "number" ? item.capacity : undefined,
+      waitingListCount:
+        typeof item.waiting_list_count === "number"
+          ? item.waiting_list_count
+          : typeof item.waiting_count === "number"
+            ? item.waiting_count
+            : undefined,
     }))
-    .filter((item) => item.datetime && item.trainer && item.service);
+    .filter((item) => {
+      if (!(item.datetime && item.trainer && item.service)) return false;
+      const ts = new Date(item.datetime).getTime();
+      return Number.isFinite(ts) && ts >= Date.now();
+    });
 }
 
 function mapTimetableAttendanceToSchedule(payload: unknown): AltegioScheduleItem[] {
@@ -262,10 +276,22 @@ function mapTimetableAttendanceToSchedule(payload: unknown): AltegioScheduleItem
       const datetime = asString(attributes.date);
       const trainer = staffMap.get(masterId) || "";
       const service = serviceMap.get(serviceId) || "";
+      const clientsCount = typeof attributes.clients_count === "number" ? attributes.clients_count : undefined;
+      const capacity = typeof attributes.capacity === "number" ? attributes.capacity : undefined;
+      const waitingListCount =
+        typeof attributes.waiting_list_count === "number"
+          ? attributes.waiting_list_count
+          : typeof attributes.waiting_count === "number"
+            ? attributes.waiting_count
+            : undefined;
 
-      return { id, datetime, trainer, service };
+      return { id, datetime, trainer, service, clientsCount, capacity, waitingListCount };
     })
-    .filter((item) => item.datetime && item.trainer && item.service)
+    .filter((item) => {
+      if (!(item.datetime && item.trainer && item.service)) return false;
+      const ts = new Date(item.datetime).getTime();
+      return Number.isFinite(ts) && ts >= Date.now();
+    })
     .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
     .slice(0, 30);
 }

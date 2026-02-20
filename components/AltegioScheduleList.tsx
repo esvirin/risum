@@ -8,6 +8,8 @@ type ScheduleItem = {
   datetime: string;
   trainer: string;
   service: string;
+  clientsCount?: number;
+  capacity?: number;
 };
 
 function formatDate(value: string) {
@@ -97,6 +99,11 @@ export function AltegioScheduleList() {
                     <div>
                       <p className="text-base font-medium text-zinc-900">{item.service}</p>
                       <p className="mt-1 text-xs uppercase tracking-[0.14em] text-zinc-500">{item.trainer}</p>
+                      <p className="mt-2 text-xs text-zinc-600">
+                        {typeof item.clientsCount === "number" && typeof item.capacity === "number"
+                          ? `${item.clientsCount}/${item.capacity}`
+                          : ""}
+                      </p>
                     </div>
                   </li>
                 ))}
