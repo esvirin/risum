@@ -1,195 +1,280 @@
 "use client";
 
-import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { AltegioScheduleList } from "@/components/AltegioScheduleList";
-import { AltegioServicesList } from "@/components/AltegioServicesList";
 import { altegioLinks } from "@/lib/altegio";
-import { useI18n } from "@/components/LanguageProvider";
 
-const gallery = [
-  {
-    titleKey: 1,
-    image: "/instagram/fit-1.jpg",
-  },
-  {
-    titleKey: 2,
-    image: "/instagram/fit-2.jpg",
-  },
-  {
-    titleKey: 3,
-    image: "/instagram/fit-3.jpg",
-  },
-  {
-    titleKey: 4,
-    image: "/instagram/fit-4.jpg",
-  },
-  {
-    titleKey: 5,
-    image: "/instagram/fit-5.jpg",
-  },
-  {
-    titleKey: 6,
-    image: "/instagram/fit-6.jpg",
-  },
+type ScheduleItem = {
+  id: string;
+  datetime: string;
+  trainer: string;
+  service: string;
+  clientsCount?: number;
+  capacity?: number;
+};
+
+type ServiceItem = {
+  id: string;
+  title: string;
+  category: string;
+  priceFrom: string;
+  priceTo: string;
+};
+
+type Mode = "group" | "private";
+
+const trainerSlides = [
+  { name: "Olga", image: "/wfolio/olga.jpg" },
+  { name: "Svetlana", image: "/wfolio/svetlana.jpg" },
+  { name: "Konstantina", image: "/wfolio/konstantina.jpg" },
+  { name: "Christina", image: "/wfolio/christina.jpg" },
+  { name: "Team", image: "/instagram/fit-2.jpg" },
 ];
 
+function detectMode(value: string): Mode {
+  return /private|индив|персон|personal/i.test(value) ? "private" : "group";
+}
+
+function formatDay(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+  }).format(new Date(value));
+}
+
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
 export default function HomePage() {
-  const { t } = useI18n();
+  const [activeTrainer, setActiveTrainer] = useState(0);
+  const [mode, setMode] = useState<Mode>("group");
+  const [priceMode, setPriceMode] = useState<Mode>("group");
+  const [pricesOpen, setPricesOpen] = useState(false);
+  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [nowTs] = useState<number>(() => Date.now());
+
+  useEffect(() => {
+    fetch("/api/altegio/schedule", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((r) => setSchedule(Array.isArray(r?.data) ? r.data : []))
+      .catch(() => setSchedule([]));
+
+    fetch("/api/altegio/services", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((r) => setServices(Array.isArray(r?.data) ? r.data : []))
+      .catch(() => setServices([]));
+  }, []);
+
+  const scheduleDays = useMemo(() => {
+    const now = nowTs;
+    const max = now + 7 * 24 * 60 * 60 * 1000;
+
+    const filtered = schedule
+      .filter((item) => {
+        const ts = new Date(item.datetime).getTime();
+        if (!Number.isFinite(ts)) return false;
+        return ts >= now && ts <= max && detectMode(item.service) === mode;
+      })
+      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
+
+    const map = new Map<string, ScheduleItem[]>();
+    for (const item of filtered) {
+      const key = new Date(item.datetime).toISOString().slice(0, 10);
+      map.set(key, [...(map.get(key) ?? []), item]);
+    }
+
+    return Array.from(map.entries()).slice(0, 7);
+  }, [schedule, mode, nowTs]);
+
+  const pricedServices = useMemo(
+    () => services.filter((item) => detectMode(`${item.title} ${item.category}`) === priceMode),
+    [services, priceMode],
+  );
 
   return (
     <div className="bg-[#f7f4ef] text-zinc-900">
       <PublicNav />
 
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-12 sm:py-20 grid gap-10 lg:grid-cols-[1.35fr_1fr] items-end">
+      <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
+        <div className="mb-8 flex items-center justify-between gap-4 text-[11px] uppercase tracking-[0.2em]">
+          <span>Kolonakiou 58, 1st Floor</span>
+          <div className="flex items-center gap-2">
+            <a
+              href={altegioLinks.booking}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-full border border-zinc-700 px-4 py-2 text-[10px] hover:bg-zinc-900 hover:text-white"
+            >
+              Book now
+            </a>
+            <button
+              onClick={() => setPricesOpen(true)}
+              className="rounded-full border border-zinc-700 px-4 py-2 text-[10px] hover:bg-zinc-900 hover:text-white"
+            >
+              Prices
+            </button>
+          </div>
+        </div>
+
+        <h1 className="text-center text-4xl sm:text-5xl tracking-tight">Reformer Pilates Studio</h1>
+
+        <div className="mt-8 grid gap-6 lg:grid-cols-[180px_1fr_220px] items-start">
+          <div className="text-4xl leading-tight tracking-tight">
+            <p>Meet</p>
+            <p>Our</p>
+            <p>Team</p>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+            <img src={trainerSlides[activeTrainer].image} alt={trainerSlides[activeTrainer].name} className="h-full w-full object-cover" />
+          </div>
+
           <div>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.badge}</p>
-            <h1 className="mt-6 text-[54px] leading-[0.9] tracking-tight sm:text-[86px] max-w-4xl">
-              {t.home.title}
-            </h1>
-            <p className="mt-7 text-zinc-600 text-base sm:text-lg max-w-2xl leading-relaxed">{t.home.lead}</p>
-
-            <div className="mt-9 flex flex-col sm:flex-row gap-3">
-              <a href={altegioLinks.booking} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center border border-zinc-900 bg-zinc-900 px-8 py-3 text-xs uppercase tracking-[0.18em] text-white hover:bg-zinc-800">
-                {t.home.bookOnline}
-              </a>
-              <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center border border-zinc-300 px-8 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 hover:border-zinc-900">
-                {t.home.personalCabinet}
-              </a>
-            </div>
+            <h2 className="text-4xl leading-[1.1]">Best Reformer Pilates</h2>
+            <p className="mt-4 text-zinc-600">Personal approach, clean studio, and experienced team for private and group training.</p>
+            <p className="mt-6 text-3xl tracking-tight">{trainerSlides[activeTrainer].name}</p>
           </div>
+        </div>
 
-          <div className="aspect-[3/4] border border-zinc-200 bg-cover bg-center" style={{ backgroundImage: `url(${gallery[0].image})` }} />
+        <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
+          {trainerSlides.map((slide, index) => (
+            <button
+              key={slide.name}
+              onClick={() => setActiveTrainer(index)}
+              className={`h-14 w-14 overflow-hidden rounded-full border ${activeTrainer === index ? "border-zinc-900" : "border-zinc-300"}`}
+            >
+              <img src={slide.image} alt={slide.name} className="h-full w-full object-cover" />
+            </button>
+          ))}
         </div>
       </section>
 
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <div className="grid gap-10 lg:grid-cols-[0.9fr_2fr]">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.aboutBadge}</p>
-              <h2 className="mt-4 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.aboutTitle}</h2>
-            </div>
-
-            <div className="grid sm:grid-cols-2 border border-zinc-200 bg-[#f8f6f1]">
-              <div className="p-7 border-b sm:border-b-0 sm:border-r border-zinc-200">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">01 · {t.home.featurePersonalTitle}</p>
-                <p className="text-zinc-700 leading-relaxed">{t.home.featurePersonalText}</p>
-              </div>
-              <div className="p-7 border-b sm:border-b-0 border-zinc-200">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">02 · {t.home.featureCoachesTitle}</p>
-                <p className="text-zinc-700 leading-relaxed">{t.home.featureCoachesText}</p>
-              </div>
-              <div className="p-7 border-t border-zinc-200 sm:border-r">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">03 · {t.home.featureAtmosphereTitle}</p>
-                <p className="text-zinc-700 leading-relaxed">{t.home.featureAtmosphereText}</p>
-              </div>
-              <div className="p-7 border-t border-zinc-200">
-                <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500 mb-3">04 · {t.home.featureScheduleTitle}</p>
-                <p className="text-zinc-700 leading-relaxed">{t.home.featureScheduleText}</p>
-              </div>
-            </div>
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-5xl tracking-tight">Join the training</h2>
+          <div className="inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
+            <button
+              onClick={() => setMode("group")}
+              className={`rounded-full px-4 py-2 ${mode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+            >
+              Group
+            </button>
+            <button
+              onClick={() => setMode("private")}
+              className={`rounded-full px-4 py-2 ${mode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+            >
+              Private
+            </button>
           </div>
         </div>
-      </section>
 
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.galleryBadge}</p>
-          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.galleryTitle}</h2>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {gallery.map((item, idx) => (
-              <article key={item.titleKey} className={`group ${idx === 0 ? "md:col-span-2" : ""}`}>
-                <div className={`border border-zinc-200 bg-cover bg-center ${idx === 0 ? "aspect-[16/8]" : "aspect-[4/5]"}`} style={{ backgroundImage: `url(${item.image})` }} />
-                <p className="mt-3 text-xs uppercase tracking-[0.16em] text-zinc-500 group-hover:text-zinc-900 transition">
-                  {String(idx + 1).padStart(2, "0")} · {t.home.galleryTitles[item.titleKey]}
-                </p>
-              </article>
+        <div className="overflow-x-auto border border-zinc-200 bg-white">
+          <div className="grid min-w-[900px] grid-cols-7 gap-px bg-zinc-200">
+            {scheduleDays.map(([day, items]) => (
+              <div key={day} className="bg-[#f8f6f1]">
+                <div className="border-b border-zinc-200 px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">{formatDay(day)}</div>
+                <div className="space-y-2 p-2">
+                  {items.map((item) => {
+                    const spots =
+                      typeof item.capacity === "number" && typeof item.clientsCount === "number"
+                        ? Math.max(item.capacity - item.clientsCount, 0)
+                        : null;
+                    return (
+                      <article key={item.id} className="rounded-md border border-zinc-200 bg-white p-3">
+                        <p className="text-xl tracking-tight">{formatTime(item.datetime)}</p>
+                        <p className="mt-1 text-sm leading-tight">{item.service}</p>
+                        <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{item.trainer}</p>
+                        {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} spots left</p> : null}
+                      </article>
+                    );
+                  })}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.scheduleBadge}</p>
-          <h2 className="font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.scheduleTitle}</h2>
-          <p className="text-zinc-600 max-w-3xl mt-3">{t.home.scheduleLead}</p>
-
-          <div className="mt-8">
-            <AltegioScheduleList />
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <h2 className="mb-5 text-5xl tracking-tight">Easy to find</h2>
+        <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
+          <div className="space-y-4">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Phone</p>
+              <p className="text-3xl tracking-tight">+357 95505556</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Address</p>
+              <p>1st floor, 58 Kolonakiou Str, Limassol, 4103</p>
+            </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Email</p>
+              <p>hello@fitspace.cy</p>
+            </div>
           </div>
-        </div>
-      </section>
-
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">Online booking</p>
-          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">Services & prices</h2>
-          <p className="text-zinc-600 mt-3 max-w-3xl">Live catalog from service categories and pricing.</p>
-
-          <div className="mt-8">
-            <AltegioServicesList />
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 grid gap-8 lg:grid-cols-[1.2fr_1fr] items-start">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.lagreeBadge}</p>
-            <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.lagreeTitle}</h2>
-            <p className="text-zinc-600 mt-4 max-w-3xl">{t.home.lagreeLead}</p>
-          </div>
-
-          <div className="border border-zinc-200 bg-[#f8f6f1] p-6">
-            <ul className="space-y-3 text-sm text-zinc-700">
-              <li>• {t.home.lagreePoint1}</li>
-              <li>• {t.home.lagreePoint2}</li>
-              <li>• {t.home.lagreePoint3}</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <section className="border-b border-zinc-200">
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20">
-          <p className="text-[11px] uppercase tracking-[0.22em] text-zinc-500">{t.home.accountBadge}</p>
-          <h2 className="mt-3 font-display text-4xl sm:text-6xl leading-[0.9] tracking-tight">{t.home.accountTitle}</h2>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {altegioLinks.iosApp ? (
-              <a href={altegioLinks.iosApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-                {t.home.iosApp} <span>→</span>
-              </a>
-            ) : null}
-            {altegioLinks.androidApp ? (
-              <a href={altegioLinks.androidApp} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-                {t.home.androidApp} <span>→</span>
-              </a>
-            ) : null}
-            <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-              {t.home.personalCabinet} <span>→</span>
-            </a>
-          </div>
-        </div>
-      </section>
-
-      <section>
-        <div className="mx-auto max-w-6xl px-4 py-14 sm:py-20 grid gap-4 sm:grid-cols-2">
-          <Link href="/trainers" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-            {t.home.trainersLink} <span>→</span>
-          </Link>
-          <Link href="/contacts" className="border border-zinc-300 px-6 py-6 text-sm uppercase tracking-[0.14em] text-zinc-700 hover:border-zinc-900 hover:text-zinc-900 flex items-center justify-between">
-            {t.home.contactsLink} <span>→</span>
-          </Link>
+          <iframe
+            title="Fit Space map"
+            className="h-[280px] w-full border border-zinc-200"
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            src="https://www.google.com/maps?q=Kolonakiou%2058%2C%20Limassol&output=embed"
+          />
         </div>
       </section>
 
       <SiteFooter />
+
+      {pricesOpen ? (
+        <div className="fixed inset-0 z-50 bg-black/45 p-4" onClick={() => setPricesOpen(false)}>
+          <div
+            className="mx-auto mt-10 w-full max-w-4xl rounded-lg bg-[#f7f4ef] p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-5 flex items-center justify-between">
+              <h3 className="text-4xl tracking-tight">Our Prices</h3>
+              <button onClick={() => setPricesOpen(false)} className="rounded-full border border-zinc-400 px-3 py-1 text-sm">
+                Close
+              </button>
+            </div>
+
+            <div className="mb-5 inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
+              <button
+                onClick={() => setPriceMode("group")}
+                className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+              >
+                Group Reformer Pilates
+              </button>
+              <button
+                onClick={() => setPriceMode("private")}
+                className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+              >
+                Private Reformer Pilates
+              </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              {pricedServices.map((item) => (
+                <article key={item.id} className="border border-zinc-200 bg-white p-4">
+                  <p className="text-lg leading-tight">{item.title}</p>
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.1em] text-zinc-500">{item.category}</p>
+                  <p className="mt-3 text-sm text-zinc-700">
+                    {item.priceFrom ? `from ${item.priceFrom}` : ""}
+                    {item.priceFrom && item.priceTo ? " · " : ""}
+                    {item.priceTo ? `to ${item.priceTo}` : ""}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
