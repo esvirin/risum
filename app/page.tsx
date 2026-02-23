@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
-import { altegioLinks } from "@/lib/altegio";
 
 type ScheduleItem = {
   id: string;
@@ -32,6 +31,13 @@ const trainerSlides = [
   { name: "Team", image: "/instagram/fit-2.jpg" },
 ];
 
+const studioSlides = [
+  "/instagram/fit-1.jpg",
+  "/instagram/fit-2.jpg",
+  "/instagram/fit-3.jpg",
+  "/instagram/fit-4.jpg",
+];
+
 function detectMode(value: string): Mode {
   return /private|индив|персон|personal/i.test(value) ? "private" : "group";
 }
@@ -55,7 +61,6 @@ export default function HomePage() {
   const [activeTrainer, setActiveTrainer] = useState(0);
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
-  const [pricesOpen, setPricesOpen] = useState(false);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [nowTs] = useState<number>(() => Date.now());
@@ -103,26 +108,6 @@ export default function HomePage() {
       <PublicNav />
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-        <div className="mb-8 flex items-center justify-between gap-4 text-[11px] uppercase tracking-[0.2em]">
-          <span>Kolonakiou 58, 1st Floor</span>
-          <div className="flex items-center gap-2">
-            <a
-              href={altegioLinks.booking}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-zinc-700 px-4 py-2 text-[10px] hover:bg-zinc-900 hover:text-white"
-            >
-              Book now
-            </a>
-            <button
-              onClick={() => setPricesOpen(true)}
-              className="rounded-full border border-zinc-700 px-4 py-2 text-[10px] hover:bg-zinc-900 hover:text-white"
-            >
-              Prices
-            </button>
-          </div>
-        </div>
-
         <h1 className="text-center text-4xl sm:text-5xl tracking-tight">Reformer Pilates Studio</h1>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[180px_1fr_220px] items-start">
@@ -152,6 +137,17 @@ export default function HomePage() {
             >
               <img src={slide.image} alt={slide.name} className="h-full w-full object-cover" />
             </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-10">
+        <h2 className="mb-4 text-3xl tracking-tight">Studio</h2>
+        <div className="flex gap-3 overflow-x-auto pb-1">
+          {studioSlides.map((slide) => (
+            <div key={slide} className="min-w-[320px] sm:min-w-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-white">
+              <img src={slide} alt="Studio" className="h-56 w-full object-cover" />
+            </div>
           ))}
         </div>
       </section>
@@ -202,6 +198,40 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section id="prices" className="mx-auto max-w-6xl px-4 pb-14">
+        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-5xl tracking-tight">Our Prices</h2>
+          <div className="inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
+            <button
+              onClick={() => setPriceMode("group")}
+              className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+            >
+              Group Reformer Pilates
+            </button>
+            <button
+              onClick={() => setPriceMode("private")}
+              className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+            >
+              Private Reformer Pilates
+            </button>
+          </div>
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+          {pricedServices.map((item) => (
+            <article key={item.id} className="border border-zinc-200 bg-white p-4">
+              <p className="text-lg leading-tight">{item.title}</p>
+              <p className="mt-1 text-[11px] uppercase tracking-[0.1em] text-zinc-500">{item.category}</p>
+              <p className="mt-3 text-sm text-zinc-700">
+                {item.priceFrom ? `from ${item.priceFrom}` : ""}
+                {item.priceFrom && item.priceTo ? " · " : ""}
+                {item.priceTo ? `to ${item.priceTo}` : ""}
+              </p>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="mb-5 text-5xl tracking-tight">Easy to find</h2>
         <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
@@ -230,51 +260,6 @@ export default function HomePage() {
       </section>
 
       <SiteFooter />
-
-      {pricesOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/45 p-4" onClick={() => setPricesOpen(false)}>
-          <div
-            className="mx-auto mt-10 w-full max-w-4xl rounded-lg bg-[#f7f4ef] p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="mb-5 flex items-center justify-between">
-              <h3 className="text-4xl tracking-tight">Our Prices</h3>
-              <button onClick={() => setPricesOpen(false)} className="rounded-full border border-zinc-400 px-3 py-1 text-sm">
-                Close
-              </button>
-            </div>
-
-            <div className="mb-5 inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
-              <button
-                onClick={() => setPriceMode("group")}
-                className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-              >
-                Group Reformer Pilates
-              </button>
-              <button
-                onClick={() => setPriceMode("private")}
-                className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-              >
-                Private Reformer Pilates
-              </button>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {pricedServices.map((item) => (
-                <article key={item.id} className="border border-zinc-200 bg-white p-4">
-                  <p className="text-lg leading-tight">{item.title}</p>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.1em] text-zinc-500">{item.category}</p>
-                  <p className="mt-3 text-sm text-zinc-700">
-                    {item.priceFrom ? `from ${item.priceFrom}` : ""}
-                    {item.priceFrom && item.priceTo ? " · " : ""}
-                    {item.priceTo ? `to ${item.priceTo}` : ""}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
