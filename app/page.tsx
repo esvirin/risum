@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { useI18n } from "@/components/LanguageProvider";
 
 type ScheduleItem = {
   id: string;
@@ -74,6 +75,45 @@ function getLocalDateKey(dateValue: string | number | Date) {
 }
 
 export default function HomePage() {
+  const { locale } = useI18n();
+  const copy = locale === "ru"
+    ? {
+        title: "Студия реформер-пилатеса",
+        lead: "Персональный подход, эстетичное пространство и сильная команда для персональных и групповых тренировок.",
+        studio: "Студия",
+        instructors: "Тренеры",
+        join: "Присоединиться к тренировке",
+        group: "Группа",
+        private: "Персонально",
+        spotsLeft: "мест осталось",
+        pricesTitle: "Наши цены",
+        groupReformer: "Групповой Reformer Pilates",
+        privateReformer: "Персональный Reformer Pilates",
+        close: "Закрыть",
+        easy: "Как нас найти",
+        phone: "Телефон",
+        address: "Адрес",
+        email: "Email",
+      }
+    : {
+        title: "{copy.title}",
+        lead: "{copy.lead}",
+        studio: "Studio",
+        instructors: "Instructors",
+        join: "Join the training",
+        group: "Group",
+        private: "Private",
+        spotsLeft: "spots left",
+        pricesTitle: "{copy.pricesTitle}",
+        groupReformer: "{copy.groupReformer}",
+        privateReformer: "{copy.privateReformer}",
+        close: "Close",
+        easy: "Easy to find",
+        phone: "Phone",
+        address: "Address",
+        email: "Email",
+      };
+
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [pricesOpen, setPricesOpen] = useState(false);
@@ -131,15 +171,15 @@ export default function HomePage() {
       <PublicNav />
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-        <h1 className="text-center text-4xl sm:text-5xl tracking-tight">Reformer Pilates Studio</h1>
+        <h1 className="text-center text-4xl sm:text-5xl tracking-tight">{copy.title}</h1>
         <p className="mx-auto mt-4 max-w-2xl text-center text-zinc-600">
-          Personal approach, clean studio, and experienced team for private and group training.
+          {copy.lead}
         </p>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
         <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-3xl tracking-tight">Studio</h2>
+          <h2 className="text-3xl tracking-tight">{copy.studio}</h2>
           <div className="inline-flex gap-2">
             <button
               onClick={() => setStudioIndex((prev) => (prev - 1 + studioSlides.length) % studioSlides.length)}
@@ -174,7 +214,7 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-6xl px-4 pb-12">
         <div className="mb-4 flex items-end justify-between gap-3">
-          <h2 className="text-3xl tracking-tight">Instructors</h2>
+          <h2 className="text-3xl tracking-tight">{copy.instructors}</h2>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {trainers.map((trainer) => (
@@ -191,19 +231,19 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-6xl px-4 pb-14">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-5xl tracking-tight">Join the training</h2>
+          <h2 className="text-5xl tracking-tight">{copy.join}</h2>
           <div className="inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
             <button
               onClick={() => setMode("group")}
               className={`rounded-full px-4 py-2 ${mode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
             >
-              Group
+              {copy.group}
             </button>
             <button
               onClick={() => setMode("private")}
               className={`rounded-full px-4 py-2 ${mode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
             >
-              Private
+              {copy.private}
             </button>
           </div>
         </div>
@@ -224,7 +264,7 @@ export default function HomePage() {
                         <p className="text-xl tracking-tight">{formatTime(item.datetime)}</p>
                         <p className="mt-1 text-sm leading-tight">{item.service}</p>
                         <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{item.trainer}</p>
-                        {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} spots left</p> : null}
+                        {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} {copy.spotsLeft}</p> : null}
                       </article>
                     );
                   })}
@@ -236,19 +276,19 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-16">
-        <h2 className="mb-5 text-5xl tracking-tight">Easy to find</h2>
+        <h2 className="mb-5 text-5xl tracking-tight">{copy.easy}</h2>
         <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
           <div className="space-y-4">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Phone</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.phone}</p>
               <p className="text-3xl tracking-tight">+357 95505556</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Address</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.address}</p>
               <p>1st floor, 58 Kolonakiou Str, Limassol, 4103</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Email</p>
+              <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.email}</p>
               <p>hello@fitspace.cy</p>
             </div>
           </div>
@@ -266,9 +306,9 @@ export default function HomePage() {
         <div className="fixed inset-0 z-50 bg-black/45 p-4" onClick={() => setPricesOpen(false)}>
           <div className="mx-auto mt-10 w-full max-w-4xl rounded-lg bg-[#f7f4ef] p-6" onClick={(e) => e.stopPropagation()}>
             <div className="mb-5 flex items-center justify-between">
-              <h3 className="text-4xl tracking-tight">Our Prices</h3>
+              <h3 className="text-4xl tracking-tight">{copy.pricesTitle}</h3>
               <button onClick={() => setPricesOpen(false)} className="rounded-full border border-zinc-400 px-3 py-1 text-sm">
-                Close
+                {copy.close}
               </button>
             </div>
 
@@ -277,13 +317,13 @@ export default function HomePage() {
                 onClick={() => setPriceMode("group")}
                 className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
               >
-                Group Reformer Pilates
+                {copy.groupReformer}
               </button>
               <button
                 onClick={() => setPriceMode("private")}
                 className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
               >
-                Private Reformer Pilates
+                {copy.privateReformer}
               </button>
             </div>
 

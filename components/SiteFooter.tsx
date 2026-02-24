@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useI18n } from "@/components/LanguageProvider";
 
 export function SiteFooter() {
-  const { t } = useI18n();
+  const { t, locale } = useI18n();
 
   return (
     <footer className="border-t border-zinc-200 bg-[#f7f4ef]">
@@ -12,7 +12,7 @@ export function SiteFooter() {
         <span>{t.footer.company}</span>
         <div className="flex items-center gap-4">
           <Link href="/policies" className="hover:text-zinc-800">
-            Studio Policies
+            {locale === "ru" ? "Правила студии" : "Studio Policies"}
           </Link>
           <span>{t.footer.copy}</span>
         </div>
