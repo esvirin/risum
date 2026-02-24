@@ -13,6 +13,8 @@ export const translations = {
       cabinet: "Кабинет",
       book: "Запись",
       prices: "Цены",
+      menu: "Меню",
+      close: "Закрыть",
     },
     home: {
       badge: "Risum Pilates Studio · Limassol",
@@ -156,6 +158,8 @@ export const translations = {
       cabinet: "Cabinet",
       book: "Book",
       prices: "Prices",
+      menu: "Menu",
+      close: "Close",
     },
     home: {
       badge: "Risum Pilates Studio · Limassol",
