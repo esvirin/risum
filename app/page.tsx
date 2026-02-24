@@ -23,12 +23,11 @@ type ServiceItem = {
 
 type Mode = "group" | "private";
 
-const trainerSlides = [
-  { name: "Olga", image: "/wfolio/olga.jpg" },
-  { name: "Svetlana", image: "/wfolio/svetlana.jpg" },
-  { name: "Konstantina", image: "/wfolio/konstantina.jpg" },
-  { name: "Christina", image: "/wfolio/christina.jpg" },
-  { name: "Team", image: "/instagram/fit-2.jpg" },
+const trainers = [
+  { name: "Olga", role: "Instructor", image: "/wfolio/olga.jpg" },
+  { name: "Svetlana", role: "Instructor", image: "/wfolio/svetlana.jpg" },
+  { name: "Konstantina", role: "Instructor", image: "/wfolio/konstantina.jpg" },
+  { name: "Christina", role: "Instructor", image: "/wfolio/christina.jpg" },
 ];
 
 const studioSlides = [
@@ -58,7 +57,6 @@ function formatTime(value: string) {
 }
 
 export default function HomePage() {
-  const [activeTrainer, setActiveTrainer] = useState(0);
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
@@ -109,35 +107,25 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
         <h1 className="text-center text-4xl sm:text-5xl tracking-tight">Reformer Pilates Studio</h1>
+        <p className="mx-auto mt-4 max-w-2xl text-center text-zinc-600">
+          Personal approach, clean studio, and experienced team for private and group training.
+        </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[180px_1fr_220px] items-start">
-          <div className="text-4xl leading-tight tracking-tight">
-            <p>Meet</p>
-            <p>Our</p>
-            <p>Team</p>
+        <div className="mt-10">
+          <div className="mb-4 flex items-end justify-between gap-3">
+            <h2 className="text-3xl tracking-tight">Instructors</h2>
           </div>
-
-          <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-            <img src={trainerSlides[activeTrainer].image} alt={trainerSlides[activeTrainer].name} className="h-full w-full object-cover" />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {trainers.map((trainer) => (
+              <article key={trainer.name} className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+                <img src={trainer.image} alt={trainer.name} className="aspect-[3/4] w-full object-cover" />
+                <div className="p-4">
+                  <p className="text-xl tracking-tight">{trainer.name}</p>
+                  <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{trainer.role}</p>
+                </div>
+              </article>
+            ))}
           </div>
-
-          <div>
-            <h2 className="text-4xl leading-[1.1]">Best Reformer Pilates</h2>
-            <p className="mt-4 text-zinc-600">Personal approach, clean studio, and experienced team for private and group training.</p>
-            <p className="mt-6 text-3xl tracking-tight">{trainerSlides[activeTrainer].name}</p>
-          </div>
-        </div>
-
-        <div className="mt-4 flex gap-3 overflow-x-auto pb-1">
-          {trainerSlides.map((slide, index) => (
-            <button
-              key={slide.name}
-              onClick={() => setActiveTrainer(index)}
-              className={`h-14 w-14 overflow-hidden rounded-full border ${activeTrainer === index ? "border-zinc-900" : "border-zinc-300"}`}
-            >
-              <img src={slide.image} alt={slide.name} className="h-full w-full object-cover" />
-            </button>
-          ))}
         </div>
       </section>
 
