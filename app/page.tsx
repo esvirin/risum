@@ -75,44 +75,8 @@ function getLocalDateKey(dateValue: string | number | Date) {
 }
 
 export default function HomePage() {
-  const { locale } = useI18n();
-  const copy = locale === "ru"
-    ? {
-        title: "Студия реформер-пилатеса",
-        lead: "Персональный подход, эстетичное пространство и сильная команда для персональных и групповых тренировок.",
-        studio: "Студия",
-        instructors: "Тренеры",
-        join: "Присоединиться к тренировке",
-        group: "Группа",
-        private: "Персонально",
-        spotsLeft: "мест осталось",
-        pricesTitle: "Наши цены",
-        groupReformer: "Групповой Reformer Pilates",
-        privateReformer: "Персональный Reformer Pilates",
-        close: "Закрыть",
-        easy: "Как нас найти",
-        phone: "Телефон",
-        address: "Адрес",
-        email: "Email",
-      }
-    : {
-        title: "{copy.title}",
-        lead: "{copy.lead}",
-        studio: "Studio",
-        instructors: "Instructors",
-        join: "Join the training",
-        group: "Group",
-        private: "Private",
-        spotsLeft: "spots left",
-        pricesTitle: "{copy.pricesTitle}",
-        groupReformer: "{copy.groupReformer}",
-        privateReformer: "{copy.privateReformer}",
-        close: "Close",
-        easy: "Easy to find",
-        phone: "Phone",
-        address: "Address",
-        email: "Email",
-      };
+  const { t } = useI18n();
+  const copy = t.homeLite;
 
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");

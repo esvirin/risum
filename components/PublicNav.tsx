@@ -7,7 +7,7 @@ import { useI18n } from "@/components/LanguageProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function PublicNav() {
-  const { t, locale } = useI18n();
+  const { t } = useI18n();
 
   return (
     <header className="sticky top-0 z-50 bg-[#f7f4ef]/95 backdrop-blur border-b border-zinc-200">
@@ -43,7 +43,7 @@ export function PublicNav() {
             onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
             className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
           >
-            {locale === "ru" ? "Цены" : "Prices"}
+            {t.nav.prices}
           </button>
           <a
             href={altegioLinks.booking}
