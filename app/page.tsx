@@ -176,7 +176,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-12">
+      <section id="instructors" className="mx-auto max-w-6xl px-4 pb-12">
         <div className="mb-4 flex items-end justify-between gap-3">
           <h2 className="text-3xl tracking-tight">{copy.instructors}</h2>
         </div>
