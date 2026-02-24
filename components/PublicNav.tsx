@@ -12,6 +12,12 @@ export function PublicNav() {
   return (
     <header className="sticky top-0 z-50 bg-[#f7f4ef]/95 backdrop-blur border-b border-zinc-200">
       <div className="border-b border-zinc-200/80">
+        <div className="mx-auto flex max-w-6xl justify-end px-4 py-2">
+          <LanguageSwitcher />
+        </div>
+      </div>
+
+      <div className="border-b border-zinc-200/80">
         <div className="mx-auto flex max-w-6xl flex-col gap-1 px-4 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
           <p>1st floor, 58 Kolonakiou Str, Limassol, 4103</p>
           <a href="tel:+35795505556" className="text-zinc-800 hover:text-black">
@@ -36,7 +42,6 @@ export function PublicNav() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <LanguageSwitcher />
           <button
             onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
             className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
