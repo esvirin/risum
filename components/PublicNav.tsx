@@ -32,7 +32,6 @@ export function PublicNav() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide text-zinc-700">
           <Link href="/" className="hover:text-black">{t.nav.studio}</Link>
-          <Link href="/#instructors" className="hover:text-black">{t.nav.trainers}</Link>
           <Link href="/schedule" className="hover:text-black">{t.nav.schedule}</Link>
           <Link href="/contacts" className="hover:text-black">{t.nav.contacts}</Link>
           <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="hover:text-black">
@@ -69,7 +68,6 @@ export function PublicNav() {
         <div className="border-t border-zinc-200 bg-[#f7f4ef] md:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 text-sm text-zinc-800">
             <Link href="/" onClick={() => setMobileOpen(false)}>{t.nav.studio}</Link>
-            <Link href="/#instructors" onClick={() => setMobileOpen(false)}>{t.nav.trainers}</Link>
             <Link href="/schedule" onClick={() => setMobileOpen(false)}>{t.nav.schedule}</Link>
             <Link href="/contacts" onClick={() => setMobileOpen(false)}>{t.nav.contacts}</Link>
             <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer">{t.nav.cabinet}</a>
