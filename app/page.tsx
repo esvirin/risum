@@ -94,7 +94,15 @@ export default function HomePage() {
       map.set(key, [...(map.get(key) ?? []), item]);
     }
 
-    return Array.from(map.entries()).slice(0, 7);
+    const start = new Date(now);
+    start.setHours(0, 0, 0, 0);
+
+    return Array.from({ length: 7 }, (_, index) => {
+      const day = new Date(start);
+      day.setDate(start.getDate() + index);
+      const key = day.toISOString().slice(0, 10);
+      return [key, map.get(key) ?? []] as [string, ScheduleItem[]];
+    });
   }, [schedule, mode, nowTs]);
 
   const pricedServices = useMemo(
