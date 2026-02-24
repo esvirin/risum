@@ -106,15 +106,7 @@ export default function HomePage() {
       map.set(key, [...(map.get(key) ?? []), item]);
     }
 
-    const start = new Date(now);
-    start.setHours(0, 0, 0, 0);
-
-    return Array.from({ length: 7 }, (_, index) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + index);
-      const key = getLocalDateKey(day);
-      return [key, map.get(key) ?? []] as [string, ScheduleItem[]];
-    });
+    return Array.from(map.entries()).slice(0, 7);
   }, [schedule, mode, nowTs]);
 
   const pricedServices = useMemo(
