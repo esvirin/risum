@@ -65,6 +65,14 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
+function getLocalDateKey(dateValue: string | number | Date) {
+  const d = new Date(dateValue);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
 export default function HomePage() {
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
@@ -94,7 +102,7 @@ export default function HomePage() {
 
     const map = new Map<string, ScheduleItem[]>();
     for (const item of filtered) {
-      const key = new Date(item.datetime).toISOString().slice(0, 10);
+      const key = getLocalDateKey(item.datetime);
       map.set(key, [...(map.get(key) ?? []), item]);
     }
 
@@ -104,7 +112,7 @@ export default function HomePage() {
     return Array.from({ length: 7 }, (_, index) => {
       const day = new Date(start);
       day.setDate(start.getDate() + index);
-      const key = day.toISOString().slice(0, 10);
+      const key = getLocalDateKey(day);
       return [key, map.get(key) ?? []] as [string, ScheduleItem[]];
     });
   }, [schedule, mode, nowTs]);
