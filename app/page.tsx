@@ -33,8 +33,6 @@ const trainers = [
 const studioSlides = [
   "/instagram/fit-1.jpg",
   "/instagram/fit-2.jpg",
-  "/instagram/fit-3.jpg",
-  "/instagram/fit-4.jpg",
 ];
 
 const manualPrices: PriceCard[] = [
@@ -147,7 +145,7 @@ export default function HomePage() {
         </div>
 
         <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-          <img src={studioSlides[studioIndex]} alt="Studio" className="h-64 w-full object-cover sm:h-80" />
+          <img src={studioSlides[studioIndex]} alt="Studio" className="h-[320px] w-full object-cover sm:h-[360px] lg:h-[380px]" />
         </div>
 
         <div className="mt-3 flex justify-center gap-2">
