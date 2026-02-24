@@ -3,12 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { altegioLinks } from "@/lib/altegio";
-import { useI18n } from "@/components/LanguageProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function PublicNav() {
-  const { t } = useI18n();
-
   return (
     <header className="sticky top-0 z-50 bg-[#f7f4ef]/95 backdrop-blur border-b border-zinc-200">
       <div className="border-b border-zinc-200/80">
@@ -25,16 +22,6 @@ export function PublicNav() {
           <Image src="/logo-fitspace.svg" alt="Fit Space" width={120} height={28} className="h-7 w-auto" priority />
         </Link>
 
-        <nav className="hidden md:flex items-center gap-8 text-sm tracking-wide text-zinc-700">
-          <Link href="/" className="hover:text-black">{t.nav.studio}</Link>
-          <Link href="/trainers" className="hover:text-black">{t.nav.trainers}</Link>
-          <Link href="/schedule" className="hover:text-black">{t.nav.schedule}</Link>
-          <Link href="/contacts" className="hover:text-black">{t.nav.contacts}</Link>
-          <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="hover:text-black">
-            {t.nav.cabinet}
-          </a>
-        </nav>
-
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
           <Link
@@ -49,7 +36,7 @@ export function PublicNav() {
             rel="noreferrer"
             className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
           >
-            {t.nav.book}
+            Book now
           </a>
         </div>
       </div>
