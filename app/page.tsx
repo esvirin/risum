@@ -59,6 +59,7 @@ function formatTime(value: string) {
 export default function HomePage() {
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
+  const [studioIndex, setStudioIndex] = useState(0);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [nowTs] = useState<number>(() => Date.now());
@@ -130,12 +131,36 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
-        <h2 className="mb-4 text-3xl tracking-tight">Studio</h2>
-        <div className="flex gap-3 overflow-x-auto pb-1">
-          {studioSlides.map((slide) => (
-            <div key={slide} className="min-w-[320px] sm:min-w-[420px] overflow-hidden rounded-xl border border-zinc-200 bg-white">
-              <img src={slide} alt="Studio" className="h-56 w-full object-cover" />
-            </div>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-3xl tracking-tight">Studio</h2>
+          <div className="inline-flex gap-2">
+            <button
+              onClick={() => setStudioIndex((prev) => (prev - 1 + studioSlides.length) % studioSlides.length)}
+              className="rounded-full border border-zinc-300 px-3 py-1 text-sm hover:border-zinc-900"
+            >
+              ←
+            </button>
+            <button
+              onClick={() => setStudioIndex((prev) => (prev + 1) % studioSlides.length)}
+              className="rounded-full border border-zinc-300 px-3 py-1 text-sm hover:border-zinc-900"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+          <img src={studioSlides[studioIndex]} alt="Studio" className="h-64 w-full object-cover sm:h-80" />
+        </div>
+
+        <div className="mt-3 flex justify-center gap-2">
+          {studioSlides.map((slide, index) => (
+            <button
+              key={slide}
+              onClick={() => setStudioIndex(index)}
+              className={`h-2.5 w-2.5 rounded-full ${studioIndex === index ? "bg-zinc-900" : "bg-zinc-300"}`}
+              aria-label={`Studio slide ${index + 1}`}
+            />
           ))}
         </div>
       </section>
