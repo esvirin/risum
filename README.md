@@ -1,72 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fit Space Website (`/home/seo/dev/risum`)
 
-## Getting Started
+Production-focused Next.js website for Fit Space with live schedule/services data and external booking flow.
 
-First, run the development server:
+## Summary
+
+- Stack: **Next.js (App Router) + TypeScript + Tailwind**
+- Main page rebuilt to match approved visual direction:
+  - instructor cards from **vertical** photos,
+  - separate studio slider from **horizontal** photos,
+  - 6–7 day schedule grid with Group/Private switch,
+  - prices section with Group/Private switch.
+- Booking and personal cabinet are external links.
+- Data policy: **real data only** (no synthetic placeholders/random fallback in schedule/services flow).
+
+## Run Locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Default URL: `http://localhost:3000`  
+If occupied, Next.js auto-uses the next port (example: `3001`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure (key files)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `app/page.tsx` — main landing page (hero, instructor cards, studio slider, schedule, prices, contacts)
+- `components/PublicNav.tsx` — top navigation + Book now/Prices buttons
+- `components/AltegioScheduleList.tsx` — reusable schedule list (used on internal pages)
+- `components/AltegioServicesList.tsx` — reusable services/prices list
+- `app/api/altegio/*` — API routes for schedule/trainers/services
+- `lib/altegio-api.ts` — Altegio API mapping/normalization
+- `public/wfolio/*` — selected instructor photos for homepage cards
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Altegio Integration
-
-Set public links/widgets in `.env`:
+### Public links
 
 ```bash
 NEXT_PUBLIC_ALTEGIO_BOOKING_URL=https://your-company.alteg.io
 NEXT_PUBLIC_ALTEGIO_CABINET_URL=https://your-company.alteg.io/login
 NEXT_PUBLIC_ALTEGIO_TRAINERS_WIDGET_URL=https://your-company.alteg.io/widget/staff
-NEXT_PUBLIC_ALTEGIO_IOS_APP_URL=https://apps.apple.com/app/altegio/id1477754250
-NEXT_PUBLIC_ALTEGIO_ANDROID_APP_URL=https://play.google.com/store/apps/details?id=com.yclients.mobile
+NEXT_PUBLIC_ALTEGIO_IOS_APP_URL=
+NEXT_PUBLIC_ALTEGIO_ANDROID_APP_URL=
 ```
 
-Used in:
-- Trainers external link (`app/trainers/page.tsx`)
-- Navigation and CTA links (`components/PublicNav.tsx`, `app/page.tsx`)
+> Current preference: iOS/Android app links may stay empty.
 
-Server API requests (optional, used by `/api/altegio/*`):
+### Server API access
 
 ```bash
-# Base URL (project uses your .env value, ex: https://api.alteg.io)
 ALTEGIO_API_BASE_URL=https://api.alteg.io
-
-# Preferred keys from this project
 ALTEGIO_PARTNER_TOKEN=...
 ALTEGIO_USER_TOKEN=...
 ALTEGIO_COMPANY_ID=...
 
-# Optional login/password fallback
+# Optional fallback auth
 ALTEGIO_USER_LOGIN=...
 ALTEGIO_USER_PASSWORD=...
-
-# Endpoints (can be absolute URL or path)
-ALTEGIO_SCHEDULE_ENDPOINT=/bookings
-ALTEGIO_TRAINERS_ENDPOINT=/staff
 ```
 
-## Deploy on Vercel
+## Current UX Rules (implemented)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- Homepage schedule shows **upcoming sessions only**.
+- Time window: up to **one week ahead**.
+- Group/Private switch on schedule.
+- Occupancy shown per slot when API provides values (`clientsCount/capacity` → spots left).
+- Prices are shown in dedicated section and split by Group/Private.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes for Further Iterations
+
+- Replace temporary Team fallback image with final approved Team photo from source gallery.
+- Continue visual polish against approved reference while preserving real-data behavior.
+
+## Commands
+
+```bash
+npm run dev
+npm run lint
+npm run build
+```
