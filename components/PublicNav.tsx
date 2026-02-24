@@ -37,12 +37,12 @@ export function PublicNav() {
 
         <div className="flex items-center gap-2">
           <LanguageSwitcher />
-          <Link
-            href="/#prices"
+          <button
+            onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
             className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
           >
             Prices
-          </Link>
+          </button>
           <a
             href={altegioLinks.booking}
             target="_blank"

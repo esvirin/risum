@@ -76,6 +76,7 @@ function getLocalDateKey(dateValue: string | number | Date) {
 export default function HomePage() {
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
+  const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
   const [nowTs] = useState<number>(() => Date.now());
@@ -86,6 +87,9 @@ export default function HomePage() {
       .then((r) => setSchedule(Array.isArray(r?.data) ? r.data : []))
       .catch(() => setSchedule([]));
 
+    const open = () => setPricesOpen(true);
+    window.addEventListener("open-prices-modal", open);
+    return () => window.removeEventListener("open-prices-modal", open);
   }, []);
 
   const scheduleDays = useMemo(() => {
@@ -231,36 +235,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="prices" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-5xl tracking-tight">Our Prices</h2>
-          <div className="inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
-            <button
-              onClick={() => setPriceMode("group")}
-              className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-            >
-              Group Reformer Pilates
-            </button>
-            <button
-              onClick={() => setPriceMode("private")}
-              className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-            >
-              Private Reformer Pilates
-            </button>
-          </div>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-          {pricedServices.map((item) => (
-            <article key={item.id} className="border border-zinc-200 bg-white p-4">
-              <p className="text-lg leading-tight">{item.title}</p>
-              <p className="mt-3 text-sm font-medium text-zinc-900">{item.price}</p>
-              {item.note ? <p className="mt-1 text-xs text-zinc-600">{item.note}</p> : null}
-            </article>
-          ))}
-        </div>
-      </section>
-
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="mb-5 text-5xl tracking-tight">Easy to find</h2>
         <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
@@ -287,6 +261,44 @@ export default function HomePage() {
           />
         </div>
       </section>
+
+      {pricesOpen ? (
+        <div className="fixed inset-0 z-50 bg-black/45 p-4" onClick={() => setPricesOpen(false)}>
+          <div className="mx-auto mt-10 w-full max-w-4xl rounded-lg bg-[#f7f4ef] p-6" onClick={(e) => e.stopPropagation()}>
+            <div className="mb-5 flex items-center justify-between">
+              <h3 className="text-4xl tracking-tight">Our Prices</h3>
+              <button onClick={() => setPricesOpen(false)} className="rounded-full border border-zinc-400 px-3 py-1 text-sm">
+                Close
+              </button>
+            </div>
+
+            <div className="mb-5 inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
+              <button
+                onClick={() => setPriceMode("group")}
+                className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+              >
+                Group Reformer Pilates
+              </button>
+              <button
+                onClick={() => setPriceMode("private")}
+                className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
+              >
+                Private Reformer Pilates
+              </button>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
+              {pricedServices.map((item) => (
+                <article key={item.id} className="border border-zinc-200 bg-white p-4">
+                  <p className="text-lg leading-tight">{item.title}</p>
+                  <p className="mt-3 text-sm font-medium text-zinc-900">{item.price}</p>
+                  {item.note ? <p className="mt-1 text-xs text-zinc-600">{item.note}</p> : null}
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       <SiteFooter />
     </div>
