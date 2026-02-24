@@ -253,26 +253,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <h2 className="mb-5 text-5xl tracking-tight">Studio Policies</h2>
-        <div className="border border-zinc-200 bg-white p-5 sm:p-6">
-          <p className="mb-4 text-sm text-zinc-600">
-            To help our studio run efficiently, please note our studio policies. Thank you in advance.
-          </p>
-          <ol className="space-y-3 text-sm text-zinc-700">
-            <li>1. Each session lasts 55 minutes. Please arrive a few minutes earlier to ensure a healthy warm up.</li>
-            <li>2. You cannot join class if you are more than 10 minutes late after start.</li>
-            <li>3. 24 hours notice is required for cancellations/rescheduling, otherwise session is charged. Monday morning sessions must be cancelled before Saturday noon (illness reasons excluded).</li>
-            <li>4. Classes with less than 2 people will be rescheduled.</li>
-            <li>5. All sessions and classes are paid in advance.</li>
-            <li>6. All packages have an expiration date and are non-refundable.</li>
-            <li>7. Please turn off cell phones to keep the environment peaceful and distraction-free.</li>
-            <li>8. Comfortable workout clothing recommended. Remove street shoes before entering workout area. Socks are required.</li>
-            <li>9. After each class/session, wipe down the reformer, replace springs, and return straps to shoulder posts.</li>
-          </ol>
-        </div>
-      </section>
-
       <section className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="mb-5 text-5xl tracking-tight">Easy to find</h2>
         <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
