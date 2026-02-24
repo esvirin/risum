@@ -13,12 +13,12 @@ type ScheduleItem = {
   capacity?: number;
 };
 
-type ServiceItem = {
+type PriceCard = {
   id: string;
   title: string;
-  category: string;
-  priceFrom: string;
-  priceTo: string;
+  price: string;
+  note?: string;
+  mode: Mode;
 };
 
 type Mode = "group" | "private";
@@ -35,6 +35,17 @@ const studioSlides = [
   "/instagram/fit-2.jpg",
   "/instagram/fit-3.jpg",
   "/instagram/fit-4.jpg",
+];
+
+const manualPrices: PriceCard[] = [
+  { id: "g1", title: "Single class", price: "€40", mode: "group" },
+  { id: "g5", title: "5 classes", price: "€160", note: "€32 each · valid 1 month", mode: "group" },
+  { id: "g10", title: "10 classes", price: "€280", note: "€28 each · valid 2 months", mode: "group" },
+  { id: "g20", title: "20 classes", price: "€520", note: "€26 each · valid 3 months", mode: "group" },
+  { id: "g30", title: "30 classes", price: "€720", note: "€24 each · valid 3 months", mode: "group" },
+  { id: "p1", title: "One-on-one training", price: "€100", note: "1 session", mode: "private" },
+  { id: "p2", title: "Duet training", price: "€120", note: "1 session", mode: "private" },
+  { id: "p3", title: "Stretching", price: "€25", note: "1 class", mode: "private" },
 ];
 
 function detectMode(value: string): Mode {
@@ -61,7 +72,6 @@ export default function HomePage() {
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
-  const [services, setServices] = useState<ServiceItem[]>([]);
   const [nowTs] = useState<number>(() => Date.now());
 
   useEffect(() => {
@@ -70,10 +80,6 @@ export default function HomePage() {
       .then((r) => setSchedule(Array.isArray(r?.data) ? r.data : []))
       .catch(() => setSchedule([]));
 
-    fetch("/api/altegio/services", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((r) => setServices(Array.isArray(r?.data) ? r.data : []))
-      .catch(() => setServices([]));
   }, []);
 
   const scheduleDays = useMemo(() => {
@@ -106,8 +112,8 @@ export default function HomePage() {
   }, [schedule, mode, nowTs]);
 
   const pricedServices = useMemo(
-    () => services.filter((item) => detectMode(`${item.title} ${item.category}`) === priceMode),
-    [services, priceMode],
+    () => manualPrices.filter((item) => item.mode === priceMode),
+    [priceMode],
   );
 
   return (
@@ -242,12 +248,8 @@ export default function HomePage() {
           {pricedServices.map((item) => (
             <article key={item.id} className="border border-zinc-200 bg-white p-4">
               <p className="text-lg leading-tight">{item.title}</p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.1em] text-zinc-500">{item.category}</p>
-              <p className="mt-3 text-sm text-zinc-700">
-                {item.priceFrom ? `from ${item.priceFrom}` : ""}
-                {item.priceFrom && item.priceTo ? " · " : ""}
-                {item.priceTo ? `to ${item.priceTo}` : ""}
-              </p>
+              <p className="mt-3 text-sm font-medium text-zinc-900">{item.price}</p>
+              {item.note ? <p className="mt-1 text-xs text-zinc-600">{item.note}</p> : null}
             </article>
           ))}
         </div>
