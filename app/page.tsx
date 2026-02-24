@@ -111,23 +111,6 @@ export default function HomePage() {
         <p className="mx-auto mt-4 max-w-2xl text-center text-zinc-600">
           Personal approach, clean studio, and experienced team for private and group training.
         </p>
-
-        <div className="mt-10">
-          <div className="mb-4 flex items-end justify-between gap-3">
-            <h2 className="text-3xl tracking-tight">Instructors</h2>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {trainers.map((trainer) => (
-              <article key={trainer.name} className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-                <img src={trainer.image} alt={trainer.name} className="aspect-[3/4] w-full object-cover" />
-                <div className="p-4">
-                  <p className="text-xl tracking-tight">{trainer.name}</p>
-                  <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{trainer.role}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
@@ -161,6 +144,23 @@ export default function HomePage() {
               className={`h-2.5 w-2.5 rounded-full ${studioIndex === index ? "bg-zinc-900" : "bg-zinc-300"}`}
               aria-label={`Studio slide ${index + 1}`}
             />
+          ))}
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-12">
+        <div className="mb-4 flex items-end justify-between gap-3">
+          <h2 className="text-3xl tracking-tight">Instructors</h2>
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {trainers.map((trainer) => (
+            <article key={trainer.name} className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+              <img src={trainer.image} alt={trainer.name} className="aspect-[3/4] w-full object-cover" />
+              <div className="p-4">
+                <p className="text-xl tracking-tight">{trainer.name}</p>
+                <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{trainer.role}</p>
+              </div>
+            </article>
           ))}
         </div>
       </section>
