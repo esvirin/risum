@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
@@ -38,29 +38,7 @@ function formatDay(value: string, locale: "ru-RU" | "en-US") {
 
 export default function SchedulePage() {
   const { locale, t } = useI18n();
-  const [items, setItems] = useState<ScheduleItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let ignore = false;
-
-    async function load() {
-      try {
-        const res = await fetch("/api/altegio/schedule", { cache: "no-store" });
-        const json = (await res.json()) as { data?: ScheduleItem[] };
-        if (!ignore) setItems(Array.isArray(json.data) ? json.data : []);
-      } catch {
-        if (!ignore) setItems([]);
-      } finally {
-        if (!ignore) setLoading(false);
-      }
-    }
-
-    load();
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  const [items] = useState<ScheduleItem[]>([]);
 
   const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
 
@@ -95,9 +73,7 @@ export default function SchedulePage() {
 
       <section>
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
-          {loading ? (
-            <div className="border border-zinc-200 bg-white p-6 text-sm text-zinc-500">{t.home.loading}</div>
-          ) : grid.days.length === 0 || grid.times.length === 0 ? (
+          {grid.days.length === 0 || grid.times.length === 0 ? (
             <div className="border border-zinc-200 bg-white p-6 text-sm text-zinc-600">{t.home.noData}</div>
           ) : (
             <div className="border border-zinc-200 bg-white overflow-x-auto">

@@ -86,15 +86,10 @@ export default function HomePage() {
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
-  const [schedule, setSchedule] = useState<ScheduleItem[]>([]);
+  const [schedule] = useState<ScheduleItem[]>([]);
   const [nowTs] = useState<number>(() => Date.now());
 
   useEffect(() => {
-    fetch("/api/altegio/schedule", { cache: "no-store" })
-      .then((r) => r.json())
-      .then((r) => setSchedule(Array.isArray(r?.data) ? r.data : []))
-      .catch(() => setSchedule([]));
-
     const open = () => setPricesOpen(true);
     window.addEventListener("open-prices-modal", open);
     return () => window.removeEventListener("open-prices-modal", open);

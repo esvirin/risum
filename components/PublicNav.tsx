@@ -3,9 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { altegioLinks } from "@/lib/altegio";
 import { useI18n } from "@/components/LanguageProvider";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+
+const BOOKING_URL = "https://my.fitspace.cy/";
 
 export function PublicNav() {
   const { t } = useI18n();
@@ -34,9 +35,6 @@ export function PublicNav() {
           <Link href="/" className="hover:text-black">{t.nav.studio}</Link>
           <Link href="/schedule" className="hover:text-black">{t.nav.schedule}</Link>
           <Link href="/contacts" className="hover:text-black">{t.nav.contacts}</Link>
-          <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer" className="hover:text-black">
-            {t.nav.cabinet}
-          </a>
         </nav>
 
         <div className="hidden md:flex items-center gap-2">
@@ -47,7 +45,7 @@ export function PublicNav() {
             {t.nav.prices}
           </button>
           <a
-            href={altegioLinks.booking}
+            href={BOOKING_URL}
             target="_blank"
             rel="noreferrer"
             className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
@@ -70,7 +68,6 @@ export function PublicNav() {
             <Link href="/" onClick={() => setMobileOpen(false)}>{t.nav.studio}</Link>
             <Link href="/schedule" onClick={() => setMobileOpen(false)}>{t.nav.schedule}</Link>
             <Link href="/contacts" onClick={() => setMobileOpen(false)}>{t.nav.contacts}</Link>
-            <a href={altegioLinks.cabinet} target="_blank" rel="noreferrer">{t.nav.cabinet}</a>
 
             <div className="mt-2 flex gap-2">
               <button
@@ -83,7 +80,7 @@ export function PublicNav() {
                 {t.nav.prices}
               </button>
               <a
-                href={altegioLinks.booking}
+                href={BOOKING_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em]"
