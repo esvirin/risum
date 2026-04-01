@@ -6,15 +6,7 @@ import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
-
-type ScheduleItem = {
-  id: string;
-  datetime: string;
-  trainer: string;
-  service: string;
-  clientsCount?: number;
-  capacity?: number;
-};
+import { BOOKING_URL, getStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
 
 type PriceCard = {
   id: string;
@@ -51,10 +43,6 @@ const manualPrices: PriceCard[] = [
   { id: "p2", label: "Private Lessons", title: "Duet training", price: "€120", note: "Valid 1 session", mode: "private" },
 ];
 
-function detectMode(value: string): Mode {
-  return /private|индив|персон|personal/i.test(value) ? "private" : "group";
-}
-
 function formatDay(value: string) {
   return new Intl.DateTimeFormat("en-US", {
     weekday: "short",
@@ -86,7 +74,7 @@ export default function HomePage() {
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
-  const [schedule] = useState<ScheduleItem[]>([]);
+  const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
   const [nowTs] = useState<number>(() => Date.now());
 
   useEffect(() => {
@@ -103,11 +91,11 @@ export default function HomePage() {
       .filter((item) => {
         const ts = new Date(item.datetime).getTime();
         if (!Number.isFinite(ts)) return false;
-        return ts >= now && ts <= max && detectMode(item.service) === mode;
+        return ts >= now && ts <= max && item.mode === mode;
       })
       .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
-    const map = new Map<string, ScheduleItem[]>();
+    const map = new Map<string, StaticScheduleItem[]>();
     for (const item of filtered) {
       const key = getLocalDateKey(item.datetime);
       map.set(key, [...(map.get(key) ?? []), item]);
@@ -120,7 +108,7 @@ export default function HomePage() {
       const day = new Date(start);
       day.setDate(start.getDate() + index);
       const key = getLocalDateKey(day);
-      return [key, map.get(key) ?? []] as [string, ScheduleItem[]];
+      return [key, map.get(key) ?? []] as [string, StaticScheduleItem[]];
     });
   }, [schedule, mode, nowTs]);
 
@@ -208,7 +196,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-14">
+      <section id="schedule" className="mx-auto max-w-6xl px-4 pb-14">
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-5xl tracking-tight">{copy.join}</h2>
           <div className="inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
@@ -239,12 +227,18 @@ export default function HomePage() {
                         ? Math.max(item.capacity - item.clientsCount, 0)
                         : null;
                     return (
-                      <article key={item.id} className="rounded-md border border-zinc-200 bg-white p-3">
+                      <a
+                        key={item.id}
+                        href={BOOKING_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block rounded-md border border-zinc-200 bg-white p-3 transition hover:border-zinc-900"
+                      >
                         <p className="text-xl tracking-tight">{formatTime(item.datetime)}</p>
                         <p className="mt-1 text-sm leading-tight">{item.service}</p>
                         <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{item.trainer}</p>
                         {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} {copy.spotsLeft}</p> : null}
-                      </article>
+                      </a>
                     );
                   })}
                 </div>
@@ -254,7 +248,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-16">
+      <section id="contacts" className="mx-auto max-w-6xl px-4 pb-16">
         <h2 className="mb-5 text-5xl tracking-tight">{copy.easy}</h2>
         <div className="grid gap-4 border border-zinc-200 bg-white p-5 md:grid-cols-2">
           <div className="space-y-4">
@@ -269,6 +263,23 @@ export default function HomePage() {
             <div>
               <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.email}</p>
               <p>hello@fitspace.cy</p>
+            </div>
+
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+              <a
+                href="https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+              >
+                {t.contacts.openMap}
+              </a>
+              <a
+                href="tel:+35795505556"
+                className="inline-flex items-center justify-center border border-zinc-300 px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:border-zinc-900"
+              >
+                {t.contacts.call}
+              </a>
             </div>
           </div>
           <iframe
