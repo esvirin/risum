@@ -40,15 +40,15 @@ export function PublicNav() {
         </div>
       </div>
 
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
+      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
         <Link href="/" className="inline-flex items-center">
-          <Image src="/logo-fitspace.svg" alt="Fit Space" width={120} height={28} className="h-7 w-auto" priority />
+          <Image src="/logo-fitspace.svg" alt="Fit Space" width={120} height={28} className="h-6 w-auto sm:h-7" priority />
         </Link>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
-            className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
+            className="border border-zinc-300 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white sm:px-4 sm:text-xs"
           >
             {t.nav.prices}
           </button>
@@ -56,7 +56,7 @@ export function PublicNav() {
             href={BOOKING_URL}
             target="_blank"
             rel="noreferrer"
-            className="border border-zinc-300 px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white"
+            className="border border-zinc-300 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white sm:px-4 sm:text-xs"
           >
             {t.nav.book}
           </a>

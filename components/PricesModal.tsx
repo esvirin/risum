@@ -50,7 +50,7 @@ export function PricesModal({
         {items.map((item) => (
           <article
             key={item.id}
-            className="flex h-full flex-col border border-zinc-900/85 bg-white px-4 py-4 shadow-[0_10px_24px_rgba(24,20,16,0.04)] sm:px-5 sm:py-5"
+            className="flex h-full flex-col border border-zinc-300 bg-white px-4 py-4 shadow-[0_8px_20px_rgba(24,20,16,0.03)] sm:px-5 sm:py-5"
           >
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-3">
               <div className="min-w-0">
@@ -70,7 +70,7 @@ export function PricesModal({
             </div>
 
             {item.note ? (
-              <p className="mt-auto border-t border-zinc-200 pt-4 text-lg leading-none tracking-tight text-zinc-900 sm:pt-4 sm:text-[1.6rem]">
+              <p className="mt-auto border-t border-zinc-200 pt-4 text-lg leading-none tracking-tight text-zinc-900 sm:text-[1.6rem]">
                 {item.note}
               </p>
             ) : null}

@@ -72,6 +72,10 @@ function getRoomName(value: string) {
   return value.split("·")[1]?.trim() || "Studio";
 }
 
+function getServiceLine(service: string, trainer: string) {
+  return `${service} ${getRoomName(trainer)}`;
+}
+
 export default function HomePage() {
   const { locale, t } = useI18n();
   const copy = t.homeLite;
@@ -146,6 +150,11 @@ export default function HomePage() {
           <p className="mx-auto mt-5 max-w-xl text-center text-base leading-relaxed text-zinc-600 sm:text-lg">
             {copy.lead}
           </p>
+          <div className="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-zinc-500 sm:mt-8">
+            <span>Reformer Pilates</span>
+            <span>Stretching</span>
+            <span>{copy.private}</span>
+          </div>
         </div>
       </section>
 
@@ -261,37 +270,30 @@ export default function HomePage() {
                     </p>
                   ) : (
                     items.map((item) => {
-                      const spots =
-                        typeof item.capacity === "number" && typeof item.clientsCount === "number"
-                          ? Math.max(item.capacity - item.clientsCount, 0)
-                          : null;
                       return (
                         <a
                           key={item.id}
                           href={BOOKING_URL}
                           target="_blank"
                           rel="noreferrer"
-                          className="block rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fbf8f3_100%)] px-3 py-3 transition hover:border-zinc-900"
+                          className="block rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:border-zinc-900"
                         >
-                          <div className="mb-3 flex items-center justify-between gap-3">
-                            <div className="inline-flex rounded-full border border-zinc-200 bg-[#f5efe7] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-zinc-600">
-                              {getRoomName(item.trainer)}
-                            </div>
-                            <p className="shrink-0 rounded-full bg-zinc-900 px-3 py-1 text-sm leading-none tracking-tight text-white">
-                              {formatTime(item.datetime)}
-                            </p>
-                          </div>
                           <div className="min-w-0">
-                            <p className="text-[1.02rem] leading-tight text-zinc-900">{item.service}</p>
-                            <p className="mt-2 text-[11px] uppercase tracking-[0.12em] text-zinc-500">
+                            <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
+                              {getServiceLine(item.service, item.trainer)}
+                            </p>
+                            <p className="mt-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
                               {getTrainerName(item.trainer)}
                             </p>
+                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-3">
+                              <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                                {getRoomName(item.trainer)}
+                              </span>
+                              <span className="text-[1.15rem] leading-none tracking-tight text-zinc-900">
+                                {formatTime(item.datetime)}
+                              </span>
+                            </div>
                           </div>
-                          {spots !== null ? (
-                            <p className="mt-3 text-xs text-zinc-600">
-                              {spots} {copy.spotsLeft}
-                            </p>
-                          ) : null}
                         </a>
                       );
                     })
@@ -304,30 +306,33 @@ export default function HomePage() {
           <div className="hidden min-w-[900px] grid-cols-7 gap-px bg-zinc-200 md:grid">
             {scheduleDays.map(([day, items]) => (
               <div key={day} className="bg-[#f8f6f1]">
-                <div className="border-b border-zinc-200 px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">{formatDay(day)}</div>
+                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                  {formatDay(day)}
+                </div>
                 <div className="space-y-2 p-2">
                   {items.map((item) => {
-                    const spots =
-                      typeof item.capacity === "number" && typeof item.clientsCount === "number"
-                        ? Math.max(item.capacity - item.clientsCount, 0)
-                        : null;
                     return (
                       <a
                         key={item.id}
                         href={BOOKING_URL}
                         target="_blank"
                         rel="noreferrer"
-                        className="block rounded-[24px] border border-zinc-200 bg-white p-3 transition hover:border-zinc-900"
+                        className="block rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-3 py-3 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:-translate-y-px hover:border-zinc-900 hover:shadow-[0_12px_26px_rgba(24,20,16,0.06)]"
                       >
-                        <div className="mb-2 inline-flex rounded-full bg-[#f3eee6] px-2.5 py-1 text-[10px] uppercase tracking-[0.14em] text-zinc-600">
-                            {getRoomName(item.trainer)}
-                        </div>
-                        <p className="text-xl tracking-tight">{formatTime(item.datetime)}</p>
-                        <p className="mt-1 text-sm leading-tight">{item.service}</p>
-                        <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">
+                        <p className="text-[0.98rem] leading-tight tracking-tight text-zinc-900">
+                          {getServiceLine(item.service, item.trainer)}
+                        </p>
+                        <p className="mt-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
                           {getTrainerName(item.trainer)}
                         </p>
-                        {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} {copy.spotsLeft}</p> : null}
+                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-3">
+                          <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                            {getRoomName(item.trainer)}
+                          </span>
+                          <span className="text-[1.05rem] leading-none tracking-tight text-zinc-900">
+                            {formatTime(item.datetime)}
+                          </span>
+                        </div>
                       </a>
                     );
                   })}
