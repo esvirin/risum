@@ -40,6 +40,15 @@ function formatDay(value: string) {
   }).format(new Date(value));
 }
 
+function formatLocalizedDay(value: string, locale: "ru" | "en") {
+  const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
+  return new Intl.DateTimeFormat(dtLocale, {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(value));
+}
+
 function formatTime(value: string) {
   return new Intl.DateTimeFormat("en-GB", {
     hour: "2-digit",
@@ -60,7 +69,7 @@ function getTrainerName(value: string) {
 }
 
 export default function HomePage() {
-  const { t } = useI18n();
+  const { locale, t } = useI18n();
   const copy = t.homeLite;
   const manualPrices: PriceCard[] = useMemo(
     () =>
@@ -217,13 +226,18 @@ export default function HomePage() {
         </div>
 
         <div className="overflow-x-auto border border-zinc-200 bg-white">
-          <div className="space-y-px bg-zinc-200 md:hidden">
+          <div className="flex gap-3 overflow-x-auto p-3 scrollbar-hide snap-x md:hidden">
             {scheduleDays.map(([day, items]) => (
-              <section key={day} className="bg-[#f8f6f1]">
-                <div className="border-b border-zinc-200 px-4 py-3 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
-                  {formatDay(day)}
+              <section
+                key={day}
+                className="flex h-[27rem] w-[calc(100vw-3rem)] shrink-0 snap-center flex-col overflow-hidden rounded-2xl border border-zinc-200 bg-[#f8f6f1] sm:w-[22rem]"
+              >
+                <div className="border-b border-zinc-200 px-4 py-3">
+                  <p className="text-base tracking-tight text-zinc-900">
+                    {formatLocalizedDay(day, locale)}
+                  </p>
                 </div>
-                <div className="space-y-2 p-3">
+                <div className="flex-1 space-y-2 overflow-y-auto p-3">
                   {items.length === 0 ? (
                     <p className="rounded-md border border-zinc-200 bg-white px-3 py-4 text-sm text-zinc-400">No classes</p>
                   ) : (
