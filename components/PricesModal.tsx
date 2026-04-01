@@ -50,7 +50,7 @@ export function PricesModal({
         {items.map((item) => (
           <article
             key={item.id}
-            className="flex h-full flex-col border border-zinc-900 bg-white px-4 py-4 sm:px-5 sm:py-5"
+            className="flex h-full flex-col border border-zinc-900/85 bg-white px-4 py-4 shadow-[0_10px_24px_rgba(24,20,16,0.04)] sm:px-5 sm:py-5"
           >
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-3">
               <div className="min-w-0">
@@ -156,16 +156,22 @@ export function PricesModal({
 
           <div className="hidden flex-1 overflow-y-auto pb-1 sm:block">
             <section>
-              <h4 className="mb-4 text-xl uppercase tracking-[0.12em] text-zinc-500">
-                {copy.groupLessons}
-              </h4>
+              <div className="mb-4 flex items-center gap-3">
+                <h4 className="text-xl uppercase tracking-[0.12em] text-zinc-500">
+                  {copy.groupLessons}
+                </h4>
+                <div className="h-px flex-1 bg-zinc-300" />
+              </div>
               {renderCards(groupPrices)}
             </section>
 
             <section className="mt-8">
-              <h4 className="mb-4 text-xl uppercase tracking-[0.12em] text-zinc-500">
-                {copy.privateLessons}
-              </h4>
+              <div className="mb-4 flex items-center gap-3">
+                <h4 className="text-xl uppercase tracking-[0.12em] text-zinc-500">
+                  {copy.privateLessons}
+                </h4>
+                <div className="h-px flex-1 bg-zinc-300" />
+              </div>
               {renderCards(privatePrices)}
             </section>
           </div>
