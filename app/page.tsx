@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
@@ -17,8 +18,10 @@ type ScheduleItem = {
 
 type PriceCard = {
   id: string;
+  label?: string;
   title: string;
   price: string;
+  unitPrice?: string;
   note?: string;
   mode: Mode;
 };
@@ -38,14 +41,14 @@ const studioSlides = [
 ];
 
 const manualPrices: PriceCard[] = [
-  { id: "g1", title: "Single class", price: "€40", mode: "group" },
-  { id: "g5", title: "5 classes", price: "€160", note: "€32 each · valid 1 month", mode: "group" },
-  { id: "g10", title: "10 classes", price: "€280", note: "€28 each · valid 2 months", mode: "group" },
-  { id: "g20", title: "20 classes", price: "€520", note: "€26 each · valid 3 months", mode: "group" },
-  { id: "g30", title: "30 classes", price: "€720", note: "€24 each · valid 3 months", mode: "group" },
-  { id: "p1", title: "One-on-one training", price: "€100", note: "1 session", mode: "private" },
-  { id: "p2", title: "Duet training", price: "€120", note: "1 session", mode: "private" },
-  { id: "p3", title: "Stretching", price: "€25", note: "1 class", mode: "private" },
+  { id: "g1", label: "Group lessons", title: "Single class", price: "€40", note: "Valid 1 visit", mode: "group" },
+  { id: "g5", label: "Group lessons", title: "5 classes", price: "€160", unitPrice: "€32 each", note: "Valid 1 month", mode: "group" },
+  { id: "g10", label: "Group lessons", title: "10 classes", price: "€280", unitPrice: "€28 each", note: "Valid 2 months", mode: "group" },
+  { id: "g20", label: "Group lessons", title: "20 classes", price: "€520", unitPrice: "€26 each", note: "Valid 3 months", mode: "group" },
+  { id: "g30", label: "Group lessons", title: "30 classes", price: "€720", unitPrice: "€24 each", note: "Valid 3 months", mode: "group" },
+  { id: "g-stretch", label: "Group lessons", title: "Stretching", price: "€25", note: "Valid 1 class", mode: "group" },
+  { id: "p1", label: "Private Lessons", title: "One-on-one training", price: "€100", note: "Valid 1 session", mode: "private" },
+  { id: "p2", label: "Private Lessons", title: "Duet training", price: "€120", note: "Valid 1 session", mode: "private" },
 ];
 
 function detectMode(value: string): Mode {
@@ -283,43 +286,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {pricesOpen ? (
-        <div className="fixed inset-0 z-50 bg-black/45 p-4" onClick={() => setPricesOpen(false)}>
-          <div className="mx-auto mt-10 w-full max-w-4xl rounded-lg bg-[#f7f4ef] p-6" onClick={(e) => e.stopPropagation()}>
-            <div className="mb-5 flex items-center justify-between">
-              <h3 className="text-4xl tracking-tight">{copy.pricesTitle}</h3>
-              <button onClick={() => setPricesOpen(false)} className="rounded-full border border-zinc-400 px-3 py-1 text-sm">
-                {copy.close}
-              </button>
-            </div>
-
-            <div className="mb-5 inline-flex rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em]">
-              <button
-                onClick={() => setPriceMode("group")}
-                className={`rounded-full px-4 py-2 ${priceMode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-              >
-                {copy.groupReformer}
-              </button>
-              <button
-                onClick={() => setPriceMode("private")}
-                className={`rounded-full px-4 py-2 ${priceMode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-              >
-                {copy.privateReformer}
-              </button>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {pricedServices.map((item) => (
-                <article key={item.id} className="border border-zinc-200 bg-white p-4">
-                  <p className="text-lg leading-tight">{item.title}</p>
-                  <p className="mt-3 text-sm font-medium text-zinc-900">{item.price}</p>
-                  {item.note ? <p className="mt-1 text-xs text-zinc-600">{item.note}</p> : null}
-                </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <PricesModal
+        isOpen={pricesOpen}
+        mode={priceMode}
+        prices={pricedServices}
+        allPrices={manualPrices}
+        copy={copy}
+        onClose={() => setPricesOpen(false)}
+        onModeChange={setPriceMode}
+      />
 
       <SiteFooter />
     </div>
