@@ -32,17 +32,6 @@ const studioSlides = [
   "/instagram/fit-2.jpg",
 ];
 
-const manualPrices: PriceCard[] = [
-  { id: "g1", label: "Group lessons", title: "Single class", price: "€40", note: "Valid 1 visit", mode: "group" },
-  { id: "g5", label: "Group lessons", title: "5 classes", price: "€160", unitPrice: "€32 each", note: "Valid 1 month", mode: "group" },
-  { id: "g10", label: "Group lessons", title: "10 classes", price: "€280", unitPrice: "€28 each", note: "Valid 2 months", mode: "group" },
-  { id: "g20", label: "Group lessons", title: "20 classes", price: "€520", unitPrice: "€26 each", note: "Valid 3 months", mode: "group" },
-  { id: "g30", label: "Group lessons", title: "30 classes", price: "€720", unitPrice: "€24 each", note: "Valid 3 months", mode: "group" },
-  { id: "g-stretch", label: "Group lessons", title: "Stretching", price: "€25", note: "Valid 1 class", mode: "group" },
-  { id: "p1", label: "Private Lessons", title: "One-on-one training", price: "€100", note: "Valid 1 session", mode: "private" },
-  { id: "p2", label: "Private Lessons", title: "Duet training", price: "€120", note: "Valid 1 session", mode: "private" },
-];
-
 function formatDay(value: string) {
   return new Intl.DateTimeFormat("en-US", {
     weekday: "short",
@@ -66,9 +55,21 @@ function getLocalDateKey(dateValue: string | number | Date) {
   return `${y}-${m}-${day}`;
 }
 
+function getTrainerName(value: string) {
+  return value.split("·")[0]?.trim() || value;
+}
+
 export default function HomePage() {
   const { t } = useI18n();
   const copy = t.homeLite;
+  const manualPrices: PriceCard[] = useMemo(
+    () =>
+      copy.priceCards.map((item) => ({
+        ...item,
+        label: item.mode === "group" ? copy.groupLessons : copy.privateLessons,
+      })),
+    [copy],
+  );
 
   const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
@@ -114,7 +115,7 @@ export default function HomePage() {
 
   const pricedServices = useMemo(
     () => manualPrices.filter((item) => item.mode === priceMode),
-    [priceMode],
+    [manualPrices, priceMode],
   );
 
   return (
@@ -216,7 +217,49 @@ export default function HomePage() {
         </div>
 
         <div className="overflow-x-auto border border-zinc-200 bg-white">
-          <div className="grid min-w-[900px] grid-cols-7 gap-px bg-zinc-200">
+          <div className="space-y-px bg-zinc-200 md:hidden">
+            {scheduleDays.map(([day, items]) => (
+              <section key={day} className="bg-[#f8f6f1]">
+                <div className="border-b border-zinc-200 px-4 py-3 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                  {formatDay(day)}
+                </div>
+                <div className="space-y-2 p-3">
+                  {items.length === 0 ? (
+                    <p className="rounded-md border border-zinc-200 bg-white px-3 py-4 text-sm text-zinc-400">No classes</p>
+                  ) : (
+                    items.map((item) => {
+                      const spots =
+                        typeof item.capacity === "number" && typeof item.clientsCount === "number"
+                          ? Math.max(item.capacity - item.clientsCount, 0)
+                          : null;
+                      return (
+                        <a
+                          key={item.id}
+                          href={BOOKING_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block rounded-md border border-zinc-200 bg-white p-3 transition hover:border-zinc-900"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-base leading-tight">{item.service}</p>
+                              <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">
+                                {getTrainerName(item.trainer)}
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-2xl tracking-tight">{formatTime(item.datetime)}</p>
+                          </div>
+                          {spots !== null ? <p className="mt-2 text-xs text-zinc-600">{spots} {copy.spotsLeft}</p> : null}
+                        </a>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <div className="hidden min-w-[900px] grid-cols-7 gap-px bg-zinc-200 md:grid">
             {scheduleDays.map(([day, items]) => (
               <div key={day} className="bg-[#f8f6f1]">
                 <div className="border-b border-zinc-200 px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">{formatDay(day)}</div>

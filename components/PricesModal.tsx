@@ -54,7 +54,7 @@ export function PricesModal({
           >
             <div className="grid grid-cols-[minmax(0,1fr)_auto] items-end gap-x-4 gap-y-3 sm:gap-x-6 sm:gap-y-3">
               <div className="min-w-0">
-                <p className="text-[2rem] font-semibold leading-[0.95] tracking-tight text-zinc-900 sm:text-[2.6rem]">
+                <p className="text-[1.6rem] font-normal leading-[0.95] tracking-tight text-zinc-900 sm:text-[2.2rem]">
                   {item.title}
                 </p>
                 {item.unitPrice ? (
@@ -64,7 +64,7 @@ export function PricesModal({
                 ) : null}
               </div>
 
-              <p className="font-display row-span-2 self-center text-right text-[3rem] leading-none tracking-tight text-zinc-900 sm:text-[3.5rem]">
+              <p className="row-span-2 self-center text-right text-[2.8rem] font-normal leading-none tracking-tight text-zinc-900 sm:text-[3.1rem]">
                 {item.price}
               </p>
             </div>
