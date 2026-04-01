@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -161,7 +162,15 @@ export default function HomePage() {
         </div>
 
         <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-          <img src={studioSlides[studioIndex]} alt="Studio" className="h-[320px] w-full object-cover sm:h-[360px] lg:h-[380px]" />
+          <div className="relative h-[320px] w-full sm:h-[360px] lg:h-[380px]">
+            <Image
+              src={studioSlides[studioIndex]}
+              alt="Studio"
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 896px, 1152px"
+              className="object-cover"
+            />
+          </div>
         </div>
 
         <div className="mt-3 flex justify-center gap-2">
@@ -183,7 +192,15 @@ export default function HomePage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {trainers.map((trainer) => (
             <article key={trainer.name} className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-              <img src={trainer.image} alt={trainer.name} className="aspect-[3/4] w-full object-cover" />
+              <div className="relative aspect-[3/4] w-full">
+                <Image
+                  src={trainer.image}
+                  alt={trainer.name}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                  className="object-cover"
+                />
+              </div>
               <div className="p-4">
                 <p className="text-xl tracking-tight">{trainer.name}</p>
                 <p className="mt-1 text-[11px] uppercase tracking-[0.12em] text-zinc-500">{trainer.role}</p>

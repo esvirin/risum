@@ -18,27 +18,14 @@ const prata = Prata({
 export const metadata: Metadata = {
   title: "Fit Space",
   description: "Fit Space Member Portal",
-  manifest: "/manifest.json",
-  appleWebApp: {
-    capable: true,
-    statusBarStyle: "default",
-    title: "Fit Space",
-  },
   formatDetection: {
     telephone: false,
-  },
-  icons: {
-    apple: "/icon-192x192.png",
   },
 };
 
 export const viewport = {
-  themeColor: "#000000",
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  viewportFit: "cover",
 };
 
 export default function RootLayout({

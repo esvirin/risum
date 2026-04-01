@@ -27,8 +27,8 @@ If occupied, Next.js auto-uses the next port (example: `3001`).
 
 - `app/page.tsx` — main landing page (hero, instructor cards, studio slider, schedule, prices, contacts)
 - `components/PublicNav.tsx` — top navigation + Book now/Prices buttons
-- `components/AltegioScheduleList.tsx` — reusable schedule list (used on internal pages)
-- `components/AltegioServicesList.tsx` — reusable services/prices list
+- `components/LanguageProvider.tsx` — client i18n state for RU/EN UI copy
+- `components/SiteFooter.tsx` — shared footer with policies link
 - `app/api/altegio/*` — API routes for schedule/trainers/services
 - `lib/altegio-api.ts` — Altegio API mapping/normalization
 - `public/wfolio/*` — selected instructor photos for homepage cards

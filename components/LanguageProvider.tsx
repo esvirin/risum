@@ -9,8 +9,7 @@ type I18nContextValue = {
   t: (typeof translations)[Locale];
 };
 
-function getInitialLocale(): Locale {
-  if (typeof window === "undefined") return defaultLocale;
+function getPreferredLocale(): Locale {
   const stored = window.localStorage.getItem(localeStorageKey);
   if (stored === "ru" || stored === "en") return stored;
   return window.navigator.language.toLowerCase().startsWith("ru") ? "ru" : "en";
@@ -19,7 +18,18 @@ function getInitialLocale(): Locale {
 const I18nContext = createContext<I18nContextValue | null>(null);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(getInitialLocale);
+  const [locale, setLocale] = useState<Locale>(defaultLocale);
+
+  useEffect(() => {
+    const preferredLocale = getPreferredLocale();
+    if (preferredLocale === defaultLocale) return;
+
+    const frameId = window.requestAnimationFrame(() => {
+      setLocale(preferredLocale);
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
 
   useEffect(() => {
     window.localStorage.setItem(localeStorageKey, locale);
