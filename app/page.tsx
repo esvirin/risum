@@ -144,20 +144,51 @@ export default function HomePage() {
       <PublicNav />
 
       <section className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-        <div className="overflow-hidden rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,rgba(255,255,255,0.88)_0%,rgba(248,244,237,0.96)_100%)] px-6 py-10 shadow-[0_18px_50px_rgba(24,20,16,0.06)] sm:px-10 sm:py-14">
-          <p className="text-center text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-            Fit Space Limassol
-          </p>
-          <h1 className="mx-auto mt-4 max-w-4xl text-center text-4xl leading-[0.95] tracking-tight sm:text-6xl">
-            {copy.title}
-          </h1>
-          <p className="mx-auto mt-5 max-w-xl text-center text-base leading-relaxed text-zinc-600 sm:text-lg">
-            {copy.lead}
-          </p>
-          <div className="mx-auto mt-7 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-zinc-500 sm:mt-8">
-            <span>Reformer Pilates</span>
-            <span>Stretching</span>
-            <span>{copy.private}</span>
+        <div className="overflow-hidden rounded-[24px] border border-zinc-200 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.95)_0%,rgba(248,244,237,0.98)_52%,rgba(241,232,220,0.95)_100%)] shadow-[0_18px_50px_rgba(24,20,16,0.06)]">
+          <div className="grid gap-8 px-6 py-8 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1.2fr)_20rem] lg:items-end">
+            <div>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+                Fit Space Limassol
+              </p>
+              <h1 className="mt-4 max-w-4xl text-4xl leading-[0.92] tracking-tight sm:text-6xl">
+                {copy.title}
+              </h1>
+              <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
+                {copy.lead}
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button
+                  onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
+                  className="border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+                >
+                  {t.nav.prices}
+                </button>
+                <a
+                  href={BOOKING_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="border border-zinc-300 bg-white/90 px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-900 transition hover:border-zinc-900"
+                >
+                  {t.nav.book}
+                </a>
+              </div>
+            </div>
+
+            <div className="grid gap-px overflow-hidden rounded-[18px] border border-zinc-200 bg-zinc-200">
+              <div className="bg-[#fcfaf6] px-5 py-4">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Practice</p>
+                <p className="mt-2 text-xl tracking-tight text-zinc-900">Reformer Pilates</p>
+              </div>
+              <div className="bg-[#fcfaf6] px-5 py-4">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Movement</p>
+                <p className="mt-2 text-xl tracking-tight text-zinc-900">Stretching</p>
+              </div>
+              <div className="bg-[#fcfaf6] px-5 py-4">
+                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Format</p>
+                <p className="mt-2 text-xl tracking-tight text-zinc-900">{copy.private}</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
