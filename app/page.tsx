@@ -18,6 +18,8 @@ type PriceCard = {
   mode: Mode;
 };
 
+type Mode = "group" | "private";
+
 const trainers = [
   { name: "Olga", role: "Instructor", image: "/wfolio/olga.jpg" },
   { name: "Svetlana", role: "Instructor", image: "/wfolio/svetlana.jpg" },
