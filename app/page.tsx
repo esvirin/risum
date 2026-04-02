@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -98,11 +98,20 @@ export default function HomePage() {
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
   const [nowTs] = useState<number>(() => Date.now());
+  const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
     const open = () => setPricesOpen(true);
     window.addEventListener("open-prices-modal", open);
     return () => window.removeEventListener("open-prices-modal", open);
+  }, []);
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setStudioIndex((prev) => (prev + 1) % studioSlides.length);
+    }, 4500);
+
+    return () => window.clearInterval(intervalId);
   }, []);
 
   const scheduleDays = useMemo(() => {
@@ -144,95 +153,103 @@ export default function HomePage() {
       <PublicNav />
 
       <section className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
-        <div className="overflow-hidden rounded-[24px] border border-zinc-200 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.95)_0%,rgba(248,244,237,0.98)_52%,rgba(241,232,220,0.95)_100%)] shadow-[0_18px_50px_rgba(24,20,16,0.06)]">
-          <div className="grid gap-8 px-6 py-8 sm:px-10 sm:py-12 lg:grid-cols-[minmax(0,1.2fr)_20rem] lg:items-end">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">
-                Fit Space Limassol
-              </p>
-              <h1 className="mt-4 max-w-4xl text-4xl leading-[0.92] tracking-tight sm:text-6xl">
-                {copy.title}
-              </h1>
-              <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
-                {copy.lead}
-              </p>
+        <div className="overflow-hidden rounded-[16px] border border-zinc-200 bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.95)_0%,rgba(248,244,237,0.98)_52%,rgba(241,232,220,0.95)_100%)] shadow-[0_18px_50px_rgba(24,20,16,0.06)]">
+          <div
+            className="relative overflow-hidden border-b border-zinc-200 bg-[#efe7dc]"
+            onTouchStart={(event) => {
+              touchStartX.current = event.touches[0]?.clientX ?? null;
+            }}
+            onTouchEnd={(event) => {
+              const startX = touchStartX.current;
+              const endX = event.changedTouches[0]?.clientX ?? null;
+              touchStartX.current = null;
 
-              <div className="mt-8 flex flex-wrap gap-3">
-                <button
-                  onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
-                  className="border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
-                >
-                  {t.nav.prices}
-                </button>
-                <a
-                  href={BOOKING_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="border border-zinc-300 bg-white/90 px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-900 transition hover:border-zinc-900"
-                >
-                  {t.nav.book}
-                </a>
+              if (startX === null || endX === null) return;
+
+              const deltaX = endX - startX;
+              if (Math.abs(deltaX) < 40) return;
+
+              setStudioIndex((prev) =>
+                deltaX < 0
+                  ? (prev + 1) % studioSlides.length
+                  : (prev - 1 + studioSlides.length) % studioSlides.length,
+              );
+            }}
+          >
+            <div className="relative aspect-[16/11] w-full sm:aspect-[16/9]">
+              <Image
+                src={studioSlides[studioIndex]}
+                alt="Fit Space Studio"
+                fill
+                sizes="(max-width: 1280px) 100vw, 1152px"
+                className="object-cover"
+              />
+            </div>
+            <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(180deg,rgba(24,20,16,0)_0%,rgba(24,20,16,0.72)_100%)] px-6 pb-6 pt-16 sm:px-10 sm:pb-8">
+              <div className="flex items-end justify-between gap-4">
+                <div>
+                  <p className="text-[10px] uppercase tracking-[0.18em] text-white/70">Fit Space Limassol</p>
+                  <p className="mt-2 max-w-[24rem] text-2xl leading-tight tracking-tight text-white sm:text-3xl">
+                    Reformer Pilates and stretching in Limassol
+                  </p>
+                </div>
+                <div className="hidden gap-2 sm:inline-flex">
+                  <button
+                    onClick={() => setStudioIndex((prev) => (prev - 1 + studioSlides.length) % studioSlides.length)}
+                    className="rounded-[10px] border border-white/35 bg-white/10 px-3 py-1 text-sm text-white transition hover:bg-white hover:text-zinc-900"
+                  >
+                    ←
+                  </button>
+                  <button
+                    onClick={() => setStudioIndex((prev) => (prev + 1) % studioSlides.length)}
+                    className="rounded-[10px] border border-white/35 bg-white/10 px-3 py-1 text-sm text-white transition hover:bg-white hover:text-zinc-900"
+                  >
+                    →
+                  </button>
+                </div>
               </div>
             </div>
+          </div>
 
-            <div className="grid gap-px overflow-hidden rounded-[18px] border border-zinc-200 bg-zinc-200">
-              <div className="bg-[#fcfaf6] px-5 py-4">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Practice</p>
-                <p className="mt-2 text-xl tracking-tight text-zinc-900">Reformer Pilates</p>
+          <div className="px-6 py-8 sm:px-10 sm:py-10">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">
+                  Fit Space Limassol
+                </p>
+                <h1 className="mt-4 max-w-4xl text-4xl leading-[0.92] tracking-tight sm:text-6xl">
+                  {copy.title}
+                </h1>
+                <p className="mt-5 max-w-xl text-base leading-relaxed text-zinc-600 sm:text-lg">
+                  {copy.lead}
+                </p>
+                <div className="mt-6 flex flex-wrap gap-x-5 gap-y-2 text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                  <span>Reformer Pilates</span>
+                  <span>Stretching</span>
+                  <span>{copy.private}</span>
+                </div>
               </div>
-              <div className="bg-[#fcfaf6] px-5 py-4">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Movement</p>
-                <p className="mt-2 text-xl tracking-tight text-zinc-900">Stretching</p>
-              </div>
-              <div className="bg-[#fcfaf6] px-5 py-4">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Format</p>
-                <p className="mt-2 text-xl tracking-tight text-zinc-900">{copy.private}</p>
+
+              <div className="flex items-center justify-between gap-4 lg:flex-col lg:items-end">
+                <div className="flex flex-wrap gap-3 lg:justify-end">
+                  <button
+                    onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
+                    className="border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+                  >
+                    {t.nav.prices}
+                  </button>
+                  <a
+                    href={BOOKING_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="border border-zinc-300 bg-white/90 px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-900 transition hover:border-zinc-900"
+                  >
+                    {t.nav.book}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-10">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <h2 className="text-3xl tracking-tight">{copy.studio}</h2>
-          <div className="inline-flex gap-2">
-            <button
-              onClick={() => setStudioIndex((prev) => (prev - 1 + studioSlides.length) % studioSlides.length)}
-              className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-sm transition hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
-            >
-              ←
-            </button>
-            <button
-              onClick={() => setStudioIndex((prev) => (prev + 1) % studioSlides.length)}
-              className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-sm transition hover:border-zinc-900 hover:bg-zinc-900 hover:text-white"
-            >
-              →
-            </button>
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-[24px] border border-zinc-200 bg-white">
-          <div className="relative h-[320px] w-full sm:h-[360px] lg:h-[380px]">
-            <Image
-              src={studioSlides[studioIndex]}
-              alt="Studio"
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 896px, 1152px"
-              className="object-cover"
-            />
-          </div>
-        </div>
-
-        <div className="mt-3 flex justify-center gap-2">
-          {studioSlides.map((slide, index) => (
-            <button
-              key={slide}
-              onClick={() => setStudioIndex(index)}
-              className={`h-2.5 w-2.5 rounded-full ${studioIndex === index ? "bg-zinc-900" : "bg-zinc-300"}`}
-              aria-label={`Studio slide ${index + 1}`}
-            />
-          ))}
         </div>
       </section>
 
@@ -242,7 +259,7 @@ export default function HomePage() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {trainers.map((trainer) => (
-            <article key={trainer.name} className="overflow-hidden rounded-[24px] border border-zinc-200 bg-white">
+            <article key={trainer.name} className="overflow-hidden rounded-[16px] border border-zinc-200 bg-white">
               <div className="relative aspect-[3/4] w-full">
                 <Image
                   src={trainer.image}
@@ -283,12 +300,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="md:overflow-x-auto md:rounded-[24px] md:border md:border-zinc-200 md:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] md:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
+        <div className="md:overflow-x-auto md:rounded-[16px] md:border md:border-zinc-200 md:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] md:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
           <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x md:hidden">
             {scheduleDays.map(([day, items]) => (
               <section
                 key={day}
-                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem]"
+                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem]"
               >
                 <div className="border-b border-zinc-200 bg-[linear-gradient(180deg,#fdfaf5_0%,#f3ece3_100%)] px-4 py-4">
                   <p className="text-[1.35rem] leading-tight tracking-tight text-zinc-900">
@@ -385,7 +402,7 @@ export default function HomePage() {
           <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{copy.easy}</h2>
         </div>
         <div className="grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
-          <div className="rounded-[24px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(24,20,16,0.05)]">
+          <div className="rounded-[16px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(24,20,16,0.05)]">
             <div className="space-y-5">
               <div className="border-b border-zinc-200 pb-5">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.address}</p>
@@ -428,7 +445,7 @@ export default function HomePage() {
           </div>
           <iframe
             title="Fit Space map"
-            className="h-[340px] w-full rounded-[24px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
+            className="h-[340px] w-full rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             src="https://www.google.com/maps?q=Kolonakiou%2058%2C%20Limassol&output=embed"

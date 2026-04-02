@@ -111,7 +111,7 @@ export function PricesModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative h-[97dvh] w-full overflow-hidden rounded-[24px] border border-[rgba(90,74,58,0.18)] bg-[#f4ede4] shadow-[0_30px_100px_rgba(20,16,12,0.28)] sm:mx-auto sm:h-auto sm:max-h-[92vh] sm:max-w-5xl xl:max-w-6xl 2xl:max-w-[96rem]"
+        className="relative h-[97dvh] w-full overflow-hidden rounded-[16px] border border-[rgba(90,74,58,0.18)] bg-[#f4ede4] shadow-[0_30px_100px_rgba(20,16,12,0.28)] sm:mx-auto sm:h-auto sm:max-h-[92vh] sm:max-w-5xl xl:max-w-6xl 2xl:max-w-[96rem]"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/55 to-transparent" />
