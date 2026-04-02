@@ -6,7 +6,7 @@ import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
-import { BOOKING_URL, getStaticSchedule, getWeeklyStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
+import { BOOKING_URL, getStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
 
 type PriceCard = {
   id: string;
@@ -96,8 +96,7 @@ export default function HomePage() {
   const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
-  const [weeklySchedule] = useState<StaticScheduleItem[]>(() => getWeeklyStaticSchedule());
-  const [nowTs] = useState<number>(() => Date.now());
+  const [nowTs, setNowTs] = useState<number>(() => Date.now());
   const touchStartX = useRef<number | null>(null);
 
   useEffect(() => {
@@ -114,15 +113,27 @@ export default function HomePage() {
     return () => window.clearInterval(intervalId);
   }, []);
 
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNowTs(Date.now());
+    }, 60 * 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, []);
+
   const scheduleDays = useMemo(() => {
     const now = nowTs;
     const max = now + 7 * 24 * 60 * 60 * 1000;
+    const todayKey = getLocalDateKey(now);
 
     const filtered = schedule
       .filter((item) => {
         const ts = new Date(item.datetime).getTime();
         if (!Number.isFinite(ts)) return false;
-        return ts >= now && ts <= max && item.mode === "group";
+        const itemDayKey = getLocalDateKey(item.datetime);
+        if (item.mode !== "group") return false;
+        if (itemDayKey === todayKey) return ts <= max;
+        return ts >= now && ts <= max;
       })
       .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
@@ -160,11 +171,12 @@ export default function HomePage() {
   }, [locale, nowTs]);
 
   const roomTables = useMemo(() => {
-    const groupItems = weeklySchedule.filter((item) => item.mode === "group");
     const rooms = ["Room 1", "Room 2"];
 
     return rooms.map((room) => {
-      const roomItems = groupItems.filter((item) => getRoomName(item.trainer) === room);
+      const roomItems = scheduleDays.flatMap(([, items]) =>
+        items.filter((item) => item.mode === "group" && getRoomName(item.trainer) === room),
+      );
       const timeKeys = Array.from(new Set(roomItems.map((item) => getTimeKey(item.datetime)))).sort();
 
       return {
@@ -182,7 +194,7 @@ export default function HomePage() {
         })),
       };
     });
-  }, [weeklySchedule]);
+  }, [scheduleDays]);
 
   const roomDaySections = useMemo(() => {
     const rooms = ["Room 1", "Room 2"];
@@ -349,7 +361,7 @@ export default function HomePage() {
                   {section.days.map(([day, items]) => (
                     <section
                       key={`${section.room}-${day}`}
-                      className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.04)] first:ml-0 last:mr-0 sm:w-[22rem] md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
+                      className="flex h-[26.5rem] w-fit min-w-[16.5rem] max-w-[20rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.04)] first:ml-0 last:mr-0 md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
                     >
                       <div className="border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4">
                         <p className="text-[1.2rem] leading-tight tracking-tight text-zinc-900">
@@ -451,7 +463,11 @@ export default function HomePage() {
                                   {item.service}
                                 </p>
                               ) : null}
-                              <p className={`text-[11px] uppercase tracking-[0.14em] text-zinc-500 ${item.service !== "Reformer Pilates" ? "mt-1" : ""}`}>
+                              <p
+                                className={`text-right text-[11px] uppercase tracking-[0.14em] text-zinc-500 ${
+                                  item.service !== "Reformer Pilates" ? "mt-1" : ""
+                                }`}
+                              >
                                 {trainerName}
                               </p>
                             </div>
