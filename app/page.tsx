@@ -56,6 +56,10 @@ function formatTime(value: string) {
   }).format(new Date(value));
 }
 
+function getScheduleHeading() {
+  return "Reformer Pilates & Stretching";
+}
+
 function getLocalDateKey(dateValue: string | number | Date) {
   const d = new Date(dateValue);
   const y = d.getFullYear();
@@ -72,8 +76,8 @@ function getRoomName(value: string) {
   return value.split("·")[1]?.trim() || "Studio";
 }
 
-function getServiceLine(service: string, trainer: string) {
-  return `${service} ${getRoomName(trainer)}`;
+function getCardService(service: string) {
+  return service === "Reformer Pilates" ? null : service;
 }
 
 export default function HomePage() {
@@ -230,7 +234,7 @@ export default function HomePage() {
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>
-            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{copy.join}</h2>
+            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{getScheduleHeading()}</h2>
           </div>
           <div className="inline-flex rounded-full border border-zinc-300 bg-white p-1 text-xs uppercase tracking-[0.12em]">
             <button
@@ -262,31 +266,34 @@ export default function HomePage() {
                 </div>
                 <div className="flex-1 space-y-2 overflow-y-auto p-2.5">
                   {items.length === 0 ? (
-                    <p className="rounded-[20px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
+                    <p className="rounded-[14px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
                       No classes
                     </p>
                   ) : (
                     items.map((item) => {
+                      const cardService = getCardService(item.service);
                       return (
                         <a
                           key={item.id}
                           href={BOOKING_URL}
                           target="_blank"
                           rel="noreferrer"
-                          className="block rounded-[20px] border border-zinc-200 bg-white px-3.5 py-3.5 shadow-[0_6px_16px_rgba(24,20,16,0.03)] transition hover:border-zinc-900"
+                          className="block rounded-[14px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fbf8f3_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.035)] transition hover:border-zinc-900"
                         >
                           <div className="min-w-0">
-                            <p className="text-[1rem] leading-tight tracking-tight text-zinc-900">
-                              {getServiceLine(item.service, item.trainer)}
-                            </p>
-                            <p className="mt-1.5 text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                            <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
                               {getTrainerName(item.trainer)}
                             </p>
-                            <div className="mt-3 flex items-center justify-between gap-3 border-t border-zinc-100 pt-2.5">
+                            {cardService ? (
+                              <p className="mt-2 text-[1.08rem] leading-tight tracking-tight text-zinc-900">
+                                {cardService}
+                              </p>
+                            ) : null}
+                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
                               <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                                 {getRoomName(item.trainer)}
                               </span>
-                              <span className="text-[1.05rem] leading-none tracking-tight text-zinc-900">
+                              <span className="text-[1.2rem] leading-none tracking-tight text-zinc-900">
                                 {formatTime(item.datetime)}
                               </span>
                             </div>
@@ -308,25 +315,26 @@ export default function HomePage() {
                 </div>
                 <div className="space-y-2 p-2">
                   {items.map((item) => {
+                    const cardService = getCardService(item.service);
                     return (
                       <a
                         key={item.id}
                         href={BOOKING_URL}
                         target="_blank"
                         rel="noreferrer"
-                        className="block rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-3 py-3 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:-translate-y-px hover:border-zinc-900 hover:shadow-[0_12px_26px_rgba(24,20,16,0.06)]"
+                        className="block rounded-[14px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fbf8f3_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:-translate-y-px hover:border-zinc-900 hover:shadow-[0_12px_26px_rgba(24,20,16,0.06)]"
                       >
-                        <p className="text-[0.98rem] leading-tight tracking-tight text-zinc-900">
-                          {getServiceLine(item.service, item.trainer)}
-                        </p>
-                        <p className="mt-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                        <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
                           {getTrainerName(item.trainer)}
                         </p>
-                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-3">
-                          <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                        {cardService ? (
+                          <p className="mt-2 text-[1rem] leading-tight tracking-tight text-zinc-900">{cardService}</p>
+                        ) : null}
+                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
+                          <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                             {getRoomName(item.trainer)}
                           </span>
-                          <span className="text-[1.05rem] leading-none tracking-tight text-zinc-900">
+                          <span className="text-[1.18rem] leading-none tracking-tight text-zinc-900">
                             {formatTime(item.datetime)}
                           </span>
                         </div>
