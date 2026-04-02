@@ -6,7 +6,7 @@ import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
-import { BOOKING_URL, getStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
+import { BOOKING_URL, getStaticSchedule, getWeeklyStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
 
 type PriceCard = {
   id: string;
@@ -17,8 +17,6 @@ type PriceCard = {
   note?: string;
   mode: Mode;
 };
-
-type Mode = "group" | "private";
 
 const trainers = [
   { name: "Olga", role: "Instructor", image: "/wfolio/olga.jpg" },
@@ -31,14 +29,6 @@ const studioSlides = [
   "/instagram/fit-1.jpg",
   "/instagram/fit-2.jpg",
 ];
-
-function formatDay(value: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    weekday: "short",
-    month: "short",
-    day: "2-digit",
-  }).format(new Date(value));
-}
 
 function formatLocalizedDay(value: string, locale: "ru" | "en") {
   const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
@@ -80,6 +70,16 @@ function getCardService(service: string) {
   return service === "Reformer Pilates" ? null : service;
 }
 
+function getWeekdayNumber(value: string) {
+  const day = new Date(value).getDay();
+  return day === 0 ? 7 : day;
+}
+
+function getTimeKey(value: string) {
+  const date = new Date(value);
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
 export default function HomePage() {
   const { locale, t } = useI18n();
   const copy = t.homeLite;
@@ -92,11 +92,11 @@ export default function HomePage() {
     [copy],
   );
 
-  const [mode, setMode] = useState<Mode>("group");
   const [priceMode, setPriceMode] = useState<Mode>("group");
   const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
+  const [weeklySchedule] = useState<StaticScheduleItem[]>(() => getWeeklyStaticSchedule());
   const [nowTs] = useState<number>(() => Date.now());
   const touchStartX = useRef<number | null>(null);
 
@@ -122,7 +122,7 @@ export default function HomePage() {
       .filter((item) => {
         const ts = new Date(item.datetime).getTime();
         if (!Number.isFinite(ts)) return false;
-        return ts >= now && ts <= max && item.mode === mode;
+        return ts >= now && ts <= max && item.mode === "group";
       })
       .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
@@ -141,12 +141,60 @@ export default function HomePage() {
       const key = getLocalDateKey(day);
       return [key, map.get(key) ?? []] as [string, StaticScheduleItem[]];
     });
-  }, [schedule, mode, nowTs]);
+  }, [schedule, nowTs]);
 
   const pricedServices = useMemo(
     () => manualPrices.filter((item) => item.mode === priceMode),
     [manualPrices, priceMode],
   );
+
+  const scheduleDayHeaders = useMemo(() => {
+    const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
+    return Array.from({ length: 6 }, (_, index) => {
+      const day = new Date(nowTs);
+      const weekday = day.getDay();
+      const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
+      day.setDate(day.getDate() + diffToMonday + index);
+      return new Intl.DateTimeFormat(dtLocale, { weekday: "long" }).format(day);
+    });
+  }, [locale, nowTs]);
+
+  const roomTables = useMemo(() => {
+    const groupItems = weeklySchedule.filter((item) => item.mode === "group");
+    const rooms = ["Room 1", "Room 2"];
+
+    return rooms.map((room) => {
+      const roomItems = groupItems.filter((item) => getRoomName(item.trainer) === room);
+      const timeKeys = Array.from(new Set(roomItems.map((item) => getTimeKey(item.datetime)))).sort();
+
+      return {
+        room,
+        rows: timeKeys.map((timeKey) => ({
+          timeKey,
+          cells: Array.from({ length: 6 }, (_, weekdayIndex) => {
+            const weekday = weekdayIndex + 1;
+            return (
+              roomItems.find(
+                (item) => getWeekdayNumber(item.datetime) === weekday && getTimeKey(item.datetime) === timeKey,
+              ) ?? null
+            );
+          }),
+        })),
+      };
+    });
+  }, [weeklySchedule]);
+
+  const roomDaySections = useMemo(() => {
+    const rooms = ["Room 1", "Room 2"];
+
+    return rooms.map((room) => ({
+      room,
+      days: scheduleDays.map(([day, items]) => [
+        day,
+        items.filter((item) => getRoomName(item.trainer) === room),
+      ] as [string, StaticScheduleItem[]]),
+    }));
+  }, [scheduleDays]);
 
   return (
     <div className="bg-[#f7f4ef] text-zinc-900">
@@ -279,118 +327,141 @@ export default function HomePage() {
       </section>
 
       <section id="schedule" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>
             <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{getScheduleHeading()}</h2>
           </div>
-          <div className="inline-flex rounded-full border border-zinc-300 bg-white p-1 text-xs uppercase tracking-[0.12em]">
-            <button
-              onClick={() => setMode("group")}
-              className={`rounded-full px-4 py-2 transition ${mode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-            >
-              {copy.group}
-            </button>
-            <button
-              onClick={() => setMode("private")}
-              className={`rounded-full px-4 py-2 transition ${mode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"}`}
-            >
-              {copy.private}
-            </button>
-          </div>
         </div>
 
-        <div className="xl:overflow-x-auto xl:rounded-[16px] xl:border xl:border-zinc-200 xl:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] xl:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x xl:hidden">
-            {scheduleDays.map(([day, items]) => (
-              <section
-                key={day}
-                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem] md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
-              >
-                <div className="border-b border-zinc-200 bg-[linear-gradient(180deg,#fdfaf5_0%,#f3ece3_100%)] px-4 py-4">
-                  <p className="text-[1.35rem] leading-tight tracking-tight text-zinc-900">
-                    {formatLocalizedDay(day, locale)}
-                  </p>
+        <div>
+          <div className="space-y-8 xl:hidden">
+            {roomDaySections.map((section) => (
+              <div key={section.room} className="space-y-4">
+                <div className="rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#fcfaf6_0%,#f3ece3_100%)] px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Schedule</p>
+                  <h3 className="mt-2 text-lg tracking-tight text-zinc-900">
+                    {section.room === "Room 1" ? "Room 1: Reformer Pilates & Stretching" : "Room 2: Reformer Pilates"}
+                  </h3>
                 </div>
-                <div className="flex-1 space-y-2 overflow-y-auto p-2.5">
-                  {items.length === 0 ? (
-                    <p className="rounded-[14px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
-                      No classes
-                    </p>
-                  ) : (
-                    items.map((item) => {
-                      const cardService = getCardService(item.service);
-                      return (
-                        <a
-                          key={item.id}
-                          href={BOOKING_URL}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="block rounded-[14px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fbf8f3_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.035)] transition hover:border-zinc-900"
-                        >
-                          <div className="min-w-0">
-                            <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                              {getTrainerName(item.trainer)}
-                            </p>
-                            {cardService ? (
-                              <p className="mt-2 text-[1.08rem] leading-tight tracking-tight text-zinc-900">
-                                {cardService}
-                              </p>
-                            ) : null}
-                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
-                              <span className="shrink-0 whitespace-nowrap text-[10px] uppercase tracking-[0.16em] text-zinc-500">
-                                {getRoomName(item.trainer)}
-                              </span>
-                              <span className="shrink-0 whitespace-nowrap text-[1.2rem] leading-none tracking-tight text-zinc-900">
-                                {formatTime(item.datetime)}
-                              </span>
-                            </div>
-                          </div>
-                        </a>
-                      );
-                    })
-                  )}
+
+                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x">
+                  {section.days.map(([day, items]) => (
+                    <section
+                      key={`${section.room}-${day}`}
+                      className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.04)] first:ml-0 last:mr-0 sm:w-[22rem] md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
+                    >
+                      <div className="border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4">
+                        <p className="text-[1.2rem] leading-tight tracking-tight text-zinc-900">
+                          {formatLocalizedDay(day, locale)}
+                        </p>
+                      </div>
+                      <div className="flex-1 space-y-1.5 overflow-y-auto p-2 md:space-y-2 md:p-2.5">
+                        {items.length === 0 ? (
+                          <p className="rounded-[14px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
+                            No classes
+                          </p>
+                        ) : (
+                          items.map((item) => {
+                            const cardService = getCardService(item.service);
+                            return (
+                              <a
+                                key={item.id}
+                                href={BOOKING_URL}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="block rounded-[14px] border border-zinc-200 bg-[#fcfaf6] px-3 py-3 transition hover:border-zinc-900 md:px-4 md:py-4"
+                              >
+                                <div className="min-w-0">
+                                  <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                                    {getTrainerName(item.trainer)}
+                                  </p>
+                                  {cardService ? (
+                                    <p className="mt-1.5 text-[0.95rem] leading-tight tracking-tight text-zinc-900 md:mt-2 md:text-[1rem]">
+                                      {cardService}
+                                    </p>
+                                  ) : null}
+                                  <div className="mt-3 flex items-center justify-end gap-3 border-t border-zinc-200 pt-2.5 md:mt-4 md:pt-3">
+                                    <span className="shrink-0 whitespace-nowrap text-[1.05rem] leading-none tracking-tight text-zinc-900 md:text-[1.2rem]">
+                                      {formatTime(item.datetime)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </a>
+                            );
+                          })
+                        )}
+                      </div>
+                    </section>
+                  ))}
                 </div>
-              </section>
+              </div>
             ))}
           </div>
 
-          <div className="hidden min-w-[900px] grid-cols-7 gap-px bg-zinc-200 xl:grid">
-            {scheduleDays.map(([day, items]) => (
-              <div key={day} className="bg-[#f8f6f1]">
-                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
-                  {formatDay(day)}
+          <div className="hidden space-y-10 xl:block">
+            {roomTables.map((table) => (
+              <section
+                key={table.room}
+                className="overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_10px_28px_rgba(24,20,16,0.04)]"
+              >
+                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-5 py-5 text-center">
+                  <h3 className="text-2xl tracking-tight text-zinc-900">
+                    {table.room === "Room 1" ? "Room 1: Reformer Pilates & Stretching" : "Room 2: Reformer Pilates"}
+                  </h3>
                 </div>
-                <div className="space-y-2 p-2">
-                  {items.map((item) => {
-                    const cardService = getCardService(item.service);
-                    return (
-                      <a
-                        key={item.id}
-                        href={BOOKING_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block rounded-[14px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fbf8f3_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:-translate-y-px hover:border-zinc-900 hover:shadow-[0_12px_26px_rgba(24,20,16,0.06)]"
-                      >
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-zinc-500">
-                          {getTrainerName(item.trainer)}
-                        </p>
-                        {cardService ? (
-                          <p className="mt-2 text-[1rem] leading-tight tracking-tight text-zinc-900">{cardService}</p>
-                        ) : null}
-                        <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
-                          <span className="shrink-0 whitespace-nowrap text-[10px] uppercase tracking-[0.16em] text-zinc-500">
-                            {getRoomName(item.trainer)}
-                          </span>
-                          <span className="shrink-0 whitespace-nowrap text-[1.18rem] leading-none tracking-tight text-zinc-900">
-                            {formatTime(item.datetime)}
-                          </span>
-                        </div>
-                      </a>
-                    );
-                  })}
+
+                <div className="grid grid-cols-6 border-b border-zinc-200 bg-[#f7f3ec]">
+                  {scheduleDayHeaders.map((label) => (
+                    <div
+                      key={label}
+                      className="border-r border-zinc-200 px-3 py-4 text-center text-[0.95rem] capitalize tracking-tight text-zinc-900 last:border-r-0"
+                    >
+                      {label}
+                    </div>
+                  ))}
                 </div>
-              </div>
+
+                <div className="grid grid-cols-6">
+                  {scheduleDayHeaders.map((label, dayIndex) => (
+                    <div key={`${table.room}-${label}`} className="border-r border-zinc-200 last:border-r-0">
+                      {table.rows.map((row) => {
+                        const item = row.cells[dayIndex];
+
+                        if (!item) {
+                          return <div key={`${table.room}-${label}-${row.timeKey}`} className="h-[92px] border-b border-zinc-100 bg-white" />;
+                        }
+
+                        const trainerName = getTrainerName(item.trainer);
+
+                        return (
+                          <a
+                            key={item.id}
+                            href={BOOKING_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="flex h-[92px] flex-col justify-between border-b border-zinc-100 bg-white px-4 py-3 transition hover:bg-[#fbf8f3]"
+                          >
+                            <p className="text-[1.85rem] leading-none tracking-tight text-zinc-900">
+                              {formatTime(item.datetime)}
+                            </p>
+                            <div>
+                              {item.service !== "Reformer Pilates" ? (
+                                <p className="text-[1.1rem] leading-tight tracking-tight text-zinc-900">
+                                  {item.service}
+                                </p>
+                              ) : null}
+                              <p className={`text-[11px] uppercase tracking-[0.14em] text-zinc-500 ${item.service !== "Reformer Pilates" ? "mt-1" : ""}`}>
+                                {trainerName}
+                              </p>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         </div>
