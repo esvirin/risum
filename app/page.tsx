@@ -300,12 +300,12 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="md:overflow-x-auto md:rounded-[16px] md:border md:border-zinc-200 md:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] md:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
-          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x md:hidden">
+        <div className="xl:overflow-x-auto xl:rounded-[16px] xl:border xl:border-zinc-200 xl:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] xl:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x xl:hidden">
             {scheduleDays.map(([day, items]) => (
               <section
                 key={day}
-                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem]"
+                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem] md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
               >
                 <div className="border-b border-zinc-200 bg-[linear-gradient(180deg,#fdfaf5_0%,#f3ece3_100%)] px-4 py-4">
                   <p className="text-[1.35rem] leading-tight tracking-tight text-zinc-900">
@@ -338,10 +338,10 @@ export default function HomePage() {
                               </p>
                             ) : null}
                             <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
-                              <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                              <span className="shrink-0 whitespace-nowrap text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                                 {getRoomName(item.trainer)}
                               </span>
-                              <span className="text-[1.2rem] leading-none tracking-tight text-zinc-900">
+                              <span className="shrink-0 whitespace-nowrap text-[1.2rem] leading-none tracking-tight text-zinc-900">
                                 {formatTime(item.datetime)}
                               </span>
                             </div>
@@ -355,7 +355,7 @@ export default function HomePage() {
             ))}
           </div>
 
-          <div className="hidden min-w-[900px] grid-cols-7 gap-px bg-zinc-200 md:grid">
+          <div className="hidden min-w-[900px] grid-cols-7 gap-px bg-zinc-200 xl:grid">
             {scheduleDays.map(([day, items]) => (
               <div key={day} className="bg-[#f8f6f1]">
                 <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
@@ -379,10 +379,10 @@ export default function HomePage() {
                           <p className="mt-2 text-[1rem] leading-tight tracking-tight text-zinc-900">{cardService}</p>
                         ) : null}
                         <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-200 pt-3">
-                          <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                          <span className="shrink-0 whitespace-nowrap text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                             {getRoomName(item.trainer)}
                           </span>
-                          <span className="text-[1.18rem] leading-none tracking-tight text-zinc-900">
+                          <span className="shrink-0 whitespace-nowrap text-[1.18rem] leading-none tracking-tight text-zinc-900">
                             {formatTime(item.datetime)}
                           </span>
                         </div>
