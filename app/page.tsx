@@ -248,24 +248,21 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="overflow-x-auto rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
-          <div className="flex gap-3 overflow-x-auto p-3 scrollbar-hide snap-x md:hidden">
+        <div className="md:overflow-x-auto md:rounded-[24px] md:border md:border-zinc-200 md:bg-[linear-gradient(180deg,#fbf8f3_0%,#f4efe7_100%)] md:shadow-[0_16px_44px_rgba(24,20,16,0.05)]">
+          <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x md:hidden">
             {scheduleDays.map(([day, items]) => (
               <section
                 key={day}
-                className="flex h-[27rem] w-[calc(100vw-3rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[24px] border border-zinc-200 bg-white shadow-[0_14px_34px_rgba(24,20,16,0.06)] sm:w-[22rem]"
+                className="flex h-[26.5rem] w-[calc(100vw-3.4rem)] shrink-0 snap-center flex-col overflow-hidden rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_12px_28px_rgba(24,20,16,0.05)] first:ml-0 last:mr-0 sm:w-[22rem]"
               >
-                <div className="border-b border-zinc-200 bg-[linear-gradient(180deg,#fcfaf6_0%,#f4eee5_100%)] px-4 py-4">
-                  <p className="text-[12px] uppercase tracking-[0.16em] text-zinc-500">
-                    {mode === "group" ? copy.group : copy.private}
-                  </p>
-                  <p className="mt-2 text-xl leading-tight tracking-tight text-zinc-900">
+                <div className="border-b border-zinc-200 bg-[linear-gradient(180deg,#fdfaf5_0%,#f3ece3_100%)] px-4 py-4">
+                  <p className="text-[1.35rem] leading-tight tracking-tight text-zinc-900">
                     {formatLocalizedDay(day, locale)}
                   </p>
                 </div>
-                <div className="flex-1 space-y-2 overflow-y-auto p-3">
+                <div className="flex-1 space-y-2 overflow-y-auto p-2.5">
                   {items.length === 0 ? (
-                    <p className="rounded-[24px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
+                    <p className="rounded-[20px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
                       No classes
                     </p>
                   ) : (
@@ -276,20 +273,20 @@ export default function HomePage() {
                           href={BOOKING_URL}
                           target="_blank"
                           rel="noreferrer"
-                          className="block rounded-[24px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#fcfaf6_100%)] px-4 py-4 shadow-[0_8px_18px_rgba(24,20,16,0.03)] transition hover:border-zinc-900"
+                          className="block rounded-[20px] border border-zinc-200 bg-white px-3.5 py-3.5 shadow-[0_6px_16px_rgba(24,20,16,0.03)] transition hover:border-zinc-900"
                         >
                           <div className="min-w-0">
-                            <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
+                            <p className="text-[1rem] leading-tight tracking-tight text-zinc-900">
                               {getServiceLine(item.service, item.trainer)}
                             </p>
-                            <p className="mt-2 text-[11px] uppercase tracking-[0.14em] text-zinc-500">
+                            <p className="mt-1.5 text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                               {getTrainerName(item.trainer)}
                             </p>
-                            <div className="mt-4 flex items-center justify-between gap-3 border-t border-zinc-100 pt-3">
-                              <span className="text-[11px] uppercase tracking-[0.16em] text-zinc-500">
+                            <div className="mt-3 flex items-center justify-between gap-3 border-t border-zinc-100 pt-2.5">
+                              <span className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
                                 {getRoomName(item.trainer)}
                               </span>
-                              <span className="text-[1.15rem] leading-none tracking-tight text-zinc-900">
+                              <span className="text-[1.05rem] leading-none tracking-tight text-zinc-900">
                                 {formatTime(item.datetime)}
                               </span>
                             </div>
@@ -351,42 +348,42 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
           <div className="rounded-[24px] border border-zinc-200 bg-white p-5 shadow-[0_10px_28px_rgba(24,20,16,0.05)]">
             <div className="space-y-5">
-              <div className="rounded-[24px] border border-zinc-200 bg-[#fbf8f3] p-4">
+              <div className="border-b border-zinc-200 pb-5">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.address}</p>
-                <p className="mt-2 text-lg leading-relaxed text-zinc-800">
+                <p className="mt-3 text-xl leading-relaxed tracking-tight text-zinc-900">
                   1st floor, 58 Kolonakiou Str, Limassol, 4103
                 </p>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
-                <div className="rounded-[24px] border border-zinc-200 bg-[#fbf8f3] p-4">
+              <div className="grid gap-5 border-b border-zinc-200 pb-5 sm:grid-cols-2">
+                <div>
                   <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.phone}</p>
-                  <p className="mt-2 text-2xl tracking-tight">+357 95505556</p>
+                  <p className="mt-3 text-2xl tracking-tight text-zinc-900">+357 95505556</p>
                 </div>
-                <div className="rounded-[24px] border border-zinc-200 bg-[#fbf8f3] p-4">
+                <div>
                   <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.email}</p>
-                  <p className="mt-2 text-zinc-700">hello@fitspace.cy</p>
+                  <p className="mt-3 text-base text-zinc-700">hello@fitspace.cy</p>
                 </div>
               </div>
 
-              <div>
+              <div className="space-y-3">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Quick actions</p>
-              </div>
-              <div className="flex flex-col gap-3 pt-1 sm:flex-row">
-                <a
-                  href="https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
-                >
-                  {t.contacts.openMap}
-                </a>
-                <a
-                  href="tel:+35795505556"
-                  className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-[#f8f4ed] px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:border-zinc-900"
-                >
-                  {t.contacts.call}
-                </a>
+                <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+                  <a
+                    href="https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+                  >
+                    {t.contacts.openMap}
+                  </a>
+                  <a
+                    href="tel:+35795505556"
+                    className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-[#f8f4ed] px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:border-zinc-900"
+                  >
+                    {t.contacts.call}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
