@@ -52,6 +52,9 @@ function getScheduleHeading() {
   return "Reformer Pilates & Stretching";
 }
 
+const privateBookingMessage = "Please contact our administrator to book your PRIVATE lesson";
+const privateBookingPhone = "+357 95505556";
+
 function getLocalDateKey(dateValue: string | number | Date) {
   const d = new Date(dateValue);
   const y = d.getFullYear();
@@ -198,20 +201,6 @@ export default function HomePage() {
                     Reformer Pilates and stretching in Limassol
                   </p>
                 </div>
-                <div className="hidden gap-2 sm:inline-flex">
-                  <button
-                    onClick={() => setStudioIndex((prev) => (prev - 1 + studioSlides.length) % studioSlides.length)}
-                    className="rounded-[10px] border border-white/35 bg-white/10 px-3 py-1 text-sm text-white transition hover:bg-white hover:text-zinc-900"
-                  >
-                    ←
-                  </button>
-                  <button
-                    onClick={() => setStudioIndex((prev) => (prev + 1) % studioSlides.length)}
-                    className="rounded-[10px] border border-white/35 bg-white/10 px-3 py-1 text-sm text-white transition hover:bg-white hover:text-zinc-900"
-                  >
-                    →
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -312,111 +301,126 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="md:hidden">
-          <div className="flex gap-3 overflow-x-auto snap-x">
-            {mobileScheduleByDay.map((day) => (
-              <section
-                key={day.key}
-                className="flex min-w-[13.5rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
-              >
-                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3.5 py-3.5">
-                  <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
-                    {formatLocalizedDay(day.key, locale)}
-                  </p>
-                </div>
-                <div className="space-y-2 bg-[#f7f4ef] p-2.5">
-                  {day.items.length === 0 ? (
-                    <p className="rounded-[14px] border border-dashed border-zinc-200 bg-white px-4 py-5 text-sm text-zinc-400">
-                      No classes
-                    </p>
-                  ) : (
-                    day.items.map((item) => {
-                      const cardService = getCardService(item.service) ?? item.service;
-                      return (
-                        <a
-                          key={item.id}
-                          href={BOOKING_URL}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="relative block rounded-[14px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
-                              {formatTime(item.datetime)}
-                            </p>
-                            {getRoomShortLabel(item.trainer) ? (
-                              <p className="shrink-0 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
-                                {getRoomShortLabel(item.trainer)}
-                              </p>
-                            ) : null}
-                          </div>
-                          <p className="mt-1.5 text-[1rem] leading-tight tracking-tight text-zinc-900">
-                            {cardService}
-                          </p>
-                          <p className="mt-2 min-w-0 break-words text-[0.76rem] uppercase tracking-[0.05em] text-zinc-500">
-                            {getTrainerName(item.trainer)}
-                          </p>
-                        </a>
-                      );
-                    })
-                  )}
-                </div>
-              </section>
-            ))}
-          </div>
-        </div>
-
-        <div className="hidden grid-cols-5 gap-3 md:grid">
-          {mobileScheduleByDay.map((day) => (
-            <section
-              key={day.key}
-              className="flex min-w-0 flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.05)]"
+        {scheduleMode === "private" ? (
+          <div className="rounded-[16px] border border-zinc-200 bg-white p-6 shadow-[0_10px_28px_rgba(24,20,16,0.05)] sm:p-8">
+            <p className="max-w-2xl text-base leading-relaxed text-zinc-700 sm:text-lg">{privateBookingMessage}</p>
+            <p className="mt-4 text-2xl tracking-tight text-zinc-900">{privateBookingPhone}</p>
+            <a
+              href="tel:+35795505556"
+              className="mt-5 inline-flex items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800"
             >
-              <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-3">
-                <p className="text-[0.96rem] leading-tight tracking-tight text-zinc-900">
-                  {formatLocalizedDay(day.key, locale)}
-                </p>
+              Call administrator
+            </a>
+          </div>
+        ) : (
+          <>
+            <div className="md:hidden">
+              <div className="flex gap-3 overflow-x-auto snap-x">
+                {mobileScheduleByDay.map((day) => (
+                  <section
+                    key={day.key}
+                    className="flex min-w-[13.5rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
+                  >
+                    <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3.5 py-3.5">
+                      <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
+                        {formatLocalizedDay(day.key, locale)}
+                      </p>
+                    </div>
+                    <div className="space-y-2 bg-[#f7f4ef] p-2.5">
+                      {day.items.length === 0 ? (
+                        <p className="rounded-[14px] border border-dashed border-zinc-200 bg-white px-4 py-5 text-sm text-zinc-400">
+                          No classes
+                        </p>
+                      ) : (
+                        day.items.map((item) => {
+                          const cardService = getCardService(item.service) ?? item.service;
+                          return (
+                            <a
+                              key={item.id}
+                              href={BOOKING_URL}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="relative block rounded-[14px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
+                                  {formatTime(item.datetime)}
+                                </p>
+                                {getRoomShortLabel(item.trainer) ? (
+                                  <p className="shrink-0 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
+                                    {getRoomShortLabel(item.trainer)}
+                                  </p>
+                                ) : null}
+                              </div>
+                              <p className="mt-1.5 text-[1rem] leading-tight tracking-tight text-zinc-900">
+                                {cardService}
+                              </p>
+                              <p className="mt-2 min-w-0 break-words text-[0.76rem] uppercase tracking-[0.05em] text-zinc-500">
+                                {getTrainerName(item.trainer)}
+                              </p>
+                            </a>
+                          );
+                        })
+                      )}
+                    </div>
+                  </section>
+                ))}
               </div>
-              <div className="space-y-2 bg-[#f7f4ef] p-2">
-                {day.items.length === 0 ? (
-                  <p className="rounded-[12px] border border-dashed border-zinc-200 bg-white px-3 py-4 text-sm text-zinc-400">
-                    No classes
-                  </p>
-                ) : (
-                  day.items.map((item) => {
-                    const cardService = getCardService(item.service) ?? item.service;
-                    return (
-                      <a
-                        key={item.id}
-                        href={BOOKING_URL}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="relative block rounded-[12px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_4px_14px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_8px_20px_rgba(24,20,16,0.06)]"
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.68rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
-                            {formatTime(item.datetime)}
-                          </p>
-                          {getRoomShortLabel(item.trainer) ? (
-                            <p className="shrink-0 text-[9px] uppercase tracking-[0.1em] text-zinc-400">
-                              {getRoomShortLabel(item.trainer)}
+            </div>
+
+            <div className="hidden grid-cols-5 gap-3 md:grid">
+              {mobileScheduleByDay.map((day) => (
+                <section
+                  key={day.key}
+                  className="flex min-w-0 flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.05)]"
+                >
+                  <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-3">
+                    <p className="text-[0.96rem] leading-tight tracking-tight text-zinc-900">
+                      {formatLocalizedDay(day.key, locale)}
+                    </p>
+                  </div>
+                  <div className="space-y-2 bg-[#f7f4ef] p-2">
+                    {day.items.length === 0 ? (
+                      <p className="rounded-[12px] border border-dashed border-zinc-200 bg-white px-3 py-4 text-sm text-zinc-400">
+                        No classes
+                      </p>
+                    ) : (
+                      day.items.map((item) => {
+                        const cardService = getCardService(item.service) ?? item.service;
+                        return (
+                          <a
+                            key={item.id}
+                            href={BOOKING_URL}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="relative block rounded-[12px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_4px_14px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_8px_20px_rgba(24,20,16,0.06)]"
+                          >
+                            <div className="flex items-center justify-between gap-2">
+                              <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.68rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
+                                {formatTime(item.datetime)}
+                              </p>
+                              {getRoomShortLabel(item.trainer) ? (
+                                <p className="shrink-0 text-[9px] uppercase tracking-[0.1em] text-zinc-400">
+                                  {getRoomShortLabel(item.trainer)}
+                                </p>
+                              ) : null}
+                            </div>
+                            <p className="mt-1.5 text-[0.9rem] leading-tight tracking-tight text-zinc-900">
+                              {cardService}
                             </p>
-                          ) : null}
-                        </div>
-                        <p className="mt-1.5 text-[0.9rem] leading-tight tracking-tight text-zinc-900">
-                          {cardService}
-                        </p>
-                        <p className="mt-1.5 min-w-0 break-words text-[0.68rem] uppercase tracking-[0.04em] text-zinc-500">
-                          {getTrainerName(item.trainer)}
-                        </p>
-                      </a>
-                    );
-                  })
-                )}
-              </div>
-            </section>
-          ))}
-        </div>
+                            <p className="mt-1.5 min-w-0 break-words text-[0.68rem] uppercase tracking-[0.04em] text-zinc-500">
+                              {getTrainerName(item.trainer)}
+                            </p>
+                          </a>
+                        );
+                      })
+                    )}
+                  </div>
+                </section>
+              ))}
+            </div>
+          </>
+        )}
       </section>
 
       <section id="contacts" className="mx-auto max-w-6xl px-4 pb-16">
