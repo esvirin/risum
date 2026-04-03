@@ -79,9 +79,8 @@ function getRoomName(value: string) {
 
 function getRoomShortLabel(value: string) {
   const room = getRoomName(value).toLowerCase();
-  if (room.includes("room 1")) return "R1";
-  if (room.includes("room 2")) return "R2";
-  return null;
+  const match = room.match(/room\s+([12])/);
+  return match ? `Room ${match[1]}` : null;
 }
 
 function getCardService(service: string) {
