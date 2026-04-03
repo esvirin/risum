@@ -23,9 +23,9 @@ export function PublicNav() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 bg-[#f7f4ef]/95 backdrop-blur">
+    <header className="sticky top-0 z-50 border-b border-[#e4d9ca] bg-[#f7f4ef]/88 backdrop-blur-xl">
       <div
-        className={`overflow-hidden border-b border-zinc-200/80 transition-all duration-300 ${
+        className={`overflow-hidden border-b border-[#e8dece]/90 transition-all duration-300 ${
           showTopBar ? "max-h-16 opacity-100" : "max-h-0 opacity-0"
         }`}
       >
@@ -42,13 +42,13 @@ export function PublicNav() {
 
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
         <Link href="/" className="inline-flex items-center">
-          <Image src="/logo-fitspace.svg" alt="Fit Space" width={120} height={28} className="h-6 w-auto sm:h-7" priority />
+          <Image src="/logo-fitspace.svg" alt="Fit Space" width={120} height={28} className="h-6 w-auto opacity-95 sm:h-7" priority />
         </Link>
 
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
-            className="inline-flex items-center justify-center rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900 sm:px-4 sm:text-xs"
+            className="inline-flex items-center justify-center rounded-[14px] border border-[#e5dbcc] bg-white/82 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-600 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:-translate-y-0.5 hover:bg-white hover:text-zinc-900 sm:px-4 sm:text-xs"
           >
             {t.nav.prices}
           </button>
@@ -56,7 +56,7 @@ export function PublicNav() {
             href={BOOKING_URL}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800 sm:px-4 sm:text-xs"
+            className="inline-flex items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.07)] transition hover:-translate-y-0.5 hover:bg-zinc-800 sm:px-4 sm:text-xs"
           >
             {t.nav.book}
           </a>

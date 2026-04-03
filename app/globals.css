@@ -6,17 +6,8 @@
     :root {
         --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
         --font-display: Georgia, "Times New Roman", serif;
-        /* 
-      Pilates.com Inspired Theme: 
-      Clean, minimal, light, with nature-inspired greens or soft neutrals.
-      Base: White / Off-White
-      Primary: Muted Sage Green or Deep classic Green
-      Accent: Soft Charcoal
-    */
         --background: 0 0% 100%;
-        /* White */
         --foreground: 240 5.9% 10%;
-        /* Almost Black */
 
         --card: 0 0% 100%;
         --card-foreground: 240 5.9% 10%;
@@ -24,9 +15,7 @@
         --popover: 0 0% 100%;
         --popover-foreground: 240 5.9% 10%;
 
-        /* Primary: Using a deep elegant green similar to pilates.com branding */
         --primary: 220 100% 63%;
-        /* Vibrant Blue */
         --primary-foreground: 0 0% 100%;
 
         --secondary: 240 4.8% 95.9%;
@@ -36,7 +25,6 @@
         --muted-foreground: 240 3.8% 46.1%;
 
         --accent: 240 4.8% 95.9%;
-        /* Light gray for hover */
         --accent-foreground: 240 5.9% 10%;
 
         --destructive: 0 84.2% 60.2%;
@@ -50,10 +38,6 @@
     }
 
     .dark {
-        /* 
-      Dark mode variant: 
-      Keeping it clean dark grey rather than pitch black.
-    */
         --background: 240 10% 3.9%;
         --foreground: 0 0% 98%;
 
@@ -92,16 +76,28 @@
     body {
         @apply bg-background text-foreground;
         font-family: var(--font-sans), sans-serif;
+        background:
+            radial-gradient(circle at top, rgba(255, 255, 255, 0.9), rgba(247, 244, 239, 0.98) 42%, rgba(241, 234, 223, 1) 100%);
+        min-height: 100vh;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
     }
 
     .font-display {
         font-family: var(--font-display), serif;
     }
+
+    ::selection {
+        background: rgba(53, 43, 34, 0.14);
+        color: hsl(var(--foreground));
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
 }
 
-/* Legacy Support / Global overrides */
 :root {
-    /* Mapping legacy variables to new Shadcn-based ones where possible */
     --text-main: hsl(var(--foreground));
     --text-secondary: hsl(var(--muted-foreground));
     --text-muted: hsl(var(--muted-foreground));
@@ -109,9 +105,7 @@
     --accent-red: #ef4444;
 }
 
-/* Custom Utilities */
 @layer utilities {
-    /* Hide scrollbar but keep functionality */
     .scrollbar-hide {
         -ms-overflow-style: none;
         scrollbar-width: none;
@@ -121,7 +115,6 @@
         display: none;
     }
     
-    /* Smooth scroll snap */
     .snap-x {
         scroll-snap-type: x mandatory;
     }
@@ -130,7 +123,6 @@
         scroll-snap-align: center;
     }
     
-    /* Custom scale for hover effects */
     .hover\:scale-102:hover {
         transform: scale(1.02);
     }
