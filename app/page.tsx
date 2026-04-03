@@ -341,12 +341,19 @@ export default function HomePage() {
               </div>
               <div className="rounded-[20px] border border-white/70 bg-white/85 p-5 shadow-[0_10px_24px_rgba(24,20,16,0.04)]">
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Телефон администратора</p>
-                <p className="font-display mt-3 text-4xl leading-none tracking-tight text-zinc-900">{privateBookingPhone}</p>
                 <a
                   href="tel:+35795505556"
+                  className="font-display mt-3 inline-flex text-4xl leading-none tracking-tight text-zinc-900 transition hover:text-zinc-700"
+                >
+                  {privateBookingPhone}
+                </a>
+                <a
+                  href="https://wa.me/35795505556"
+                  target="_blank"
+                  rel="noreferrer"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5 hover:bg-zinc-800"
                 >
-                  Позвонить администратору
+                  Написать в WhatsApp
                 </a>
               </div>
             </div>
@@ -480,7 +487,12 @@ export default function HomePage() {
               <div className="grid gap-5 border-b border-[#ece2d5] pb-5 sm:grid-cols-2">
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.phone}</p>
-                  <p className="font-display mt-3 text-3xl tracking-tight text-zinc-900">+357 95505556</p>
+                  <a
+                    href="tel:+35795505556"
+                    className="font-display mt-3 inline-flex text-3xl tracking-tight text-zinc-900 transition hover:text-zinc-700"
+                  >
+                    +357 95505556
+                  </a>
                 </div>
                 <div>
                   <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.email}</p>
@@ -500,10 +512,12 @@ export default function HomePage() {
                     {t.contacts.openMap}
                   </a>
                   <a
-                    href="tel:+35795505556"
+                    href="https://wa.me/35795505556"
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex min-w-[9rem] items-center justify-center rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900"
                   >
-                    {t.contacts.call}
+                    Написать в WhatsApp
                   </a>
                 </div>
               </div>
