@@ -58,7 +58,7 @@ function getScheduleHeading() {
   return "Reformer Pilates & Stretching";
 }
 
-const privateBookingMessage = "Please contact our administrator to book your PRIVATE lesson";
+const privateBookingMessage = "Для бронирования индивидуального занятия свяжитесь с нашим администратором.";
 const privateBookingPhone = "+357 95505556";
 
 function getLocalDateKey(dateValue: string | number | Date) {
@@ -333,20 +333,20 @@ export default function HomePage() {
           <div className="overflow-hidden rounded-[24px] border border-[#ddd2c2] bg-[linear-gradient(135deg,#fffdfa_0%,#f4ede2_100%)] shadow-[0_12px_34px_rgba(24,20,16,0.06)]">
             <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Private booking</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-zinc-500">Персональные занятия</p>
                 <p className="font-display mt-3 text-3xl leading-tight tracking-tight text-zinc-900 sm:text-4xl">
-                  One direct contact, one private lesson, one smooth booking flow.
+                  Один контакт, одно персональное занятие, простая запись.
                 </p>
                 <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-700 sm:text-lg">{privateBookingMessage}</p>
               </div>
               <div className="rounded-[20px] border border-white/70 bg-white/85 p-5 shadow-[0_10px_24px_rgba(24,20,16,0.04)]">
-                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Administrator phone</p>
+                <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Телефон администратора</p>
                 <p className="font-display mt-3 text-4xl leading-none tracking-tight text-zinc-900">{privateBookingPhone}</p>
                 <a
                   href="tel:+35795505556"
                   className="mt-5 inline-flex w-full items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5 hover:bg-zinc-800"
                 >
-                  Call administrator
+                  Позвонить администратору
                 </a>
               </div>
             </div>
