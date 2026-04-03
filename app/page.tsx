@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -32,6 +32,13 @@ const studioSlides = [
   "/instagram/fit-2.jpg",
 ];
 
+function formatTime(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
+}
+
 function formatLocalizedDay(value: string, locale: "ru" | "en") {
   const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
   return new Intl.DateTimeFormat(dtLocale, {
@@ -41,11 +48,16 @@ function formatLocalizedDay(value: string, locale: "ru" | "en") {
   }).format(new Date(value));
 }
 
-function formatTime(value: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(new Date(value));
+function formatScheduleHeaderDate(value: string, locale: "ru" | "en") {
+  const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
+  return new Intl.DateTimeFormat(dtLocale, {
+    weekday: "short",
+    month: "short",
+    day: "2-digit",
+  })
+    .format(new Date(value))
+    .replace(".", "")
+    .toUpperCase();
 }
 
 function getScheduleHeading() {
@@ -68,18 +80,15 @@ function getRoomName(value: string) {
   return value.split("·")[1]?.trim() || "Studio";
 }
 
+function getRoomShortLabel(value: string) {
+  const room = getRoomName(value).toLowerCase();
+  if (room.includes("room 1")) return "R1";
+  if (room.includes("room 2")) return "R2";
+  return null;
+}
+
 function getCardService(service: string) {
   return service === "Reformer Pilates" ? null : service;
-}
-
-function getWeekdayNumber(value: string) {
-  const day = new Date(value).getDay();
-  return day === 0 ? 7 : day;
-}
-
-function getTimeKey(value: string) {
-  const date = new Date(value);
-  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
 }
 
 export default function HomePage() {
@@ -95,6 +104,7 @@ export default function HomePage() {
   );
 
   const [priceMode, setPriceMode] = useState<Mode>("group");
+  const [scheduleMode, setScheduleMode] = useState<Mode>("group");
   const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
@@ -123,92 +133,69 @@ export default function HomePage() {
     return () => window.clearInterval(intervalId);
   }, []);
 
-  const scheduleDays = useMemo(() => {
-    const now = nowTs;
-    const max = now + 7 * 24 * 60 * 60 * 1000;
-    const todayKey = getLocalDateKey(now);
-
-    const filtered = schedule
-      .filter((item) => {
-        const ts = new Date(item.datetime).getTime();
-        if (!Number.isFinite(ts)) return false;
-        const itemDayKey = getLocalDateKey(item.datetime);
-        if (item.mode !== "group") return false;
-        if (itemDayKey === todayKey) return ts <= max;
-        return ts >= now && ts <= max;
-      })
-      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
-
-    const map = new Map<string, StaticScheduleItem[]>();
-    for (const item of filtered) {
-      const key = getLocalDateKey(item.datetime);
-      map.set(key, [...(map.get(key) ?? []), item]);
-    }
-
-    const start = new Date(now);
-    start.setHours(0, 0, 0, 0);
-
-    return Array.from({ length: 7 }, (_, index) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + index);
-      const key = getLocalDateKey(day);
-      return [key, map.get(key) ?? []] as [string, StaticScheduleItem[]];
-    });
-  }, [schedule, nowTs]);
-
   const pricedServices = useMemo(
     () => manualPrices.filter((item) => item.mode === priceMode),
     [manualPrices, priceMode],
   );
 
-  const scheduleDayHeaders = useMemo(() => {
-    const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
+  const scheduleDays = useMemo(() => {
+    const start = new Date(nowTs);
+    const weekday = start.getDay();
+    const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
+    start.setDate(start.getDate() + diffToMonday);
+    start.setHours(0, 0, 0, 0);
+
     return Array.from({ length: 6 }, (_, index) => {
-      const day = new Date(nowTs);
-      const weekday = day.getDay();
-      const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
-      day.setDate(day.getDate() + diffToMonday + index);
-      return new Intl.DateTimeFormat(dtLocale, { weekday: "long" }).format(day);
+      const day = new Date(start);
+      day.setDate(start.getDate() + index);
+      return getLocalDateKey(day);
     });
-  }, [locale, nowTs]);
+  }, [nowTs]);
 
-  const roomTables = useMemo(() => {
-    const rooms = ["Room 1", "Room 2"];
+  const scheduleTable = useMemo(() => {
+    const daySet = new Set(scheduleDays);
+    const filtered = schedule
+      .filter((item) => item.mode === scheduleMode && daySet.has(getLocalDateKey(item.datetime)))
+      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
 
-    return rooms.map((room) => {
-      const roomItems = scheduleDays.flatMap(([, items]) =>
-        items.filter((item) => item.mode === "group" && getRoomName(item.trainer) === room),
-      );
-      const timeKeys = Array.from(new Set(roomItems.map((item) => getTimeKey(item.datetime)))).sort();
+    const timeKeys = Array.from(
+      new Set(
+        filtered.map((item) => {
+          const date = new Date(item.datetime);
+          return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+        }),
+      ),
+    ).sort();
 
-      return {
-        room,
-        rows: timeKeys.map((timeKey) => ({
-          timeKey,
-          cells: Array.from({ length: 6 }, (_, weekdayIndex) => {
-            const weekday = weekdayIndex + 1;
-            return (
-              roomItems.find(
-                (item) => getWeekdayNumber(item.datetime) === weekday && getTimeKey(item.datetime) === timeKey,
-              ) ?? null
-            );
-          }),
-        })),
-      };
-    });
-  }, [scheduleDays]);
+    return {
+      days: scheduleDays.map((day) => ({
+        key: day,
+        label: formatScheduleHeaderDate(day, locale),
+      })),
+      rows: timeKeys.map((timeKey) => ({
+        timeKey,
+        cells: scheduleDays.map((day) =>
+          filtered.filter((item) => getLocalDateKey(item.datetime) === day && formatTime(item.datetime) === timeKey),
+        ),
+      })),
+    };
+  }, [locale, schedule, scheduleDays, scheduleMode]);
 
-  const roomDaySections = useMemo(() => {
-    const rooms = ["Room 1", "Room 2"];
+  const scheduleByDay = useMemo(
+    () =>
+      scheduleTable.days.map((day) => ({
+        ...day,
+        items: schedule
+          .filter((item) => item.mode === scheduleMode && getLocalDateKey(item.datetime) === day.key)
+          .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()),
+      })),
+    [schedule, scheduleMode, scheduleTable.days],
+  );
 
-    return rooms.map((room) => ({
-      room,
-      days: scheduleDays.map(([day, items]) => [
-        day,
-        items.filter((item) => getRoomName(item.trainer) === room),
-      ] as [string, StaticScheduleItem[]]),
-    }));
-  }, [scheduleDays]);
+  const mobileScheduleByDay = useMemo(() => {
+    const todayKey = getLocalDateKey(nowTs);
+    return scheduleByDay.filter((day) => day.key >= todayKey);
+  }, [nowTs, scheduleByDay]);
 
   return (
     <div className="bg-[#f7f4ef] text-zinc-900">
@@ -296,7 +283,7 @@ export default function HomePage() {
                 <div className="flex flex-wrap gap-3 lg:justify-end">
                   <button
                     onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
-                    className="border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+                    className="inline-flex items-center justify-center rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900"
                   >
                     {t.nav.prices}
                   </button>
@@ -304,7 +291,7 @@ export default function HomePage() {
                     href={BOOKING_URL}
                     target="_blank"
                     rel="noreferrer"
-                    className="border border-zinc-300 bg-white/90 px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-900 transition hover:border-zinc-900"
+                    className="inline-flex items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800"
                   >
                     {t.nav.book}
                   </a>
@@ -341,148 +328,152 @@ export default function HomePage() {
       </section>
 
       <section id="schedule" className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+        <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>
-            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{getScheduleHeading()}</h2>
+            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{copy.join}:</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+              {getScheduleHeading()}
+            </p>
+          </div>
+
+          <div className="inline-flex w-full rounded-[14px] border border-zinc-200 bg-white p-1 shadow-[0_8px_24px_rgba(24,20,16,0.04)] md:w-auto">
+            {(["group", "private"] as const).map((mode) => {
+              const active = scheduleMode === mode;
+              return (
+                <button
+                  key={mode}
+                  type="button"
+                  onClick={() => setScheduleMode(mode)}
+                  className={`flex-1 rounded-[10px] px-6 py-2.5 text-sm font-medium uppercase tracking-[0.12em] transition md:flex-none ${
+                    active ? "border border-zinc-900 bg-zinc-900 text-white" : "text-zinc-500 hover:bg-[#f7f4ef] hover:text-zinc-900"
+                  }`}
+                >
+                  {mode === "group" ? copy.group : copy.private}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div>
-          <div className="space-y-8 xl:hidden">
-            {roomDaySections.map((section) => (
-              <div key={section.room} className="space-y-4">
-                <div className="rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#fcfaf6_0%,#f3ece3_100%)] px-4 py-3">
-                  <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Schedule</p>
-                  <h3 className="mt-2 text-lg tracking-tight text-zinc-900">
-                    {section.room === "Room 1" ? "Room 1: Reformer Pilates & Stretching" : "Room 2: Reformer Pilates"}
-                  </h3>
+        <div className="space-y-4 md:hidden">
+          <div className="flex gap-3 overflow-x-auto snap-x">
+            {mobileScheduleByDay.map((day) => (
+              <section
+                key={day.key}
+                className="flex h-[28rem] min-w-[17rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
+              >
+                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4">
+                  <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
+                    {formatLocalizedDay(day.key, locale)}
+                  </p>
                 </div>
-
-                <div className="flex gap-3 overflow-x-auto scrollbar-hide snap-x">
-                  {section.days.map(([day, items]) => (
-                    <section
-                      key={`${section.room}-${day}`}
-                      className="flex h-[26.5rem] w-fit min-w-[16.5rem] max-w-[20rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.04)] first:ml-0 last:mr-0 md:h-[calc(100dvh-14rem)] md:min-h-[44rem] md:w-[26rem]"
-                    >
-                      <div className="border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4">
-                        <p className="text-[1.2rem] leading-tight tracking-tight text-zinc-900">
-                          {formatLocalizedDay(day, locale)}
-                        </p>
-                      </div>
-                      <div className="flex-1 space-y-1.5 overflow-y-auto p-2 md:space-y-2 md:p-2.5">
-                        {items.length === 0 ? (
-                          <p className="rounded-[14px] border border-dashed border-zinc-200 bg-[#fbf8f3] px-4 py-5 text-sm text-zinc-400">
-                            No classes
+                <div className="flex-1 space-y-2 overflow-y-auto bg-[#f7f4ef] p-3">
+                  {day.items.length === 0 ? (
+                    <p className="rounded-[14px] border border-dashed border-zinc-200 bg-white px-4 py-5 text-sm text-zinc-400">
+                      No classes
+                    </p>
+                  ) : (
+                    day.items.map((item) => {
+                      const cardService = getCardService(item.service) ?? item.service;
+                      return (
+                        <a
+                          key={item.id}
+                          href={BOOKING_URL}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="relative block rounded-[14px] border border-zinc-200 bg-white px-4 py-4 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
+                        >
+                          {getRoomShortLabel(item.trainer) ? (
+                            <p className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
+                              {getRoomShortLabel(item.trainer)}
+                            </p>
+                          ) : null}
+                          <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
+                            {formatTime(item.datetime)}
                           </p>
-                        ) : (
-                          items.map((item) => {
-                            const cardService = getCardService(item.service);
+                          <p className="mt-2 text-[1rem] leading-tight tracking-tight text-zinc-900">
+                            {cardService}
+                          </p>
+                          <p className="mt-3 min-w-0 break-words text-[0.78rem] uppercase tracking-[0.06em] text-zinc-500">
+                            {getTrainerName(item.trainer)}
+                          </p>
+                        </a>
+                      );
+                    })
+                  )}
+                </div>
+              </section>
+            ))}
+          </div>
+
+        </div>
+
+        <section className="hidden overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)] md:block">
+          <div className="overflow-x-auto">
+            <div className="grid min-w-[860px] grid-cols-[122px_repeat(6,minmax(120px,1fr))]">
+              <div className="border-r border-b border-zinc-200 bg-[#fcfaf6] px-5 py-4 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
+                Time
+              </div>
+              {scheduleTable.days.map((day) => (
+                <div
+                  key={day.key}
+                  className="border-r border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4 text-center text-sm font-semibold uppercase tracking-[0.16em] text-zinc-500 last:border-r-0"
+                >
+                  {day.label}
+                </div>
+              ))}
+
+              {scheduleTable.rows.map((row) => (
+                <Fragment key={row.timeKey}>
+                  <div
+                    className="border-r border-b border-zinc-200 bg-white px-5 py-6 text-[1.8rem] leading-none tracking-tight text-zinc-900"
+                  >
+                    {row.timeKey}
+                  </div>
+                  {row.cells.map((items, cellIndex) => (
+                    <div
+                      key={`${row.timeKey}-${scheduleTable.days[cellIndex]?.key}`}
+                      className="min-h-[146px] border-r border-b border-zinc-200 bg-[#f7f4ef] p-3 last:border-r-0"
+                    >
+                      {items.length === 0 ? (
+                        <div className="pt-2 text-2xl leading-none text-zinc-300">-</div>
+                      ) : (
+                        <div className="space-y-3">
+                          {items.map((item) => {
+                            const cardService = getCardService(item.service) ?? item.service;
                             return (
                               <a
                                 key={item.id}
                                 href={BOOKING_URL}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="block rounded-[14px] border border-zinc-200 bg-[#fcfaf6] px-3 py-3 transition hover:border-zinc-900 md:px-4 md:py-4"
+                                className="relative block rounded-[14px] border border-zinc-200 bg-white px-4 py-4 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
                               >
-                                <div className="min-w-0">
-                                  <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
-                                    {getTrainerName(item.trainer)}
+                                {getRoomShortLabel(item.trainer) ? (
+                                  <p className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
+                                    {getRoomShortLabel(item.trainer)}
                                   </p>
-                                  {cardService ? (
-                                    <p className="mt-1.5 text-[0.95rem] leading-tight tracking-tight text-zinc-900 md:mt-2 md:text-[1rem]">
-                                      {cardService}
-                                    </p>
-                                  ) : null}
-                                  <div className="mt-3 flex items-center justify-end gap-3 border-t border-zinc-200 pt-2.5 md:mt-4 md:pt-3">
-                                    <span className="shrink-0 whitespace-nowrap text-[1.05rem] leading-none tracking-tight text-zinc-900 md:text-[1.2rem]">
-                                      {formatTime(item.datetime)}
-                                    </span>
-                                  </div>
-                                </div>
+                                ) : null}
+                                <p className="text-[1.05rem] leading-[1.25] tracking-tight text-zinc-900">
+                                  {cardService}
+                                </p>
+                                <p className="mt-3 min-w-0 break-words text-[0.78rem] uppercase tracking-[0.06em] text-zinc-500">
+                                  {getTrainerName(item.trainer)}
+                                </p>
                               </a>
                             );
-                          })
-                        )}
-                      </div>
-                    </section>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="hidden space-y-10 xl:block">
-            {roomTables.map((table) => (
-              <section
-                key={table.room}
-                className="overflow-hidden rounded-[16px] border border-zinc-200 bg-[linear-gradient(180deg,#ffffff_0%,#f8f3eb_100%)] shadow-[0_10px_28px_rgba(24,20,16,0.04)]"
-              >
-                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-5 py-5 text-center">
-                  <h3 className="text-2xl tracking-tight text-zinc-900">
-                    {table.room === "Room 1" ? "Room 1: Reformer Pilates & Stretching" : "Room 2: Reformer Pilates"}
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-6 border-b border-zinc-200 bg-[#f7f3ec]">
-                  {scheduleDayHeaders.map((label) => (
-                    <div
-                      key={label}
-                      className="border-r border-zinc-200 px-3 py-4 text-center text-[0.95rem] capitalize tracking-tight text-zinc-900 last:border-r-0"
-                    >
-                      {label}
+                          })}
+                        </div>
+                      )}
                     </div>
                   ))}
-                </div>
-
-                <div className="grid grid-cols-6">
-                  {scheduleDayHeaders.map((label, dayIndex) => (
-                    <div key={`${table.room}-${label}`} className="border-r border-zinc-200 last:border-r-0">
-                      {table.rows.map((row) => {
-                        const item = row.cells[dayIndex];
-
-                        if (!item) {
-                          return <div key={`${table.room}-${label}-${row.timeKey}`} className="h-[92px] border-b border-zinc-100 bg-white" />;
-                        }
-
-                        const trainerName = getTrainerName(item.trainer);
-
-                        return (
-                          <a
-                            key={item.id}
-                            href={BOOKING_URL}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="flex h-[92px] flex-col justify-between border-b border-zinc-100 bg-white px-4 py-3 transition hover:bg-[#fbf8f3]"
-                          >
-                            <p className="text-[1.85rem] leading-none tracking-tight text-zinc-900">
-                              {formatTime(item.datetime)}
-                            </p>
-                            <div>
-                              {item.service !== "Reformer Pilates" ? (
-                                <p className="text-[1.1rem] leading-tight tracking-tight text-zinc-900">
-                                  {item.service}
-                                </p>
-                              ) : null}
-                              <p
-                                className={`text-right text-[11px] uppercase tracking-[0.14em] text-zinc-500 ${
-                                  item.service !== "Reformer Pilates" ? "mt-1" : ""
-                                }`}
-                              >
-                                {trainerName}
-                              </p>
-                            </div>
-                          </a>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))}
+                </Fragment>
+              ))}
+            </div>
           </div>
-        </div>
+
+        </section>
       </section>
 
       <section id="contacts" className="mx-auto max-w-6xl px-4 pb-16">
@@ -518,13 +509,13 @@ export default function HomePage() {
                     href="https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103"
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center justify-center rounded-full border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white transition hover:bg-zinc-800"
+                    className="inline-flex min-w-[9rem] items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800"
                   >
                     {t.contacts.openMap}
                   </a>
                   <a
                     href="tel:+35795505556"
-                    className="inline-flex items-center justify-center rounded-full border border-zinc-300 bg-[#f8f4ed] px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-800 transition hover:border-zinc-900"
+                    className="inline-flex min-w-[9rem] items-center justify-center rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-6 py-3 text-xs uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900"
                   >
                     {t.contacts.call}
                   </a>

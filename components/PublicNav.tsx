@@ -48,7 +48,7 @@ export function PublicNav() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
-            className="border border-zinc-300 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white sm:px-4 sm:text-xs"
+            className="inline-flex items-center justify-center rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900 sm:px-4 sm:text-xs"
           >
             {t.nav.prices}
           </button>
@@ -56,7 +56,7 @@ export function PublicNav() {
             href={BOOKING_URL}
             target="_blank"
             rel="noreferrer"
-            className="border border-zinc-300 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-zinc-800 transition hover:bg-zinc-900 hover:text-white sm:px-4 sm:text-xs"
+            className="inline-flex items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-3 py-2 text-[11px] uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800 sm:px-4 sm:text-xs"
           >
             {t.nav.book}
           </a>

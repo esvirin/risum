@@ -127,18 +127,18 @@ export function PricesModal({
             <button
               type="button"
               onClick={onClose}
-              className="shrink-0 rounded-full border border-zinc-400/80 bg-white/80 px-4 py-2 text-xs uppercase tracking-[0.16em] text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
+              className="shrink-0 rounded-[12px] border border-zinc-200 bg-[#f7f4ef] px-4 py-2 text-xs uppercase tracking-[0.18em] text-zinc-500 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-white hover:text-zinc-900"
             >
               {copy.close}
             </button>
           </div>
 
-          <div className="mb-5 grid w-full grid-cols-2 rounded-full border border-zinc-300 p-1 text-xs uppercase tracking-[0.12em] sm:hidden">
+          <div className="mb-5 grid w-full grid-cols-2 rounded-[14px] border border-zinc-200 bg-white p-1 text-xs uppercase tracking-[0.12em] shadow-[0_8px_24px_rgba(24,20,16,0.04)] sm:hidden">
             <button
               type="button"
               onClick={() => onModeChange("group")}
-              className={`rounded-full px-4 py-2 text-center ${
-                mode === "group" ? "bg-zinc-900 text-white" : "text-zinc-700"
+              className={`rounded-[10px] px-4 py-2 text-center transition ${
+                mode === "group" ? "border border-zinc-900 bg-zinc-900 text-white" : "text-zinc-500 hover:bg-[#f7f4ef] hover:text-zinc-900"
               }`}
             >
               {copy.groupLessons}
@@ -146,8 +146,8 @@ export function PricesModal({
             <button
               type="button"
               onClick={() => onModeChange("private")}
-              className={`rounded-full px-4 py-2 text-center ${
-                mode === "private" ? "bg-zinc-900 text-white" : "text-zinc-700"
+              className={`rounded-[10px] px-4 py-2 text-center transition ${
+                mode === "private" ? "border border-zinc-900 bg-zinc-900 text-white" : "text-zinc-500 hover:bg-[#f7f4ef] hover:text-zinc-900"
               }`}
             >
               {copy.privateLessons}
