@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { PricesModal } from "@/components/PricesModal";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -46,18 +46,6 @@ function formatLocalizedDay(value: string, locale: "ru" | "en") {
     month: "short",
     day: "numeric",
   }).format(new Date(value));
-}
-
-function formatScheduleHeaderDate(value: string, locale: "ru" | "en") {
-  const dtLocale = locale === "ru" ? "ru-RU" : "en-US";
-  return new Intl.DateTimeFormat(dtLocale, {
-    weekday: "short",
-    month: "short",
-    day: "2-digit",
-  })
-    .format(new Date(value))
-    .replace(".", "")
-    .toUpperCase();
 }
 
 function getScheduleHeading() {
@@ -139,63 +127,31 @@ export default function HomePage() {
   );
 
   const scheduleDays = useMemo(() => {
-    const start = new Date(nowTs);
-    const weekday = start.getDay();
-    const diffToMonday = weekday === 0 ? -6 : 1 - weekday;
-    start.setDate(start.getDate() + diffToMonday);
-    start.setHours(0, 0, 0, 0);
-
-    return Array.from({ length: 6 }, (_, index) => {
-      const day = new Date(start);
-      day.setDate(start.getDate() + index);
-      return getLocalDateKey(day);
-    });
-  }, [nowTs]);
-
-  const scheduleTable = useMemo(() => {
-    const daySet = new Set(scheduleDays);
-    const filtered = schedule
-      .filter((item) => item.mode === scheduleMode && daySet.has(getLocalDateKey(item.datetime)))
-      .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime());
-
-    const timeKeys = Array.from(
+    const todayKey = getLocalDateKey(nowTs);
+    const upcomingKeys = Array.from(
       new Set(
-        filtered.map((item) => {
-          const date = new Date(item.datetime);
-          return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
-        }),
+        schedule
+          .filter((item) => item.mode === scheduleMode && getLocalDateKey(item.datetime) >= todayKey)
+          .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime())
+          .map((item) => getLocalDateKey(item.datetime)),
       ),
-    ).sort();
+    );
 
-    return {
-      days: scheduleDays.map((day) => ({
-        key: day,
-        label: formatScheduleHeaderDate(day, locale),
-      })),
-      rows: timeKeys.map((timeKey) => ({
-        timeKey,
-        cells: scheduleDays.map((day) =>
-          filtered.filter((item) => getLocalDateKey(item.datetime) === day && formatTime(item.datetime) === timeKey),
-        ),
-      })),
-    };
-  }, [locale, schedule, scheduleDays, scheduleMode]);
+    return upcomingKeys.slice(0, 5);
+  }, [nowTs, schedule, scheduleMode]);
 
   const scheduleByDay = useMemo(
     () =>
-      scheduleTable.days.map((day) => ({
-        ...day,
+      scheduleDays.map((day) => ({
+        key: day,
         items: schedule
-          .filter((item) => item.mode === scheduleMode && getLocalDateKey(item.datetime) === day.key)
+          .filter((item) => item.mode === scheduleMode && getLocalDateKey(item.datetime) === day)
           .sort((a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()),
       })),
-    [schedule, scheduleMode, scheduleTable.days],
+    [schedule, scheduleDays, scheduleMode],
   );
 
-  const mobileScheduleByDay = useMemo(() => {
-    const todayKey = getLocalDateKey(nowTs);
-    return scheduleByDay.filter((day) => day.key >= todayKey);
-  }, [nowTs, scheduleByDay]);
+  const mobileScheduleByDay = useMemo(() => scheduleByDay.slice(0, 5), [scheduleByDay]);
 
   return (
     <div className="bg-[#f7f4ef] text-zinc-900">
@@ -331,7 +287,7 @@ export default function HomePage() {
         <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>
-            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{copy.join}:</h2>
+            <h2 className="mt-2 text-4xl tracking-tight sm:text-5xl">{copy.join}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
               {getScheduleHeading()}
             </p>
@@ -356,19 +312,19 @@ export default function HomePage() {
           </div>
         </div>
 
-        <div className="space-y-4 md:hidden">
+        <div className="md:hidden">
           <div className="flex gap-3 overflow-x-auto snap-x">
             {mobileScheduleByDay.map((day) => (
               <section
                 key={day.key}
-                className="flex h-[28rem] min-w-[17rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
+                className="flex min-w-[13.5rem] shrink-0 snap-center flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
               >
-                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4">
+                <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3.5 py-3.5">
                   <p className="text-[1.05rem] leading-tight tracking-tight text-zinc-900">
                     {formatLocalizedDay(day.key, locale)}
                   </p>
                 </div>
-                <div className="flex-1 space-y-2 overflow-y-auto bg-[#f7f4ef] p-3">
+                <div className="space-y-2 bg-[#f7f4ef] p-2.5">
                   {day.items.length === 0 ? (
                     <p className="rounded-[14px] border border-dashed border-zinc-200 bg-white px-4 py-5 text-sm text-zinc-400">
                       No classes
@@ -382,20 +338,22 @@ export default function HomePage() {
                           href={BOOKING_URL}
                           target="_blank"
                           rel="noreferrer"
-                          className="relative block rounded-[14px] border border-zinc-200 bg-white px-4 py-4 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
+                          className="relative block rounded-[14px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
                         >
-                          {getRoomShortLabel(item.trainer) ? (
-                            <p className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
-                              {getRoomShortLabel(item.trainer)}
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.72rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
+                              {formatTime(item.datetime)}
                             </p>
-                          ) : null}
-                          <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">
-                            {formatTime(item.datetime)}
-                          </p>
-                          <p className="mt-2 text-[1rem] leading-tight tracking-tight text-zinc-900">
+                            {getRoomShortLabel(item.trainer) ? (
+                              <p className="shrink-0 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
+                                {getRoomShortLabel(item.trainer)}
+                              </p>
+                            ) : null}
+                          </div>
+                          <p className="mt-1.5 text-[1rem] leading-tight tracking-tight text-zinc-900">
                             {cardService}
                           </p>
-                          <p className="mt-3 min-w-0 break-words text-[0.78rem] uppercase tracking-[0.06em] text-zinc-500">
+                          <p className="mt-2 min-w-0 break-words text-[0.76rem] uppercase tracking-[0.05em] text-zinc-500">
                             {getTrainerName(item.trainer)}
                           </p>
                         </a>
@@ -406,74 +364,59 @@ export default function HomePage() {
               </section>
             ))}
           </div>
-
         </div>
 
-        <section className="hidden overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)] md:block">
-          <div className="overflow-x-auto">
-            <div className="grid min-w-[860px] grid-cols-[122px_repeat(6,minmax(120px,1fr))]">
-              <div className="border-r border-b border-zinc-200 bg-[#fcfaf6] px-5 py-4 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-500">
-                Time
+        <div className="hidden grid-cols-5 gap-3 md:grid">
+          {mobileScheduleByDay.map((day) => (
+            <section
+              key={day.key}
+              className="flex min-w-0 flex-col overflow-hidden rounded-[16px] border border-zinc-200 bg-white shadow-[0_10px_24px_rgba(24,20,16,0.05)]"
+            >
+              <div className="border-b border-zinc-200 bg-[#fcfaf6] px-3 py-3">
+                <p className="text-[0.96rem] leading-tight tracking-tight text-zinc-900">
+                  {formatLocalizedDay(day.key, locale)}
+                </p>
               </div>
-              {scheduleTable.days.map((day) => (
-                <div
-                  key={day.key}
-                  className="border-r border-b border-zinc-200 bg-[#fcfaf6] px-4 py-4 text-center text-sm font-semibold uppercase tracking-[0.16em] text-zinc-500 last:border-r-0"
-                >
-                  {day.label}
-                </div>
-              ))}
-
-              {scheduleTable.rows.map((row) => (
-                <Fragment key={row.timeKey}>
-                  <div
-                    className="border-r border-b border-zinc-200 bg-white px-5 py-6 text-[1.8rem] leading-none tracking-tight text-zinc-900"
-                  >
-                    {row.timeKey}
-                  </div>
-                  {row.cells.map((items, cellIndex) => (
-                    <div
-                      key={`${row.timeKey}-${scheduleTable.days[cellIndex]?.key}`}
-                      className="min-h-[146px] border-r border-b border-zinc-200 bg-[#f7f4ef] p-3 last:border-r-0"
-                    >
-                      {items.length === 0 ? (
-                        <div className="pt-2 text-2xl leading-none text-zinc-300">-</div>
-                      ) : (
-                        <div className="space-y-3">
-                          {items.map((item) => {
-                            const cardService = getCardService(item.service) ?? item.service;
-                            return (
-                              <a
-                                key={item.id}
-                                href={BOOKING_URL}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="relative block rounded-[14px] border border-zinc-200 bg-white px-4 py-4 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)]"
-                              >
-                                {getRoomShortLabel(item.trainer) ? (
-                                  <p className="absolute right-4 top-4 text-[10px] uppercase tracking-[0.12em] text-zinc-400">
-                                    {getRoomShortLabel(item.trainer)}
-                                  </p>
-                                ) : null}
-                                <p className="text-[1.05rem] leading-[1.25] tracking-tight text-zinc-900">
-                                  {cardService}
-                                </p>
-                                <p className="mt-3 min-w-0 break-words text-[0.78rem] uppercase tracking-[0.06em] text-zinc-500">
-                                  {getTrainerName(item.trainer)}
-                                </p>
-                              </a>
-                            );
-                          })}
+              <div className="space-y-2 bg-[#f7f4ef] p-2">
+                {day.items.length === 0 ? (
+                  <p className="rounded-[12px] border border-dashed border-zinc-200 bg-white px-3 py-4 text-sm text-zinc-400">
+                    No classes
+                  </p>
+                ) : (
+                  day.items.map((item) => {
+                    const cardService = getCardService(item.service) ?? item.service;
+                    return (
+                      <a
+                        key={item.id}
+                        href={BOOKING_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="relative block rounded-[12px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_4px_14px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_8px_20px_rgba(24,20,16,0.06)]"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <p className="inline-flex rounded-[8px] bg-[#f7f4ef] px-2 py-1 text-[0.68rem] font-medium uppercase tracking-[0.08em] text-zinc-700">
+                            {formatTime(item.datetime)}
+                          </p>
+                          {getRoomShortLabel(item.trainer) ? (
+                            <p className="shrink-0 text-[9px] uppercase tracking-[0.1em] text-zinc-400">
+                              {getRoomShortLabel(item.trainer)}
+                            </p>
+                          ) : null}
                         </div>
-                      )}
-                    </div>
-                  ))}
-                </Fragment>
-              ))}
-            </div>
-          </div>
-
-        </section>
+                        <p className="mt-1.5 text-[0.9rem] leading-tight tracking-tight text-zinc-900">
+                          {cardService}
+                        </p>
+                        <p className="mt-1.5 min-w-0 break-words text-[0.68rem] uppercase tracking-[0.04em] text-zinc-500">
+                          {getTrainerName(item.trainer)}
+                        </p>
+                      </a>
+                    );
+                  })
+                )}
+              </div>
+            </section>
+          ))}
+        </div>
       </section>
 
       <section id="contacts" className="mx-auto max-w-6xl px-4 pb-16">
