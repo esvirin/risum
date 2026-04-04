@@ -9,6 +9,7 @@ import { detectBookingDevice } from "@/lib/booking-server";
 import { translations } from "@/lib/i18n";
 import { resolveRequestLocale } from "@/lib/i18n-server";
 
+
 export const dynamic = "force-dynamic";
 
 export default async function BookingPage() {
