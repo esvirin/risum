@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { BOOKING_URL } from "@/lib/static-schedule";
+import Link from "next/link";
+import { BOOKING_PAGE_PATH } from "@/lib/booking";
 import { heroHighlights, studioSlides, type HomeLiteCopy } from "@/lib/home-page";
 
 type HeroSectionProps = {
@@ -86,14 +87,12 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
               >
                 Цены
               </button>
-              <a
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noreferrer"
+              <Link
+                href={BOOKING_PAGE_PATH}
                 className="inline-flex items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.08)] transition hover:-translate-y-0.5 hover:bg-zinc-800"
               >
                 Запись
-              </a>
+              </Link>
             </div>
           </div>
         </div>

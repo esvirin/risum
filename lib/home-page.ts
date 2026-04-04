@@ -27,7 +27,7 @@ export type HomeLiteCopy = {
   phone: string;
   address: string;
   email: string;
-  priceCards: Array<{
+  priceCards: ReadonlyArray<{
     id: string;
     title: string;
     price: string;

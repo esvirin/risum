@@ -1,4 +1,5 @@
-import { BOOKING_URL } from "@/lib/static-schedule";
+import Link from "next/link";
+import { BOOKING_PAGE_PATH } from "@/lib/booking";
 import {
   formatLocalizedDay,
   formatTime,
@@ -40,11 +41,9 @@ function ScheduleCard({ day, locale }: { day: ScheduleDay; locale: "ru" | "en" }
           day.items.map((item) => {
             const cardService = getCardService(item.service) ?? item.service;
             return (
-              <a
+              <Link
                 key={item.id}
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noreferrer"
+                href={BOOKING_PAGE_PATH}
                 className="relative block rounded-[14px] border border-zinc-200 bg-white px-3 py-3 shadow-[0_6px_18px_rgba(24,20,16,0.04)] transition hover:border-zinc-900 hover:shadow-[0_10px_24px_rgba(24,20,16,0.06)] md:rounded-[12px] md:shadow-[0_4px_14px_rgba(24,20,16,0.04)] md:hover:shadow-[0_8px_20px_rgba(24,20,16,0.06)]"
               >
                 <div className="flex items-center justify-between gap-3 md:gap-2">
@@ -63,7 +62,7 @@ function ScheduleCard({ day, locale }: { day: ScheduleDay; locale: "ru" | "en" }
                 <p className="mt-2 min-w-0 break-words text-[0.76rem] uppercase tracking-[0.05em] text-zinc-500 md:mt-1.5 md:text-[0.68rem] md:tracking-[0.04em]">
                   {getTrainerName(item.trainer)}
                 </p>
-              </a>
+              </Link>
             );
           })
         )}

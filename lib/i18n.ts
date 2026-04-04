@@ -2,6 +2,7 @@ export type Locale = "ru" | "en";
 
 export const defaultLocale: Locale = "ru";
 export const localeStorageKey = "fitspace-locale";
+export const localeCookieKey = "fitspace-locale";
 
 export const translations = {
   ru: {
@@ -108,6 +109,22 @@ export const translations = {
       company: "Risum Cyprus Limited",
       copy: "© 2026 Fit Space",
       policies: "Правила студии",
+    },
+    booking: {
+      eyebrow: "Fit Space booking",
+      title: "Выберите удобный способ записи",
+      lead: "На мобильном устройстве можно продолжить в веб-версии кабинета или открыть приложение.",
+      webLabel: "Web version",
+      webTitle: "Открыть личный кабинет",
+      webLead: "Продолжить в браузере на my.fitspace.cy.",
+      iosLabel: "App Store",
+      iosTitle: "iPhone / iPad",
+      iosLead: "Перейти к установке или открытию приложения.",
+      androidLabel: "Google Play",
+      androidTitle: "Android",
+      androidLead: "Перейти к установке или открытию приложения.",
+      appFallback: "Ссылка на приложение пока не настроена.",
+      back: "Вернуться на сайт",
     },
     homeLite: {
       title: "Студия реформер-пилатеса",
@@ -257,6 +274,22 @@ export const translations = {
       company: "Risum Cyprus Limited",
       copy: "© 2026 Fit Space",
       policies: "Studio Policies",
+    },
+    booking: {
+      eyebrow: "Fit Space booking",
+      title: "Choose your booking option",
+      lead: "On mobile, you can continue in the web account or open the mobile app.",
+      webLabel: "Web version",
+      webTitle: "Open member account",
+      webLead: "Continue in the browser on my.fitspace.cy.",
+      iosLabel: "App Store",
+      iosTitle: "iPhone / iPad",
+      iosLead: "Open the app listing or continue to install the app.",
+      androidLabel: "Google Play",
+      androidTitle: "Android",
+      androidLead: "Open the app listing or continue to install the app.",
+      appFallback: "The app link has not been configured yet.",
+      back: "Back to website",
     },
     homeLite: {
       title: "Reformer Pilates Studio",

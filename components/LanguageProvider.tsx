@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { defaultLocale, localeStorageKey, translations, type Locale } from "@/lib/i18n";
+import { defaultLocale, localeCookieKey, localeStorageKey, translations, type Locale } from "@/lib/i18n";
 
 type I18nContextValue = {
   locale: Locale;
@@ -33,6 +33,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     window.localStorage.setItem(localeStorageKey, locale);
+    document.cookie = `${localeCookieKey}=${locale}; path=/; max-age=31536000; samesite=lax`;
     document.documentElement.lang = locale;
   }, [locale]);
 
