@@ -26,7 +26,7 @@ type AppId = "web" | "ios" | "android";
 const PHONE = "+357 955 05 556";
 const PHONE_HREF = "tel:+35795505556";
 const WHATSAPP_HREF = "https://wa.me/35795505556";
-const TELEGRAM_HREF = process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "";
+const TELEGRAM_HREF = process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "https://t.me/pilatescy";
 const MAPS_HREF = "https://maps.app.goo.gl/73izTMWrueWUpKYN6";
 
 export const metadata: Metadata = {
