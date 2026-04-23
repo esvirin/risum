@@ -8,9 +8,7 @@ import {
   CircleDollarSign,
   Globe,
   MapPinned,
-  MessageCircle,
   Play,
-  Send,
 } from "lucide-react";
 import { OpenPricesButton } from "@/components/OpenPricesButton";
 import { PricesModalContainer } from "@/components/PricesModalContainer";
@@ -28,7 +26,7 @@ const PHONE = "+357 955 05 556";
 const PHONE_HREF = "tel:+35795505556";
 const WHATSAPP_HREF = "https://wa.me/35795505556";
 const TELEGRAM_HREF = process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "";
-const MAPS_HREF = "https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103";
+const MAPS_HREF = "https://maps.app.goo.gl/73izTMWrueWUpKYN6";
 
 export const metadata: Metadata = {
   title: "Welcome | Fit Space",
@@ -36,6 +34,22 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
+
+function WhatsAppIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6 fill-current">
+      <path d="M19.05 4.94A9.9 9.9 0 0 0 12 2C6.48 2 2 6.47 2 12c0 1.76.46 3.48 1.33 5L2 22l5.14-1.3A9.95 9.95 0 0 0 12 22c5.52 0 10-4.47 10-10 0-2.67-1.04-5.18-2.95-7.06Zm-7.05 15.39a8.3 8.3 0 0 1-4.24-1.16l-.3-.18-3.05.77.82-2.97-.2-.31A8.27 8.27 0 0 1 3.72 12 8.29 8.29 0 0 1 12 3.67 8.3 8.3 0 0 1 20.28 12 8.29 8.29 0 0 1 12 20.33Zm4.54-6.2c-.25-.12-1.47-.72-1.7-.81-.23-.08-.4-.12-.56.13-.17.25-.64.81-.79.97-.14.17-.29.19-.54.06-.25-.12-1.04-.38-1.98-1.2-.73-.65-1.22-1.44-1.37-1.69-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.44.12-.14.17-.25.25-.42.08-.17.04-.31-.02-.44-.06-.12-.56-1.35-.77-1.85-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.44.06-.67.31-.23.25-.88.86-.88 2.09s.9 2.42 1.02 2.58c.12.17 1.77 2.7 4.28 3.79.6.26 1.07.42 1.43.54.6.19 1.15.16 1.58.1.48-.07 1.47-.6 1.68-1.17.21-.58.21-1.07.14-1.17-.06-.1-.23-.17-.48-.29Z" />
+    </svg>
+  );
+}
+
+function TelegramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6 fill-current">
+      <path d="M21.43 4.57a1.5 1.5 0 0 0-1.63-.24L3.87 10.8a1.25 1.25 0 0 0 .08 2.34l4.14 1.42 1.59 5.08a1.25 1.25 0 0 0 2.12.5l2.32-2.4 4.56 3.34a1.5 1.5 0 0 0 2.37-.9l2.18-13.88a1.5 1.5 0 0 0-.8-1.73ZM10.6 17.3l-.95-3.04 7.8-6.88-6.85 8.1Zm1.76.33-.63-.46 5.66-6.69-4.88 7.15Z" />
+    </svg>
+  );
+}
 
 function detectPlatform(userAgent: string): Platform {
   const ua = userAgent.toLowerCase();
@@ -135,26 +149,29 @@ export default async function WelcomePage() {
       || appLinks[0];
 
   return (
-    <main className="min-h-screen bg-[#e7e7e7] px-4 py-7 sm:px-6 sm:py-10">
-      <div className="mx-auto flex min-h-[calc(100vh-3.5rem)] w-full max-w-[560px] items-center justify-center sm:min-h-[calc(100vh-5rem)]">
-        <section className="relative w-full overflow-hidden rounded-[28px] border border-[#d7d7d7] bg-[#f8f8f8] px-6 py-8 shadow-[0_22px_70px_rgba(24,20,16,0.08)] sm:px-9 sm:py-10">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-0 opacity-70"
-            style={{
-              backgroundImage:
-                "radial-gradient(circle at 12% 22%, rgba(170, 182, 180, 0.13) 0, transparent 26%), radial-gradient(circle at 84% 18%, rgba(170, 182, 180, 0.12) 0, transparent 28%), radial-gradient(circle at 22% 78%, rgba(170, 182, 180, 0.1) 0, transparent 27%), radial-gradient(circle at 80% 82%, rgba(170, 182, 180, 0.11) 0, transparent 28%)",
-            }}
-          />
+    <main className="min-h-screen bg-[#efeeeb] px-0 py-0 sm:px-4 sm:py-6">
+      <div className="mx-auto flex min-h-screen w-full max-w-[560px] items-center justify-center sm:min-h-[calc(100vh-3rem)]">
+        <section className="relative w-full overflow-hidden border border-[#d9d4ce] bg-[#f8f6f2] px-6 py-8 shadow-[0_18px_60px_rgba(24,20,16,0.08)] sm:rounded-[28px] sm:px-8 sm:py-10">
+          <div aria-hidden className="pointer-events-none absolute inset-0">
+            <Image
+              src="/background.png"
+              alt=""
+              fill
+              sizes="(max-width: 640px) 100vw, 560px"
+              className="object-cover object-center opacity-[0.88]"
+              priority
+            />
+            <div className="absolute inset-0 bg-white/38" />
+          </div>
 
           <div className="relative z-10">
-            <div className="mx-auto flex w-fit items-center justify-center rounded-[18px] border border-[#dbd3ce] bg-white/80 px-4 py-3">
+            <div className="mx-auto flex w-fit items-center justify-center">
               <Image
-                src="/logo-fitspace.svg"
-                alt="Fit Space"
-                width={220}
-                height={52}
-                className="h-10 w-auto sm:h-11"
+                src="/logo.png"
+                alt="Pilates Space by Olga Brovko"
+                width={438}
+                height={248}
+                className="h-auto w-[210px] sm:w-[240px]"
                 priority
               />
             </div>
@@ -176,7 +193,7 @@ export default async function WelcomePage() {
                   aria-label="WhatsApp"
                   className="inline-flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#30cc59] text-white shadow-[0_8px_20px_rgba(27,136,58,0.32)] transition hover:-translate-y-0.5"
                 >
-                  <MessageCircle className="h-6 w-6" />
+                  <WhatsAppIcon />
                 </a>
                 {TELEGRAM_HREF ? (
                   <a
@@ -186,7 +203,7 @@ export default async function WelcomePage() {
                     aria-label="Telegram"
                     className="inline-flex h-12 w-12 items-center justify-center rounded-[14px] bg-[#28a8ea] text-white shadow-[0_8px_20px_rgba(23,105,168,0.25)] transition hover:-translate-y-0.5"
                   >
-                    <Send className="h-6 w-6" />
+                    <TelegramIcon />
                   </a>
                 ) : null}
               </div>
@@ -201,11 +218,12 @@ export default async function WelcomePage() {
                 rel="noreferrer"
                 className="mt-4 flex items-center gap-4 rounded-[22px] border border-[#d7cfc9] bg-white/85 p-4 shadow-[0_10px_28px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5"
               >
-                <div className="flex h-[86px] w-[86px] shrink-0 items-center justify-center rounded-[22px] border-2 border-zinc-900 bg-[#efecf1] text-[2.5rem] font-black lowercase text-zinc-900">
-                  fs
+                <div className="flex h-[96px] w-[96px] shrink-0 flex-col items-start justify-center rounded-[26px] border-[3px] border-zinc-900 bg-[#efecf1] px-3 text-zinc-900">
+                  <span className="block text-[1.15rem] font-black lowercase leading-none">fit</span>
+                  <span className="mt-0.5 block text-[1.15rem] font-black lowercase leading-none">space</span>
                 </div>
                 <div>
-                  <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">FitSpace Cy</p>
+                  <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">FitSpace Cyprus</p>
                   <p className="text-lg text-zinc-500 sm:text-xl">{copy.appSubtitle}</p>
                   <p className="mt-1 text-sm font-medium uppercase tracking-[0.16em] text-zinc-700">
                     {copy.platformPrefix} {copy.channels[platform]}
