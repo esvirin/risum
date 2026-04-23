@@ -115,3 +115,10 @@ export function getRoomShortLabel(value: string) {
 export function getCardService(service: string) {
   return service === "Reformer Pilates" ? null : service;
 }
+
+export function buildPriceCards(copy: Pick<HomeLiteCopy, "priceCards" | "groupLessons" | "privateLessons">): PriceCard[] {
+  return copy.priceCards.map((item) => ({
+    ...item,
+    label: item.mode === "group" ? copy.groupLessons : copy.privateLessons,
+  }));
+}

@@ -5,38 +5,21 @@ import { ContactsSection } from "@/components/home/ContactsSection";
 import { HeroSection } from "@/components/home/HeroSection";
 import { InstructorsSection } from "@/components/home/InstructorsSection";
 import { ScheduleSection } from "@/components/home/ScheduleSection";
-import { PricesModal } from "@/components/PricesModal";
+import { PricesModalContainer } from "@/components/PricesModalContainer";
 import { PublicNav } from "@/components/PublicNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useI18n } from "@/components/LanguageProvider";
 import { getStaticSchedule, type StaticScheduleItem } from "@/lib/static-schedule";
-import { getLocalDateKey, studioSlides, type Mode, type PriceCard } from "@/lib/home-page";
+import { getLocalDateKey, studioSlides, type Mode } from "@/lib/home-page";
 
 export default function HomePage() {
   const { locale, t } = useI18n();
   const copy = t.homeLite;
-  const manualPrices: PriceCard[] = useMemo(
-    () =>
-      copy.priceCards.map((item) => ({
-        ...item,
-        label: item.mode === "group" ? copy.groupLessons : copy.privateLessons,
-      })),
-    [copy],
-  );
-
-  const [priceMode, setPriceMode] = useState<Mode>("group");
   const [scheduleMode, setScheduleMode] = useState<Mode>("group");
-  const [pricesOpen, setPricesOpen] = useState(false);
   const [studioIndex, setStudioIndex] = useState(0);
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
   const [nowTs, setNowTs] = useState<number>(() => Date.now());
   const touchStartX = useRef<number | null>(null);
-
-  useEffect(() => {
-    const open = () => setPricesOpen(true);
-    window.addEventListener("open-prices-modal", open);
-    return () => window.removeEventListener("open-prices-modal", open);
-  }, []);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -53,11 +36,6 @@ export default function HomePage() {
 
     return () => window.clearInterval(intervalId);
   }, []);
-
-  const pricedServices = useMemo(
-    () => manualPrices.filter((item) => item.mode === priceMode),
-    [manualPrices, priceMode],
-  );
 
   const scheduleDays = useMemo(() => {
     const todayKey = getLocalDateKey(nowTs);
@@ -125,15 +103,7 @@ export default function HomePage() {
 
       <ContactsSection copy={copy} openMapLabel={t.contacts.openMap} />
 
-      <PricesModal
-        isOpen={pricesOpen}
-        mode={priceMode}
-        prices={pricedServices}
-        allPrices={manualPrices}
-        copy={copy}
-        onClose={() => setPricesOpen(false)}
-        onModeChange={setPriceMode}
-      />
+      <PricesModalContainer />
 
       <SiteFooter />
     </div>

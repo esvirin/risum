@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { OpenPricesButton } from "@/components/OpenPricesButton";
 import { BOOKING_PAGE_PATH } from "@/lib/booking";
 import { heroHighlights, studioSlides, type HomeLiteCopy } from "@/lib/home-page";
 
@@ -81,12 +82,11 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
             </div>
 
             <div className="flex flex-wrap items-center gap-3 lg:justify-end">
-              <button
-                onClick={() => window.dispatchEvent(new Event("open-prices-modal"))}
+              <OpenPricesButton
                 className="inline-flex items-center justify-center rounded-[14px] border border-zinc-200 bg-[#f7f4ef] px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-600 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:-translate-y-0.5 hover:bg-white hover:text-zinc-900"
               >
                 Цены
-              </button>
+              </OpenPricesButton>
               <Link
                 href={BOOKING_PAGE_PATH}
                 className="inline-flex items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.08)] transition hover:-translate-y-0.5 hover:bg-zinc-800"
