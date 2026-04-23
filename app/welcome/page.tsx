@@ -225,9 +225,14 @@ export default async function WelcomePage() {
                 rel="noreferrer"
                 className="mt-4 flex items-center gap-4 rounded-[22px] border border-[#d7cfc9] bg-white/85 p-4 shadow-[0_10px_28px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5"
               >
-                <div className="flex h-[96px] w-[96px] shrink-0 flex-col items-start justify-center rounded-[26px] border-[3px] border-zinc-900 bg-[#efecf1] px-3 text-zinc-900">
-                  <span className="block text-[1.15rem] font-black lowercase leading-none">fit</span>
-                  <span className="mt-0.5 block text-[1.15rem] font-black lowercase leading-none">space</span>
+                <div className="flex h-[96px] w-[96px] shrink-0 items-center justify-center rounded-[26px] border border-[#d7cfc9] bg-white/90 p-4">
+                  <Image
+                    src="/logo-fitspace.svg"
+                    alt="Fit Space"
+                    width={120}
+                    height={28}
+                    className="h-auto w-full opacity-95"
+                  />
                 </div>
                 <div>
                   <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">FitSpace Cyprus</p>
