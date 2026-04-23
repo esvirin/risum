@@ -46,7 +46,7 @@ function WhatsAppIcon() {
 
 function TelegramIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6 fill-current">
+    <svg viewBox="0 0 24 24" aria-hidden className="h-5 w-5 fill-current translate-x-[0.5px] translate-y-[0.5px]">
       <path d="M21.43 4.57a1.5 1.5 0 0 0-1.63-.24L3.87 10.8a1.25 1.25 0 0 0 .08 2.34l4.14 1.42 1.59 5.08a1.25 1.25 0 0 0 2.12.5l2.32-2.4 4.56 3.34a1.5 1.5 0 0 0 2.37-.9l2.18-13.88a1.5 1.5 0 0 0-.8-1.73ZM10.6 17.3l-.95-3.04 7.8-6.88-6.85 8.1Zm1.76.33-.63-.46 5.66-6.69-4.88 7.15Z" />
     </svg>
   );
