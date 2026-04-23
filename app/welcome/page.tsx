@@ -225,13 +225,13 @@ export default async function WelcomePage() {
                 rel="noreferrer"
                 className="mt-4 flex items-center gap-4 rounded-[22px] border border-[#d7cfc9] bg-white/85 p-4 shadow-[0_10px_28px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5"
               >
-                <div className="flex h-[96px] w-[96px] shrink-0 items-center justify-center rounded-[26px] border border-[#d7cfc9] bg-white/90 p-4">
+                <div className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[28px] bg-white/90 p-1">
                   <Image
-                    src="/logo-fitspace.svg"
+                    src="/fs.png"
                     alt="Fit Space"
-                    width={120}
-                    height={28}
-                    className="h-auto w-full opacity-95"
+                    width={239}
+                    height={239}
+                    className="h-auto w-full scale-[1.08]"
                   />
                 </div>
                 <div>
