@@ -11,17 +11,24 @@ import {
   privateBookingPhone,
   whatsappHref,
   contactPhoneHref,
-  type HomeLiteCopy,
   type Mode,
   type ScheduleDay,
 } from "@/lib/home-page";
 
+export type ScheduleSectionCopy = {
+  join: string;
+  group: string;
+  private: string;
+};
+
 type ScheduleSectionProps = {
-  copy: HomeLiteCopy;
+  copy: ScheduleSectionCopy;
   locale: "ru" | "en";
   scheduleMode: Mode;
   onScheduleModeChange: (mode: Mode) => void;
   scheduleByDay: ScheduleDay[];
+  id?: string;
+  className?: string;
 };
 
 function ScheduleCard({ day, locale }: { day: ScheduleDay; locale: "ru" | "en" }) {
@@ -77,9 +84,11 @@ export function ScheduleSection({
   scheduleMode,
   onScheduleModeChange,
   scheduleByDay,
+  id = "schedule",
+  className = "",
 }: ScheduleSectionProps) {
   return (
-    <section id="schedule" className="mx-auto max-w-6xl px-4 pb-14">
+    <section id={id} className={`mx-auto max-w-6xl px-4 pb-14 ${className}`.trim()}>
       <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>

@@ -4,14 +4,15 @@ import Link from "next/link";
 import { headers } from "next/headers";
 import {
   Apple,
-  CalendarDays,
   CircleDollarSign,
   Globe,
   MapPinned,
   Play,
 } from "lucide-react";
+import { OpenScheduleButton } from "@/components/OpenScheduleButton";
 import { OpenPricesButton } from "@/components/OpenPricesButton";
 import { PricesModalContainer } from "@/components/PricesModalContainer";
+import { ScheduleModalContainer } from "@/components/ScheduleModalContainer";
 import {
   BOOKING_ANDROID_APP_URL,
   BOOKING_IOS_APP_URL,
@@ -91,6 +92,9 @@ export default async function WelcomePage() {
           appSubtitle: "Health & Fitness",
           platformPrefix: "Под ваше устройство:",
           backHome: "На главную",
+          close: "Закрыть",
+          group: "Группа",
+          private: "Персонально",
           channels: {
             ios: "iOS",
             android: "Android",
@@ -115,6 +119,9 @@ export default async function WelcomePage() {
           appSubtitle: "Health & Fitness",
           platformPrefix: "Detected platform:",
           backHome: "Back to website",
+          close: "Close",
+          group: "Group",
+          private: "Private",
           channels: {
             ios: "iOS",
             android: "Android",
@@ -289,13 +296,9 @@ export default async function WelcomePage() {
                   <MapPinned className="h-5 w-5" />
                   {copy.maps}
                 </a>
-                <Link
-                  href="/#schedule"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl"
-                >
-                  <CalendarDays className="h-5 w-5" />
+                <OpenScheduleButton className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl">
                   {copy.schedule}
-                </Link>
+                </OpenScheduleButton>
                 <OpenPricesButton
                   className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl"
                 >
@@ -316,6 +319,13 @@ export default async function WelcomePage() {
           </div>
         </section>
       </div>
+      <ScheduleModalContainer
+        locale={locale}
+        scheduleLabel={copy.schedule}
+        groupLabel={copy.group}
+        privateLabel={copy.private}
+        closeLabel={copy.close}
+      />
       <PricesModalContainer />
     </main>
   );
