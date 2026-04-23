@@ -29,6 +29,7 @@ type ScheduleSectionProps = {
   scheduleByDay: ScheduleDay[];
   id?: string;
   className?: string;
+  compact?: boolean;
 };
 
 function ScheduleCard({ day, locale }: { day: ScheduleDay; locale: "ru" | "en" }) {
@@ -86,19 +87,23 @@ export function ScheduleSection({
   scheduleByDay,
   id = "schedule",
   className = "",
+  compact = false,
 }: ScheduleSectionProps) {
   return (
-    <section id={id} className={`mx-auto max-w-6xl px-4 pb-14 ${className}`.trim()}>
-      <div className="mb-8 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+    <section
+      id={id}
+      className={`mx-auto max-w-6xl ${compact ? "px-2 pb-6 sm:px-3 sm:pb-8" : "px-4 pb-14"} ${className}`.trim()}
+    >
+      <div className={`flex flex-col md:flex-row md:items-end md:justify-between ${compact ? "mb-5 gap-4" : "mb-8 gap-5"}`}>
         <div>
           <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Weekly schedule</p>
-          <h2 className="font-display mt-2 text-4xl tracking-tight sm:text-5xl">{copy.join}</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-zinc-600 sm:text-base">
+          <h2 className={`font-display mt-2 tracking-tight ${compact ? "text-3xl sm:text-4xl" : "text-4xl sm:text-5xl"}`}>{copy.join}</h2>
+          <p className={`max-w-2xl leading-relaxed text-zinc-600 ${compact ? "mt-2 text-sm" : "mt-3 text-sm sm:text-base"}`}>
             {getScheduleHeading()}
           </p>
         </div>
 
-        <div className="inline-flex w-full rounded-[14px] border border-zinc-200 bg-white p-1 shadow-[0_8px_24px_rgba(24,20,16,0.04)] md:w-auto">
+        <div className={`inline-flex w-full rounded-[14px] border border-zinc-200 bg-white p-1 shadow-[0_8px_24px_rgba(24,20,16,0.04)] md:w-auto ${compact ? "md:self-start" : ""}`}>
           {(["group", "private"] as const).map((mode) => {
             const active = scheduleMode === mode;
             return (
@@ -106,7 +111,7 @@ export function ScheduleSection({
                 key={mode}
                 type="button"
                 onClick={() => onScheduleModeChange(mode)}
-                className={`flex-1 rounded-[10px] px-6 py-2.5 text-sm font-medium uppercase tracking-[0.12em] transition md:flex-none ${
+                className={`flex-1 rounded-[10px] font-medium uppercase tracking-[0.12em] transition md:flex-none ${compact ? "px-4 py-2 text-xs" : "px-6 py-2.5 text-sm"} ${
                   active ? "border border-zinc-900 bg-zinc-900 text-white" : "text-zinc-500 hover:bg-[#f7f4ef] hover:text-zinc-900"
                 }`}
               >

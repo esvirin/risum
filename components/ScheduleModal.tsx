@@ -58,8 +58,8 @@ export function ScheduleModal({
       >
         <div className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-white/60 to-transparent" />
 
-        <div className="relative flex h-full flex-col overflow-hidden p-5 sm:max-h-[92vh] sm:p-8">
-          <div className="mb-4 flex justify-end sm:mb-5">
+        <div className="relative flex h-full flex-col overflow-hidden p-4 sm:max-h-[92vh] sm:p-6">
+          <div className="mb-3 flex justify-end sm:mb-4">
             <button
               type="button"
               onClick={onClose}
@@ -79,6 +79,7 @@ export function ScheduleModal({
               locale={locale}
               id="welcome-schedule"
               className="max-w-none px-0 pb-0"
+              compact
             />
           </div>
         </div>

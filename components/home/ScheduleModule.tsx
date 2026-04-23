@@ -10,9 +10,10 @@ type ScheduleModuleProps = {
   locale: "ru" | "en";
   id?: string;
   className?: string;
+  compact?: boolean;
 };
 
-export function ScheduleModule({ copy, locale, id, className }: ScheduleModuleProps) {
+export function ScheduleModule({ copy, locale, id, className, compact = false }: ScheduleModuleProps) {
   const [scheduleMode, setScheduleMode] = useState<Mode>("group");
   const [schedule] = useState<StaticScheduleItem[]>(() => getStaticSchedule());
   const [nowTs, setNowTs] = useState<number>(() => Date.now());
@@ -59,6 +60,7 @@ export function ScheduleModule({ copy, locale, id, className }: ScheduleModulePr
       scheduleByDay={scheduleByDay}
       id={id}
       className={className}
+      compact={compact}
     />
   );
 }
