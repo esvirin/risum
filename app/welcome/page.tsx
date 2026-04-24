@@ -18,6 +18,7 @@ import {
   BOOKING_IOS_APP_URL,
   BOOKING_WEB_URL,
 } from "@/lib/booking";
+import { GtmTrackedLink } from "@/components/GtmTrackedLink";
 import { resolveRequestLocale } from "@/lib/i18n-server";
 
 type Platform = "ios" | "android" | "mobile" | "desktop";
@@ -219,10 +220,20 @@ export default async function WelcomePage() {
             <div className="mt-8 border-t border-zinc-400/60 pt-5">
               <p className="text-center text-3xl font-medium text-zinc-900 sm:text-[2rem]">{copy.download}</p>
 
-              <a
+              <GtmTrackedLink
+                id="welcome-app-primary-link"
                 href={preferredLink.href}
                 target="_blank"
                 rel="noreferrer"
+                eventName="welcome_app_link_click"
+                eventPayload={{
+                  link_id: preferredLink.id,
+                  link_url: preferredLink.href,
+                  link_location: "primary",
+                  page: "welcome",
+                  locale,
+                  detected_platform: platform,
+                }}
                 className="mt-4 flex items-center gap-4 rounded-[22px] border border-[#d7cfc9] bg-white/85 p-4 shadow-[0_10px_28px_rgba(24,20,16,0.06)] transition hover:-translate-y-0.5"
               >
                 <div className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[28px] bg-white/90 p-1">
@@ -241,7 +252,7 @@ export default async function WelcomePage() {
                     {copy.platformPrefix} {copy.channels[platform]}
                   </p>
                 </div>
-              </a>
+              </GtmTrackedLink>
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {appLinks.map((item) => {
@@ -269,11 +280,21 @@ export default async function WelcomePage() {
                   }
 
                   return (
-                    <a
+                    <GtmTrackedLink
                       key={item.id}
+                      id={`welcome-app-link-${item.id}`}
                       href={item.href}
                       target="_blank"
                       rel="noreferrer"
+                      eventName="welcome_app_link_click"
+                      eventPayload={{
+                        link_id: item.id,
+                        link_url: item.href,
+                        link_location: isPrimary ? "secondary_primary" : "secondary",
+                        page: "welcome",
+                        locale,
+                        detected_platform: platform,
+                      }}
                       className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition ${
                         isPrimary
                           ? "border-zinc-900 bg-zinc-900 text-white"
@@ -282,7 +303,7 @@ export default async function WelcomePage() {
                     >
                       {icon}
                       {item.label}
-                    </a>
+                    </GtmTrackedLink>
                   );
                 })}
               </div>
