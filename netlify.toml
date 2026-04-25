@@ -1,8 +1,16 @@
 [[plugins]]
-package = "@sentry/netlify-build-plugin"
+  package = "@netlify/plugin-nextjs"
+
+[[plugins]]
+  package = "@sentry/netlify-build-plugin"
   [plugins.inputs]
-  skipSetCommits = true
+    skipSetCommits = true
+
+[[redirects]]
+  from = "https://fitspace.cy/*"
+  to = "https://www.fitspace.cy/:splat"
+  status = 301
+  force = true
 
 [build]
   command = "npm run build"
-  publish = ".next"

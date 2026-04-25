@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev", 
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@netlify/plugin-nextjs": "^5.15.9",
     "@prisma/client": "^6.19.2",
     "@sentry/nextjs": "^10.38.0",
     "@types/bcryptjs": "^2.4.6",
