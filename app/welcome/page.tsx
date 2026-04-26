@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
-import {
-  Apple,
-  CircleDollarSign,
-  Globe,
-  MapPinned,
-  Play,
-} from "lucide-react";
+import { Apple, CircleDollarSign, Globe, MapPinned, Play } from "lucide-react";
 import { OpenScheduleButton } from "@/components/OpenScheduleButton";
 import { OpenPricesButton } from "@/components/OpenPricesButton";
 import { PricesModalContainer } from "@/components/PricesModalContainer";
@@ -27,12 +21,16 @@ type AppId = "web" | "ios" | "android";
 const PHONE = "+357 955 05 556";
 const PHONE_HREF = "tel:+35795505556";
 const WHATSAPP_HREF = "https://wa.me/35795505556";
-const TELEGRAM_HREF = process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "https://t.me/pilatescy";
+const TELEGRAM_HREF =
+  process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "https://t.me/pilatescy";
 const MAPS_HREF = "https://maps.app.goo.gl/73izTMWrueWUpKYN6";
 
 export const metadata: Metadata = {
   title: "Welcome | Fit Space",
   description: "Quick links for Fit Space booking and contact channels.",
+  alternates: {
+    canonical: "https://www.fitspace.cy/welcome",
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -47,7 +45,11 @@ function WhatsAppIcon() {
 
 function TelegramIcon() {
   return (
-    <svg viewBox="0 0 24 24" aria-hidden className="h-6 w-6 fill-current -translate-x-[1.5px]">
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden
+      className="h-6 w-6 fill-current -translate-x-[1.5px]"
+    >
       <path d="M21.43 4.57a1.5 1.5 0 0 0-1.63-.24L3.87 10.8a1.25 1.25 0 0 0 .08 2.34l4.14 1.42 1.59 5.08a1.25 1.25 0 0 0 2.12.5l2.32-2.4 4.56 3.34a1.5 1.5 0 0 0 2.37-.9l2.18-13.88a1.5 1.5 0 0 0-.8-1.73ZM10.6 17.3l-.95-3.04 7.8-6.88-6.85 8.1Zm1.76.33-.63-.46 5.66-6.69-4.88 7.15Z" />
     </svg>
   );
@@ -57,7 +59,8 @@ function detectPlatform(userAgent: string): Platform {
   const ua = userAgent.toLowerCase();
 
   const isIosDevice =
-    /iphone|ipad|ipod/.test(ua) || (ua.includes("macintosh") && ua.includes("mobile"));
+    /iphone|ipad|ipod/.test(ua) ||
+    (ua.includes("macintosh") && ua.includes("mobile"));
 
   if (isIosDevice) {
     return "ios";
@@ -139,8 +142,16 @@ export default async function WelcomePage() {
 
   const appLinks = [
     { id: "web" as const, label: copy.appButtons.web, href: BOOKING_WEB_URL },
-    { id: "ios" as const, label: copy.appButtons.ios, href: BOOKING_IOS_APP_URL },
-    { id: "android" as const, label: copy.appButtons.android, href: BOOKING_ANDROID_APP_URL },
+    {
+      id: "ios" as const,
+      label: copy.appButtons.ios,
+      href: BOOKING_IOS_APP_URL,
+    },
+    {
+      id: "android" as const,
+      label: copy.appButtons.android,
+      href: BOOKING_ANDROID_APP_URL,
+    },
   ];
 
   const preferredOrder: Record<Platform, AppId[]> = {
@@ -153,8 +164,7 @@ export default async function WelcomePage() {
   const preferredLink =
     preferredOrder[platform]
       .map((id) => appLinks.find((item) => item.id === id))
-      .find((item) => item?.href)
-      || appLinks[0];
+      .find((item) => item?.href) || appLinks[0];
 
   return (
     <main className="min-h-screen bg-[#efeeeb] px-0 py-0 sm:px-4 sm:py-6">
@@ -190,7 +200,10 @@ export default async function WelcomePage() {
 
             <div className="mt-7 border-t border-zinc-400/60 pt-5 text-center">
               <p className="text-xl text-zinc-700 sm:text-2xl">{copy.lead}</p>
-              <a href={PHONE_HREF} className="mt-2 inline-block text-4xl font-semibold tracking-tight text-zinc-900 sm:text-[2.75rem]">
+              <a
+                href={PHONE_HREF}
+                className="mt-2 inline-block text-4xl font-semibold tracking-tight text-zinc-900 sm:text-[2.75rem]"
+              >
                 {PHONE}
               </a>
               <div className="mt-5 flex items-center justify-center gap-3">
@@ -218,7 +231,9 @@ export default async function WelcomePage() {
             </div>
 
             <div className="mt-8 border-t border-zinc-400/60 pt-5">
-              <p className="text-center text-3xl font-medium text-zinc-900 sm:text-[2rem]">{copy.download}</p>
+              <p className="text-center text-3xl font-medium text-zinc-900 sm:text-[2rem]">
+                {copy.download}
+              </p>
 
               <GtmTrackedLink
                 id="welcome-app-primary-link"
@@ -246,8 +261,12 @@ export default async function WelcomePage() {
                   />
                 </div>
                 <div>
-                  <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">FitSpace Cyprus</p>
-                  <p className="text-lg text-zinc-500 sm:text-xl">{copy.appSubtitle}</p>
+                  <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">
+                    FitSpace Cyprus
+                  </p>
+                  <p className="text-lg text-zinc-500 sm:text-xl">
+                    {copy.appSubtitle}
+                  </p>
                   <p className="mt-1 text-sm font-medium uppercase tracking-[0.16em] text-zinc-700">
                     {copy.platformPrefix} {copy.channels[platform]}
                   </p>
@@ -290,7 +309,9 @@ export default async function WelcomePage() {
                       eventPayload={{
                         link_id: item.id,
                         link_url: item.href,
-                        link_location: isPrimary ? "secondary_primary" : "secondary",
+                        link_location: isPrimary
+                          ? "secondary_primary"
+                          : "secondary",
                         page: "welcome",
                         locale,
                         detected_platform: platform,
@@ -307,11 +328,15 @@ export default async function WelcomePage() {
                   );
                 })}
               </div>
-              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-500">{copy.primaryHint}</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-500">
+                {copy.primaryHint}
+              </p>
             </div>
 
             <div className="mt-8 border-t border-zinc-400/60 pt-6">
-              <p className="mb-4 text-center text-3xl font-medium text-zinc-900 sm:text-[2rem]">{copy.info}</p>
+              <p className="mb-4 text-center text-3xl font-medium text-zinc-900 sm:text-[2rem]">
+                {copy.info}
+              </p>
               <div className="space-y-3">
                 <a
                   href={MAPS_HREF}
@@ -325,9 +350,7 @@ export default async function WelcomePage() {
                 <OpenScheduleButton className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl">
                   {copy.schedule}
                 </OpenScheduleButton>
-                <OpenPricesButton
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl"
-                >
+                <OpenPricesButton className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl">
                   <CircleDollarSign className="h-5 w-5" />
                   {copy.prices}
                 </OpenPricesButton>
