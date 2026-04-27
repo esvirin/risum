@@ -1,6 +1,6 @@
-# Fit Space Website (`/home/seo/dev/risum`)
+# PilatesSpace Website (`/home/seo/dev/risum`)
 
-Production-focused Next.js website for Fit Space with a custom marketing site and external booking flow.
+Production-focused Next.js website for PilatesSpace with a custom marketing site and external booking flow.
 
 ## Summary
 

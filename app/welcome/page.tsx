@@ -26,10 +26,10 @@ const TELEGRAM_HREF =
 const MAPS_HREF = "https://maps.app.goo.gl/73izTMWrueWUpKYN6";
 
 export const metadata: Metadata = {
-  title: "Welcome | Fit Space",
-  description: "Quick links for Fit Space booking and contact channels.",
+  title: "Welcome | PilatesSpace",
+  description: "Quick links for PilatesSpace booking and contact channels.",
   alternates: {
-    canonical: "https://www.fitspace.cy/welcome",
+    canonical: "https://www.pilatesspace.cy/welcome",
   },
 };
 
@@ -254,7 +254,7 @@ export default async function WelcomePage() {
                 <div className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[28px] bg-white/90 p-1">
                   <Image
                     src="/fs.png"
-                    alt="Fit Space"
+                    alt="PilatesSpace"
                     width={239}
                     height={239}
                     className="h-auto w-full scale-[1.08]"
@@ -262,7 +262,7 @@ export default async function WelcomePage() {
                 </div>
                 <div>
                   <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">
-                    FitSpace Cyprus
+                    PilatesSpace Cyprus
                   </p>
                   <p className="text-lg text-zinc-500 sm:text-xl">
                     {copy.appSubtitle}

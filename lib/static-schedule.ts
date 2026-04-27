@@ -10,7 +10,7 @@ export type StaticScheduleItem = {
   capacity?: number;
 };
 
-export const BOOKING_URL = "https://my.fitspace.cy/";
+export const BOOKING_URL = process.env.BOOKING_WEB_URL || "/"
 
 type ScheduleTemplateItem = {
   id: string;

@@ -1,8 +1,8 @@
 export type Locale = "ru" | "en";
 
 export const defaultLocale: Locale = "ru";
-export const localeStorageKey = "fitspace-locale";
-export const localeCookieKey = "fitspace-locale";
+export const localeStorageKey = "pilatesspace-locale";
+export const localeCookieKey = "pilatesspace-locale";
 
 export const translations = {
   ru: {
@@ -63,7 +63,7 @@ export const translations = {
     trainers: {
       badge: "Команда",
       title: "Тренеры",
-      lead: "Команда Fit Space помогает достигать результата безопасно, системно и в комфортном темпе.",
+      lead: "Команда PilatesSpace помогает достигать результата безопасно, системно и в комфортном темпе.",
       loading: "Загрузка...",
       noData: "Данные пока недоступны",
       cards: [
@@ -93,7 +93,7 @@ export const translations = {
       openMap: "Открыть карту",
       call: "Позвонить",
       whatsapp: "WhatsApp",
-      mapTitle: "Локация Fit Space",
+      mapTitle: "Локация PilatesSpace",
     },
     schedule: {
       badge: "Онлайн-запись",
@@ -107,16 +107,16 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
-      copy: "© 2026 Fit Space",
+      copy: "© 2026 PilatesSpace",
       policies: "Правила студии",
     },
     booking: {
-      eyebrow: "Fit Space booking",
+      eyebrow: "PilatesSpace booking",
       title: "Выберите удобный способ записи",
       lead: "На мобильном устройстве можно продолжить в веб-версии кабинета или открыть приложение.",
       webLabel: "Web version",
       webTitle: "Открыть личный кабинет",
-      webLead: "Продолжить в браузере на my.fitspace.cy.",
+      webLead: "Продолжить в браузере на my.pilatesspace.cy.",
       iosLabel: "App Store",
       iosTitle: "iPhone / iPad",
       iosLead: "Перейти к установке или открытию приложения.",
@@ -228,7 +228,7 @@ export const translations = {
     trainers: {
       badge: "Team",
       title: "Trainers",
-      lead: "The Fit Space team helps you progress safely, consistently and at a sustainable pace.",
+      lead: "The PilatesSpace team helps you progress safely, consistently and at a sustainable pace.",
       loading: "Loading...",
       noData: "Data is currently unavailable",
       cards: [
@@ -258,7 +258,7 @@ export const translations = {
       openMap: "Open map",
       call: "Call",
       whatsapp: "WhatsApp",
-      mapTitle: "Fit Space location",
+      mapTitle: "PilatesSpace location",
     },
     schedule: {
       badge: "Online booking",
@@ -272,16 +272,16 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
-      copy: "© 2026 Fit Space",
+      copy: "© 2026 PilatesSpace",
       policies: "Studio Policies",
     },
     booking: {
-      eyebrow: "Fit Space booking",
+      eyebrow: "PilatesSpace booking",
       title: "Choose your booking option",
       lead: "On mobile, you can continue in the web account or open the mobile app.",
       webLabel: "Web version",
       webTitle: "Open member account",
-      webLead: "Continue in the browser on my.fitspace.cy.",
+      webLead: "Continue in the browser on my.pilatesspace.cy.",
       iosLabel: "App Store",
       iosTitle: "iPhone / iPad",
       iosLead: "Open the app listing or continue to install the app.",

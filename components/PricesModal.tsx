@@ -124,7 +124,7 @@ export function PricesModal({
         <div className="relative flex h-full flex-col overflow-hidden p-5 sm:max-h-[92vh] sm:p-8">
           <div className="mb-6 flex items-start justify-between gap-4 sm:mb-8">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">Fit Space Limassol</p>
+              <p className="text-[11px] uppercase tracking-[0.18em] text-zinc-500">PilatesSpace Limassol</p>
               <h3 id={titleId} className="font-display text-3xl tracking-tight sm:text-5xl">
                 {copy.pricesTitle}
               </h3>

@@ -7,8 +7,8 @@
     skipSetCommits = true
 
 [[redirects]]
-  from = "https://fitspace.cy/*"
-  to = "https://www.fitspace.cy/:splat"
+  from = "https://pilatesspace.cy/*"
+  to = "https://www.pilatesspace.cy/:splat"
   status = 301
   force = true
 

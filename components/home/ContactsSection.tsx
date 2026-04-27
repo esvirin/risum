@@ -34,7 +34,7 @@ export function ContactsSection({ copy, openMapLabel }: ContactsSectionProps) {
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">{copy.email}</p>
-                <p className="mt-3 text-base text-zinc-700">hello@fitspace.cy</p>
+                <p className="mt-3 text-base text-zinc-700">hello@pilatesspace.cy</p>
               </div>
             </div>
 
@@ -62,7 +62,7 @@ export function ContactsSection({ copy, openMapLabel }: ContactsSectionProps) {
           </div>
         </div>
         <iframe
-          title="Fit Space map"
+          title="PilatesSpace map"
           className="h-[340px] w-full rounded-[20px] border border-[#e5dbcc] bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"

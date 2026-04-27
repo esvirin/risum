@@ -28,7 +28,7 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
             <div className="absolute inset-0 z-10 bg-[linear-gradient(115deg,rgba(42,34,27,0.12)_0%,rgba(42,34,27,0.03)_38%,rgba(255,255,255,0)_70%)]" />
             <Image
               src={studioSlides[studioIndex]}
-              alt="Fit Space Studio"
+              alt="PilatesSpace Studio"
               fill
               sizes="(max-width: 1280px) 100vw, 1152px"
               className="object-cover"
@@ -40,7 +40,7 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
           <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(180deg,rgba(24,20,16,0)_0%,rgba(24,20,16,0.76)_100%)] px-6 pb-6 pt-16 sm:px-10 sm:pb-8">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-white/70">Fit Space Limassol</p>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-white/70">PilatesSpace Limassol</p>
                 <p className="font-display mt-2 max-w-[26rem] text-3xl leading-[0.95] tracking-tight text-white sm:text-4xl">
                   Reformer Pilates and stretching in Limassol
                 </p>
@@ -62,7 +62,7 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
         <div className="px-6 py-8 sm:px-10 sm:py-10">
           <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.24em] text-zinc-500">Fit Space Limassol</p>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-zinc-500">PilatesSpace Limassol</p>
               <h1 className="font-display mt-4 max-w-4xl text-5xl leading-[0.92] tracking-tight sm:text-7xl">
                 {copy.title}
               </h1>
