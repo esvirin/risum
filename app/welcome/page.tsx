@@ -253,7 +253,7 @@ export default async function WelcomePage() {
               >
                 <div className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[28px] bg-white/90 p-1">
                   <Image
-                    src="/fs.png"
+                    src="/android-chrome-512x512.png"
                     alt="PilatesSpace"
                     width={239}
                     height={239}
