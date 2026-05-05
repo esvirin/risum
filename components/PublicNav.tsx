@@ -42,15 +42,25 @@ export function PublicNav() {
       </div>
 
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:h-16">
-        <Link href="/" className="inline-flex items-center overflow-visible">
-          <Image
-            src="/logo.png"
-            alt="PilatesSpace"
-            width={438}
-            height={248}
-            className="relative top-4 h-[5rem] w-auto opacity-95 sm:top-4 sm:h-[5rem] lg:h-[6rem]"
-            priority
-          />
+        <Link href="/" className="inline-flex items-center justify-center overflow-visible">
+          <>
+            <Image
+              src="/logo.png"
+              alt="Pilates Space"
+              width={188}
+              height={188}
+              className="h-[3.1rem] w-auto opacity-95 sm:hidden"
+              priority
+            />
+            <Image
+              src="/brand.png"
+              alt="Pilates Space"
+              width={340}
+              height={83}
+              className="relative top-1 hidden h-[4rem] w-auto opacity-95 sm:block lg:h-[4.75rem]"
+              priority
+            />
+          </>
         </Link>
 
         <div className="flex items-center gap-2">

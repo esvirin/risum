@@ -17,8 +17,8 @@ const prata = Prata({
 });
 
 export const metadata: Metadata = {
-  title: "PilatesSpace",
-  description: "PilatesSpace Member Portal",
+  title: "Pilates Space",
+  description: "Pilates Space Member Portal",
   metadataBase: new URL("https://www.pilatesspace.cy"),
   formatDetection: {
     telephone: false,

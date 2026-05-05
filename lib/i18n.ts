@@ -107,7 +107,7 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
-      copy: "© 2026 PilatesSpace",
+      copy: "© 2026 Pilates Space",
       policies: "Правила студии",
     },
     booking: {
@@ -272,7 +272,7 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
-      copy: "© 2026 PilatesSpace",
+      copy: "© 2026 Pilates Space",
       policies: "Studio Policies",
     },
     booking: {

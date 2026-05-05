@@ -1,4 +1,10 @@
-import { contactPhoneHref, whatsappHref, type HomeLiteCopy } from "@/lib/home-page";
+import {
+  contactPhoneHref,
+  studioMapsEmbedSrc,
+  studioMapsHref,
+  whatsappHref,
+  type HomeLiteCopy,
+} from "@/lib/home-page";
 
 type ContactsSectionProps = {
   copy: HomeLiteCopy;
@@ -42,7 +48,7 @@ export function ContactsSection({ copy, openMapLabel }: ContactsSectionProps) {
               <p className="text-[10px] uppercase tracking-[0.16em] text-zinc-500">Quick actions</p>
               <div className="flex flex-col gap-3 pt-1 sm:flex-row">
                 <a
-                  href="https://maps.google.com/?q=1st+floor,+58+Kolonakiou+Str,+Limassol,+4103"
+                  href={studioMapsHref}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex min-w-[9rem] items-center justify-center rounded-[12px] border border-zinc-900 bg-zinc-900 px-6 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:bg-zinc-800"
@@ -66,7 +72,7 @@ export function ContactsSection({ copy, openMapLabel }: ContactsSectionProps) {
           className="h-[340px] w-full rounded-[20px] border border-[#e5dbcc] bg-white shadow-[0_10px_28px_rgba(24,20,16,0.05)]"
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
-          src="https://www.google.com/maps?q=Kolonakiou%2058%2C%20Limassol&output=embed"
+          src={studioMapsEmbedSrc}
         />
       </div>
     </section>

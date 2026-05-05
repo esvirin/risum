@@ -2,7 +2,14 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { headers } from "next/headers";
-import { Apple, CircleDollarSign, Globe, MapPinned, Play } from "lucide-react";
+import {
+  Apple,
+  CircleDollarSign,
+  Globe,
+  Instagram,
+  MapPinned,
+  Play,
+} from "lucide-react";
 import { OpenScheduleButton } from "@/components/OpenScheduleButton";
 import { OpenPricesButton } from "@/components/OpenPricesButton";
 import { PricesModalContainer } from "@/components/PricesModalContainer";
@@ -14,6 +21,7 @@ import {
 } from "@/lib/booking";
 import { GtmTrackedLink } from "@/components/GtmTrackedLink";
 import { resolveRequestLocale } from "@/lib/i18n-server";
+import { instagramHref, studioMapsHref } from "@/lib/home-page";
 
 type Platform = "ios" | "android" | "mobile" | "desktop";
 type AppId = "web" | "ios" | "android";
@@ -23,11 +31,9 @@ const PHONE_HREF = "tel:+35795505556";
 const WHATSAPP_HREF = "https://wa.me/35795505556";
 const TELEGRAM_HREF =
   process.env.NEXT_PUBLIC_TELEGRAM_URL?.trim() || "https://t.me/pilatescy";
-const MAPS_HREF = "https://maps.app.goo.gl/73izTMWrueWUpKYN6";
-
 export const metadata: Metadata = {
-  title: "Welcome | PilatesSpace",
-  description: "Quick links for PilatesSpace booking and contact channels.",
+  title: "Welcome | Pilates Space",
+  description: "Quick links for Pilates Space booking and contact channels.",
   alternates: {
     canonical: "https://www.pilatesspace.cy/welcome",
   },
@@ -92,6 +98,7 @@ export default async function WelcomePage() {
           info: "Информация:",
           maps: "Google Maps",
           schedule: "Расписание",
+          instagram: "Instagram",
           prices: "Цены",
           appSubtitle: "Health & Fitness",
           platformPrefix: "Под ваше устройство:",
@@ -119,6 +126,7 @@ export default async function WelcomePage() {
           info: "Information:",
           maps: "Google Maps",
           schedule: "Schedule",
+          instagram: "Instagram",
           prices: "Prices",
           appSubtitle: "Health & Fitness",
           platformPrefix: "Detected platform:",
@@ -185,10 +193,10 @@ export default async function WelcomePage() {
           <div className="relative z-10">
             <div className="mx-auto flex w-fit items-center justify-center">
               <Image
-                src="/logo.png"
-                alt="Pilates Space by Olga Brovko"
-                width={438}
-                height={248}
+                src="/brand.png"
+                alt="Pilates Space"
+                width={340}
+                height={83}
                 className="h-auto w-[210px] sm:w-[240px]"
                 priority
               />
@@ -253,16 +261,16 @@ export default async function WelcomePage() {
               >
                 <div className="flex h-[108px] w-[108px] shrink-0 items-center justify-center rounded-[28px] bg-white/90 p-1">
                   <Image
-                    src="/android-chrome-512x512.png"
-                    alt="PilatesSpace"
-                    width={239}
-                    height={239}
-                    className="h-auto w-full scale-[1.08]"
+                    src="/fitspace.png"
+                    alt="Fitspace"
+                    width={512}
+                    height={512}
+                    className="h-auto w-full"
                   />
                 </div>
                 <div>
                   <p className="text-3xl font-semibold leading-tight text-zinc-900 sm:text-[2.1rem]">
-                    PilatesSpace Cyprus
+                    Fitspace
                   </p>
                   <p className="text-lg text-zinc-500 sm:text-xl">
                     {copy.appSubtitle}
@@ -339,7 +347,7 @@ export default async function WelcomePage() {
               </p>
               <div className="space-y-3">
                 <a
-                  href={MAPS_HREF}
+                  href={studioMapsHref}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl"
@@ -350,6 +358,15 @@ export default async function WelcomePage() {
                 <OpenScheduleButton className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl">
                   {copy.schedule}
                 </OpenScheduleButton>
+                <a
+                  href={instagramHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl"
+                >
+                  <Instagram className="h-5 w-5" />
+                  {copy.instagram}
+                </a>
                 <OpenPricesButton className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#bbb4ae] bg-[#efedeb] px-4 py-3 text-center text-lg font-medium text-zinc-900 transition hover:bg-white sm:text-xl">
                   <CircleDollarSign className="h-5 w-5" />
                   {copy.prices}

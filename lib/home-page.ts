@@ -69,6 +69,12 @@ export const privateBookingMessage = "Для бронирования индив
 export const privateBookingPhone = "+357 95505556";
 export const contactPhoneHref = "tel:+35795505556";
 export const whatsappHref = "https://wa.me/35795505556";
+export const instagramHref =
+  process.env.NEXT_PUBLIC_INSTAGRAM_URL?.trim() || "https://www.instagram.com/pilatespace/";
+export const studioMapsHref =
+  "https://www.google.com/maps/search/?api=1&query=Pilates+Space+Limassol";
+export const studioMapsEmbedSrc =
+  "https://www.google.com/maps?q=Pilates%20Space%20Limassol&output=embed";
 
 export function formatTime(value: string) {
   return new Intl.DateTimeFormat("en-GB", {
