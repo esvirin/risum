@@ -57,7 +57,7 @@ export function PublicNav() {
               alt="Pilates Space"
               width={340}
               height={83}
-              className="relative top-1 hidden h-[4rem] w-auto opacity-95 sm:block lg:h-[4.75rem]"
+              className="relative top-1 hidden h-[3.75rem] w-auto opacity-95 sm:block lg:h-[4.4rem]"
               priority
             />
           </>

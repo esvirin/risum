@@ -37,6 +37,15 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://www.pilatesspace.cy/welcome",
   },
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: {
+      index: false,
+      follow: false,
+      noimageindex: true,
+    },
+  },
 };
 
 export const dynamic = "force-dynamic";
@@ -187,7 +196,7 @@ export default async function WelcomePage() {
               className="object-cover object-center opacity-[0.88]"
               priority
             />
-            <div className="absolute inset-0 bg-white/38" />
+            <div className="absolute inset-0 bg-white/20" />
           </div>
 
           <div className="relative z-10">
@@ -197,7 +206,7 @@ export default async function WelcomePage() {
                 alt="Pilates Space"
                 width={340}
                 height={83}
-                className="h-auto w-[210px] sm:w-[240px]"
+                className="h-auto w-[265px] sm:w-[300px]"
                 priority
               />
             </div>
@@ -385,6 +394,12 @@ export default async function WelcomePage() {
           </div>
         </section>
       </div>
+      <footer className="border-t border-[#d9d4ce] bg-[#f4eee5]">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3 px-4 py-6 text-center text-xs uppercase tracking-[0.14em] text-zinc-500 sm:max-w-6xl sm:flex-row sm:items-center sm:justify-between sm:text-left">
+          <span>Risum Cyprus Ltd</span>
+          <span>©2026 Pilates Space</span>
+        </div>
+      </footer>
       <ScheduleModalContainer
         locale={locale}
         scheduleLabel={copy.schedule}

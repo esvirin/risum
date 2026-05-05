@@ -31,6 +31,8 @@ export default function HomePage() {
 
       <HeroSection
         copy={copy}
+        pricesLabel={t.nav.prices}
+        bookLabel={t.nav.book}
         studioIndex={studioIndex}
         onTouchStart={(clientX) => {
           touchStartX.current = clientX;

@@ -6,12 +6,21 @@ import { heroHighlights, studioSlides, type HomeLiteCopy } from "@/lib/home-page
 
 type HeroSectionProps = {
   copy: HomeLiteCopy;
+  pricesLabel: string;
+  bookLabel: string;
   studioIndex: number;
   onTouchStart: (clientX: number | null) => void;
   onTouchEnd: (clientX: number | null) => void;
 };
 
-export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: HeroSectionProps) {
+export function HeroSection({
+  copy,
+  pricesLabel,
+  bookLabel,
+  studioIndex,
+  onTouchStart,
+  onTouchEnd,
+}: HeroSectionProps) {
   return (
     <section className="mx-auto max-w-6xl px-4 py-8 sm:py-12">
       <div className="overflow-hidden rounded-[28px] border border-[#ddd2c2] bg-[radial-gradient(circle_at_top_left,rgba(255,255,255,0.98)_0%,rgba(248,244,237,0.98)_45%,rgba(240,230,214,0.96)_100%)] shadow-[0_22px_70px_rgba(24,20,16,0.08)]">
@@ -85,13 +94,13 @@ export function HeroSection({ copy, studioIndex, onTouchStart, onTouchEnd }: Her
               <OpenPricesButton
                 className="inline-flex items-center justify-center rounded-[14px] border border-zinc-200 bg-[#f7f4ef] px-5 py-3 text-xs uppercase tracking-[0.18em] text-zinc-600 shadow-[0_8px_24px_rgba(24,20,16,0.04)] transition hover:-translate-y-0.5 hover:bg-white hover:text-zinc-900"
               >
-                Цены
+                {pricesLabel}
               </OpenPricesButton>
               <Link
                 href={BOOKING_PAGE_PATH}
                 className="inline-flex items-center justify-center rounded-[14px] border border-zinc-900 bg-zinc-900 px-5 py-3 text-xs uppercase tracking-[0.18em] text-white shadow-[0_8px_24px_rgba(24,20,16,0.08)] transition hover:-translate-y-0.5 hover:bg-zinc-800"
               >
-                Запись
+                {bookLabel}
               </Link>
             </div>
           </div>
