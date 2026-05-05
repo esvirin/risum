@@ -395,7 +395,7 @@ export default async function WelcomePage() {
         </section>
       </div>
       <footer className="border-t border-[#d9d4ce] bg-[#f4eee5]">
-        <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3 px-4 py-6 text-center text-xs uppercase tracking-[0.14em] text-zinc-500 sm:max-w-6xl sm:flex-row sm:items-center sm:justify-between sm:text-left">
+        <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3 px-4 py-6 text-center text-xs uppercase tracking-[0.14em] text-zinc-500 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <span>Risum Cyprus Ltd</span>
           <span>©2026 Pilates Space</span>
         </div>
