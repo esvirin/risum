@@ -107,6 +107,7 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
+      registration: "Registration number: HE 357486",
       copy: "© 2026 Pilates Space",
       policies: "Правила студии",
     },
@@ -272,6 +273,7 @@ export const translations = {
     },
     footer: {
       company: "Risum Cyprus Limited",
+      registration: "Registration number: HE 357486",
       copy: "© 2026 Pilates Space",
       policies: "Studio Policies",
     },

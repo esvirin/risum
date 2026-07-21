@@ -11,7 +11,10 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-[#e5dbcc] bg-[#f4eee5]">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-10 text-xs uppercase tracking-[0.14em] text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
-        <span>{t.footer.company}</span>
+        <div className="flex flex-col gap-1">
+          <span>{t.footer.company}</span>
+          <span className="text-[0.65rem] text-zinc-400">{t.footer.registration}</span>
+        </div>
         <div className="flex items-center gap-4">
           <a
             href={instagramHref}
